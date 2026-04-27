@@ -34,7 +34,13 @@ TEST(AABBTest, RayFromInside) {
 
 TEST(AABBTest, RayGrazingEdge) {
   AABB box(Vector3D(-1.0, -1.0, -1.0), Vector3D(1.0, 1.0, 1.0));
-  Ray ray(Vector3D(1.5, 0.0, -5.0), Vector3D(0.0, 0.0, 1.0));
+  Ray ray(Vector3D(1.0, 0.0, -5.0), Vector3D(0.0, 0.0, 1.0));
+  EXPECT_FALSE(box.hit(ray, 0.0, 100.0));
+}
+
+TEST(AABBTest, RayParallelOutside) {
+  AABB box(Vector3D(-1.0, -1.0, -1.0), Vector3D(1.0, 1.0, 1.0));
+  Ray ray(Vector3D(2.0, 0.0, -5.0), Vector3D(0.0, 0.0, 1.0));
   EXPECT_FALSE(box.hit(ray, 0.0, 100.0));
 }
 

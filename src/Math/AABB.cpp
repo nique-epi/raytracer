@@ -26,20 +26,27 @@ bool AABB::hit(const Ray& ray, double tMin, double tMax) const {
   const std::array<double, 3> max_a = {max.x, max.y, max.z};
 
   for (int i = 0; i < 3; ++i) {
+    if (dir_a[i] == 0.0) {
+      if (orig_a[i] < min_a[i] || orig_a[i] >= max_a[i]) {
+        return false;
+}
+      continue;
+    }
+
     const double invD = 1.0 / dir_a[i];
     double t0 = (min_a[i] - orig_a[i]) * invD;
     double t1 = (max_a[i] - orig_a[i]) * invD;
 
     if (invD < 0.0) {
       std::swap(t0, t1);
-    }
+}
 
     tMin = std::max(t0, tMin);
     tMax = std::min(t1, tMax);
 
     if (tMax <= tMin) {
       return false;
-    }
+}
   }
   return true;
 }
