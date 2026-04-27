@@ -1,5 +1,15 @@
+build/
 *.o
+*.a
+*.so
+*.gcda
+*.gcno
+*.profraw
 .cache/
 compile_commands.json
 Makefile
 raytracer
+Testing/
+test-results/
+tests/bin/
+tests/*.xml
