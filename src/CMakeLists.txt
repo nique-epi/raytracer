@@ -7,6 +7,8 @@ target_include_directories(raytracer
     ${CMAKE_SOURCE_DIR}/include
 )
 
+raytracer_enable_target_warnings(raytracer)
+
 
 add_custom_command(
   TARGET raytracer

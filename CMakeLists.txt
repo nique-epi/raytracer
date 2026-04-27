@@ -1,21 +1,32 @@
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.16)
 
-project(raytracer)
+project(raytracer CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-if(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
+option(BUILD_TESTS "Build unit tests" OFF)
+option(BUILD_BONUS "Build bonus features" OFF)
+
+find_package(libconfig++ QUIET)
+
+if(BUILD_BONUS)
+  find_package(SFML QUIET COMPONENTS graphics window system)
 endif()
 
+function(raytracer_enable_target_warnings target)
+  target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic -fPIC)
+endfunction()
+
 add_subdirectory(src)
+add_subdirectory(plugins)
 
-option(WITH_TESTS "Build unit tests" OFF)
+if(BUILD_BONUS)
+  add_subdirectory(bonus)
+endif()
 
-if (WITH_TESTS)
+if(BUILD_TESTS)
   enable_testing()
   add_subdirectory(tests)
 endif()
