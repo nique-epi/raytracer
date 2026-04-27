@@ -5,4 +5,5 @@ target_sources(raytracer_core
     Color.cpp
     HitRecord.cpp
     AABB.cpp
+    RenderSettings.cpp
 )
