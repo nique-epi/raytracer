@@ -25,7 +25,24 @@ jobs:
       - name: Check formatting
         run: cmake --build build --target format-check
 
+  format-check:
+    name: Format check
+    runs-on: ubuntu-latest
+    container: epitechcontent/epitest-docker:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install clang-format
+        run: apt-get update && apt-get install -y clang-format-20
+
+      - name: Configure
+        run: cmake -B build
+
+      - name: Check formatting
+        run: cmake --build build --target format-check
+
   build:
+    name: Build
     name: Build
     runs-on: ubuntu-latest
     container: epitechcontent/epitest-docker:latest
@@ -50,12 +67,39 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     container: epitechcontent/epitest-docker:latest
+    container: epitechcontent/epitest-docker:latest
     steps:
       - uses: actions/checkout@v4
 
       - name: Configure
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build -j$(nproc)
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: raytracer-binary
+          path: |
+            raytracer
+          if-no-files-found: warn
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    container: epitechcontent/epitest-docker:latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -B build -DBUILD_TESTS=ON
+      - name: Configure
         run: cmake -B build -DBUILD_TESTS=ON
 
+      - name: Build tests
+        run: cmake --build build -j$(nproc)
       - name: Build tests
         run: cmake --build build -j$(nproc)
 
@@ -101,7 +145,30 @@ jobs:
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
       - name: Filter .claude/ from history and push to mirror
+      - name: Setup SSH for mirror push
         if: ${{ steps.is_mirror_repo.outputs.is_mirror == 'false' }}
+        env:
+          SSH_KEY: ${{ secrets.GIT_SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Filter .claude/ from history and push to mirror
+        if: ${{ steps.is_mirror_repo.outputs.is_mirror == 'false' }}
+        env:
+          GIT_SSH_COMMAND: "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no"
+        run: |
+          # filter-repo réécrit l'historique du clone du runner pour
+          # supprimer toute trace de .claude/ — le repo source n'est pas
+          # touché. On push ensuite tout l'historique filtré (toutes les
+          # refs) vers le mirror Epitech, qui garde branches, tags et
+          # commits.
+          pip install --quiet git-filter-repo
+          git filter-repo --force --path .claude --invert-paths
+          git remote add mirror "${{ env.MIRROR_URL }}"
+          git push --force --mirror mirror
         env:
           GIT_SSH_COMMAND: "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no"
         run: |
