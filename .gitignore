@@ -13,3 +13,6 @@ Testing/
 test-results/
 tests/bin/
 tests/*.xml
+
+# Sujet PDF — laissé en local, pas commit
+G-OOP-400_raytracer.pdf
