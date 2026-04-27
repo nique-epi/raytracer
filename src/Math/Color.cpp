@@ -8,6 +8,7 @@
 #include "Math/Color.hpp"
 #include <algorithm>
 #include <cmath>
+#include <stdexcept>
 
 namespace {
 constexpr double kRgbScale = 255.0;
