@@ -1,3 +1,19 @@
+add_library(raytracer_core
+  plugin/PluginLoader.cpp
+)
+
+target_include_directories(raytracer_core
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/include
+)
+
+raytracer_enable_target_warnings(raytracer_core)
+
+find_library(DL_LIBRARY dl)
+if(DL_LIBRARY)
+  target_link_libraries(raytracer_core PUBLIC ${DL_LIBRARY})
+endif()
+
 add_executable(raytracer
   main.cpp
 )
@@ -6,6 +22,8 @@ target_include_directories(raytracer
   PRIVATE
     ${CMAKE_SOURCE_DIR}/include
 )
+
+target_link_libraries(raytracer PRIVATE raytracer_core)
 
 raytracer_enable_target_warnings(raytracer)
 
