@@ -25,6 +25,8 @@ Color Color::clamp() const {
 }
 
 Color Color::gammaCorrect(double gamma) const {
+  if (gamma <= 0.0)
+    throw std::domain_error("gamma must be > 0");
   double inv = 1.0 / gamma;
   return {std::pow(r, inv), std::pow(g, inv), std::pow(b, inv)};
 }

@@ -105,6 +105,12 @@ TEST(ColorTest, ClampAlreadyValid) {
   EXPECT_DOUBLE_EQ(clamped.b, 0.8);
 }
 
+TEST(ColorTest, GammaCorrectInvalidThrows) {
+  Color c(0.5, 0.5, 0.5);
+  EXPECT_THROW({ auto _ = c.gammaCorrect(0.0); (void)_; }, std::domain_error);
+  EXPECT_THROW({ auto _ = c.gammaCorrect(-1.0); (void)_; }, std::domain_error);
+}
+
 TEST(ColorTest, GammaCorrect22) {
   Color c(0.5, 0.5, 0.5);
   Color gc = c.gammaCorrect(2.2);
