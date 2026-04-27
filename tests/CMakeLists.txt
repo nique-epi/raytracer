@@ -26,7 +26,11 @@ set_target_properties(plugin_loader_test PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-add_test(NAME plugin_loader_test COMMAND plugin_loader_test)
+add_test(
+	NAME plugin_loader_test
+	COMMAND plugin_loader_test
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
 set_tests_properties(plugin_loader_test PROPERTIES
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )

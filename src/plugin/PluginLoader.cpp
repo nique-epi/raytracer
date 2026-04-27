@@ -51,13 +51,14 @@ void* PluginLoader::getSymbol(void* handle, const std::string& name) {
 }
 
 void PluginLoader::unloadAll() {
-  for (auto& [path, handle] : handles) {
+  for (auto it = handles.begin(); it != handles.end();) {
+    const std::string& path = it->first;
+    void* handle = it->second;
     if (handle == nullptr) {
+      it = handles.erase(it);
       continue;
     }
     if (dlclose(handle) != 0) {
-      // NOLINTNEXTLINE(concurrency-mt-unsafe)
-      (void)dlerror();
       // NOLINTNEXTLINE(concurrency-mt-unsafe)
       const char* error = dlerror();
       std::cerr << "PluginLoader: failed to unload '" << path << "'";
@@ -65,8 +66,10 @@ void PluginLoader::unloadAll() {
         std::cerr << ": " << error;
       }
       std::cerr << '\n';
+      ++it;
+      continue;
     }
+    it = handles.erase(it);
   }
-  handles.clear();
 }
 }  // namespace raytracer::plugin
