@@ -5,7 +5,8 @@
 int main() {
   raytracer::plugin::PluginLoader loader;
 
-  const std::filesystem::path pluginPath{"fake_plugin.so"};
+  const std::filesystem::path pluginPath =
+      std::filesystem::current_path() / "fake_plugin.so";
 
   void* handle = loader.load(pluginPath.string());
   assert(handle != nullptr);
