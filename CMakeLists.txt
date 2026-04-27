@@ -30,3 +30,24 @@ if(BUILD_TESTS)
   enable_testing()
   add_subdirectory(tests)
 endif()
+
+find_program(CLANG_FORMAT NAMES clang-format-20 clang-format)
+if(CLANG_FORMAT)
+  add_custom_target(format
+    COMMAND ${CLANG_FORMAT} -i ${ALL_SOURCE_FILES}
+    COMMENT "Formatting code with ${CLANG_FORMAT}..."
+  )
+  add_custom_target(format-check
+    COMMAND ${CLANG_FORMAT} --dry-run -Werror ${ALL_SOURCE_FILES}
+    COMMENT "Checking code format with ${CLANG_FORMAT}..."
+  )
+endif()
+
+find_program(CLANG_TIDY NAMES clang-tidy-20 clang-tidy)
+if(CLANG_TIDY)
+  add_custom_target(tidy
+    COMMAND ${CLANG_TIDY} ${ALL_SOURCE_FILES} -p ${CMAKE_BINARY_DIR}
+      --extra-arg=-Wno-unknown-warning-option
+    COMMENT "Linting code with ${CLANG_TIDY}..."
+  )
+endif()
