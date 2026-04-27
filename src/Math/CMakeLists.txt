@@ -4,4 +4,5 @@ target_sources(raytracer_core
     Ray.cpp
     Color.cpp
     HitRecord.cpp
+    AABB.cpp
 )
