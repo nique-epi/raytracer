@@ -44,7 +44,7 @@ TEST(OpticsTest, RefractTotalInternalReflection) {
   Vector3D v(0.9, -0.1, 0.0);
   Vector3D n(0.0, 1.0, 0.0);
   Vector3D r = Optics::refract(v, n, 1.5);
-  Vector3D reflected = Optics::reflect(v, n);
+  Vector3D reflected = Optics::reflect(v.normalize(), n);
   EXPECT_NEAR(r.x, reflected.x, 1e-9);
   EXPECT_NEAR(r.y, reflected.y, 1e-9);
   EXPECT_NEAR(r.z, reflected.z, 1e-9);

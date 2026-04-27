@@ -27,7 +27,7 @@ Vector3D refract(const Vector3D& v, const Vector3D& n, double ni_nt) {
   const double discriminant =
       constants::one - ((ni_nt * ni_nt) * (constants::one - (dt * dt)));
   if (discriminant <= 0.0) {
-    return reflect(v, n);
+    return reflect(uv, n);
   }
   return uv * ni_nt - n * ((ni_nt * dt) + std::sqrt(discriminant));
 }
