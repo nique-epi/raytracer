@@ -3,4 +3,5 @@ target_sources(raytracer_core
     Vector3D.cpp
     Ray.cpp
     Color.cpp
+    HitRecord.cpp
 )

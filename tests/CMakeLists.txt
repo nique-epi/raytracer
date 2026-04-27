@@ -12,6 +12,7 @@ add_executable(raytracer_tests
   utils/math/Vector3DTest.cpp
   utils/math/RayTest.cpp
   utils/math/ColorTest.cpp
+  utils/math/HitRecordTest.cpp
 )
 
 target_link_libraries(raytracer_tests
