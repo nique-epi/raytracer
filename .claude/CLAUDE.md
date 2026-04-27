@@ -155,3 +155,50 @@ class IRenderer {
 
 Note : le destructeur virtuel par défaut (`= default`) est autorisé et
 recommandé — c'est la seule "implémentation" tolérée dans une interface.
+
+### R3 — Aucun co-auteur ni mention d'assistant dans les commits
+
+**Règle :** les messages de commit ne doivent contenir **aucun trailer
+`Co-Authored-By:`**, **aucune mention d'un assistant IA** (Claude, Copilot,
+ChatGPT, Cursor, etc.), **aucun lien vers un outil d'IA**, et **aucun
+emoji robot / "Generated with"**. Le sujet, le corps et les trailers du
+commit doivent décrire uniquement *ce que* le commit change et *pourquoi*.
+
+**Pourquoi :** la paternité d'un commit appartient à l'auteur humain qui
+prend la responsabilité du code. L'outillage utilisé pour produire le diff
+(IA, IDE, snippets) est un détail privé qui ne doit pas polluer
+l'historique git ni le repo mirror Epitech. Les Co-Authored-By légitimes
+(pair-programming humain) ne sont pas l'usage qu'on a ici, donc on
+l'interdit pour éviter toute ambiguïté.
+
+**À appliquer :** absolument tous les commits du projet, y compris les
+commits intermédiaires d'une PR (squash ou non). S'applique aussi à toute
+réécriture d'historique : si un commit existant contient une de ces
+mentions, il doit être réécrit avant push.
+
+**Exemple interdit :**
+
+```
+chore: gitignore the subject PDF
+
+Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
+```
+
+```
+feat: add Vector3 utilities
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+```
+
+**Exemple correct :**
+
+```
+chore: gitignore the subject PDF
+```
+
+```
+feat: add Vector3 utilities
+
+Implements addition, scaling and dot product. Used by the camera
+ray-generation step.
+```
