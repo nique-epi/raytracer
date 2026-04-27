@@ -6,4 +6,5 @@ target_sources(raytracer_core
     HitRecord.cpp
     AABB.cpp
     RenderSettings.cpp
+    Optics.cpp
 )

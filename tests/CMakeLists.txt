@@ -15,6 +15,7 @@ add_executable(raytracer_tests
   utils/math/HitRecordTest.cpp
   utils/math/AABBTest.cpp
   utils/math/RenderSettingsTest.cpp
+  utils/math/OpticsTest.cpp
 )
 
 target_link_libraries(raytracer_tests
