@@ -8,6 +8,7 @@
 #include "PluginLoader.hpp"
 #include <dlfcn.h>
 #include <iostream>
+#include <string>
 
 namespace raytracer::plugin {
 

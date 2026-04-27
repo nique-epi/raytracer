@@ -27,3 +27,6 @@ set_target_properties(plugin_loader_test PROPERTIES
 )
 
 add_test(NAME plugin_loader_test COMMAND plugin_loader_test)
+set_tests_properties(plugin_loader_test PROPERTIES
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
