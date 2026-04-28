@@ -21,6 +21,7 @@ endfunction()
 
 add_subdirectory(src)
 add_subdirectory(plugins)
+add_subdirectory(utils)
 
 if(BUILD_BONUS)
   add_subdirectory(bonus)
