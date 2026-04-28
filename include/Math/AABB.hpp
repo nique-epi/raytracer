@@ -13,7 +13,8 @@
 
 namespace Math {
 
-struct AABB {
+class AABB {
+ public:
   Vector3D min;
   Vector3D max;
 

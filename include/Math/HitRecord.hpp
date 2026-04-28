@@ -16,7 +16,8 @@ class IMaterial;
 
 namespace Math {
 
-struct HitRecord {
+class HitRecord {
+ public:
   Vector3D point;
   Vector3D normal;
   double t{0.0};

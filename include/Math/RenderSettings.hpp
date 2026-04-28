@@ -20,7 +20,8 @@ constexpr int samplesPerPixel = 1;
 constexpr int maxDepth = 5;
 }  // namespace defaults
 
-struct RenderSettings {
+class RenderSettings {
+ public:
   int imageWidth{defaults::imageWidth};
   int imageHeight{defaults::imageHeight};
   int tileWidth{defaults::tileWidth};

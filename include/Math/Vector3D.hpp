@@ -10,7 +10,8 @@
 
 namespace Math {
 
-struct Vector3D {
+class Vector3D {
+ public:
   double x;
   double y;
   double z;
