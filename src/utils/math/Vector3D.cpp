@@ -7,7 +7,8 @@
 
 #include "Vector3D.hpp"
 #include <cmath>
-#include <stdexcept>
+#include "constants/Errors.hpp"
+#include "core/Exceptions.hpp"
 
 namespace Math {
 
@@ -31,7 +32,7 @@ double Vector3D::length() const { return std::sqrt(lengthSquared()); }
 Vector3D Vector3D::normalize() const {
   const double len = length();
   if (len == 0.0) {
-    throw std::domain_error("Cannot normalize a zero vector");
+    throw Core::RaytracerException(Constants::Errors::MATH_VECTOR_ZERO_NORMALIZE);
   }
   return {x / len, y / len, z / len};
 }

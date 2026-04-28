@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 #include <cmath>
-#include <stdexcept>
+#include "core/Exceptions.hpp"
 #include "utils/math/Vector3D.hpp"
 
 using Math::Vector3D;
@@ -57,7 +57,7 @@ TEST(Vector3DTest, NormalizeZeroVectorThrows) {
         auto _ = v.normalize();
         (void)_;
       },
-      std::domain_error);
+      Core::RaytracerException);
 }
 
 TEST(Vector3DTest, Dot) {

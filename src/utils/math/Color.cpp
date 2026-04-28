@@ -8,7 +8,8 @@
 #include "Color.hpp"
 #include <algorithm>
 #include <cmath>
-#include <stdexcept>
+#include "constants/Errors.hpp"
+#include "core/Exceptions.hpp"
 
 namespace {
 constexpr double kRgbScale = 255.0;
@@ -27,7 +28,7 @@ Color Color::clamp() const {
 
 Color Color::gammaCorrect(double gamma) const {
   if (gamma <= 0.0) {
-    throw std::domain_error("gamma must be > 0");
+    throw Core::RaytracerException(Constants::Errors::MATH_GAMMA_INVALID);
   }
   double inv = 1.0 / gamma;
   return {std::pow(r, inv), std::pow(g, inv), std::pow(b, inv)};

@@ -3,11 +3,17 @@ add_library(raytracer_plugin STATIC)
 target_sources(raytracer_plugin
   PRIVATE
     PluginLoader.cpp
+    PluginException.cpp
 )
 
 target_include_directories(raytracer_plugin
   PUBLIC
     ${CMAKE_SOURCE_DIR}/src
+)
+
+target_link_libraries(raytracer_plugin
+  PUBLIC
+    raytracer_exceptions
 )
 
 find_library(DL_LIBRARY dl)

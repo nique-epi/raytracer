@@ -16,6 +16,8 @@ add_executable(raytracer_tests
   utils/math/AABBTest.cpp
   utils/math/RenderSettingsTest.cpp
   utils/math/OpticsTest.cpp
+  core/ExceptionsTest.cpp
+  plugin/PluginExceptionTest.cpp
 )
 
 target_include_directories(raytracer_tests

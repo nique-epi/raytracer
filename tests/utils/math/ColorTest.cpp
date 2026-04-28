@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 #include <cmath>
 #include <tuple>
+#include "core/Exceptions.hpp"
 #include "utils/math/Color.hpp"
 
 using Math::Color;
@@ -112,13 +113,13 @@ TEST(ColorTest, GammaCorrectInvalidThrows) {
         auto _ = c.gammaCorrect(0.0);
         (void)_;
       },
-      std::domain_error);
+      Core::RaytracerException);
   EXPECT_THROW(
       {
         auto _ = c.gammaCorrect(-1.0);
         (void)_;
       },
-      std::domain_error);
+      Core::RaytracerException);
 }
 
 TEST(ColorTest, GammaCorrect22) {
