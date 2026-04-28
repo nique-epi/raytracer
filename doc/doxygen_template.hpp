@@ -229,7 +229,7 @@ class RingBuffer : public IStringifiable {
  *
  * @pre lo <= hi
  *
- * @note Equivalent to std::clamp (C++17) but available in C++14 contexts.
+ * @note Semantically equivalent to std::clamp.
  */
 template <typename T>
 T clamp(T value, T lo, T hi);
