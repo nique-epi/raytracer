@@ -16,10 +16,9 @@
  *  - @tparam      : name must match the template parameter name exactly
  *  - No duplicate docs in overrides — use @inheritDoc or add context only
  *
- * @author  Firstname Lastname
- * @date    YYYY-MM-DD
+ * @date    2026-04-28
  * @version 1.0
- * @copyright (C) 2026 Nique-Epi
+ * @copyright (C) 2026 Nique-Epi ;)
  */
 
 #ifndef DOC_DOXYGEN_TEMPLATE_HPP_
