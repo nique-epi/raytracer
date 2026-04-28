@@ -10,9 +10,9 @@
 #include "utils/math/Ray.hpp"
 #include "utils/math/Vector3D.hpp"
 
-using Math::AABB;
-using Math::Ray;
-using Math::Vector3D;
+using raytracer::math::AABB;
+using raytracer::math::Ray;
+using raytracer::math::Vector3D;
 
 TEST(AABBTest, RayHitsCenter) {
   AABB box(Vector3D(-1.0, -1.0, -1.0), Vector3D(1.0, 1.0, 1.0));

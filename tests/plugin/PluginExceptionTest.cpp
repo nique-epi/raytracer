@@ -20,7 +20,7 @@ TEST(PluginExceptionTest, LoadExceptionIncludesPathAndReason) {
   std::string msg = e.what();
   EXPECT_NE(msg.find("/path/to/plug.so"), std::string::npos);
   EXPECT_NE(msg.find("file not found"), std::string::npos);
-  EXPECT_NE(msg.find(Constants::Errors::PLUGIN_LOAD_FAILED), std::string::npos);
+  EXPECT_NE(msg.find(raytracer::constants::errors::PLUGIN_LOAD_FAILED), std::string::npos);
 }
 
 TEST(PluginExceptionTest, SymbolExceptionIncludesSymbolAndPath) {
@@ -28,7 +28,7 @@ TEST(PluginExceptionTest, SymbolExceptionIncludesSymbolAndPath) {
   std::string msg = e.what();
   EXPECT_NE(msg.find("/lib/foo.so"), std::string::npos);
   EXPECT_NE(msg.find("create"), std::string::npos);
-  EXPECT_NE(msg.find(Constants::Errors::PLUGIN_SYMBOL_NOT_FOUND),
+  EXPECT_NE(msg.find(raytracer::constants::errors::PLUGIN_SYMBOL_NOT_FOUND),
             std::string::npos);
 }
 
@@ -45,7 +45,7 @@ TEST(PluginExceptionTest, LoadExceptionCaughtAsPluginException) {
 TEST(PluginExceptionTest, SymbolExceptionCaughtAsRaytracerException) {
   try {
     throw PluginSymbolException("a", "b");
-  } catch (const Core::RaytracerException&) {
+  } catch (const raytracer::core::RaytracerException&) {
     SUCCEED();
   } catch (...) {
     FAIL() << "not caught as RaytracerException";

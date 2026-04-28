@@ -27,7 +27,7 @@ int run(int argc, char** argv) {
 int main(int argc, char** argv) {
   try {
     return run(argc, argv);
-  } catch (const Core::RaytracerException& e) {
+  } catch (const raytracer::core::RaytracerException& e) {
     std::cerr << "Error: " << e.what() << '\n';
     return error_exit_code;
   } catch (const std::exception& e) {

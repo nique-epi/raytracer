@@ -11,7 +11,7 @@
 #include "core/Exceptions.hpp"
 #include "utils/math/Color.hpp"
 
-using Math::Color;
+using raytracer::math::Color;
 
 TEST(ColorTest, DefaultConstructorIsBlack) {
   Color c;
@@ -113,13 +113,13 @@ TEST(ColorTest, GammaCorrectInvalidThrows) {
         auto _ = c.gammaCorrect(0.0);
         (void)_;
       },
-      Core::RaytracerException);
+      raytracer::core::RaytracerException);
   EXPECT_THROW(
       {
         auto _ = c.gammaCorrect(-1.0);
         (void)_;
       },
-      Core::RaytracerException);
+      raytracer::core::RaytracerException);
 }
 
 TEST(ColorTest, GammaCorrect22) {

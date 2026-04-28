@@ -11,15 +11,15 @@
 #include "constants/Errors.hpp"
 #include "core/Exceptions.hpp"
 
-using Components::ImageException;
-using Components::ImageIOException;
+using raytracer::components::ImageException;
+using raytracer::components::ImageIOException;
 
 TEST(ImageExceptionTest, IOExceptionIncludesPathAndReason) {
   ImageIOException e("/tmp/out.ppm", "disk full");
   std::string msg = e.what();
   EXPECT_NE(msg.find("/tmp/out.ppm"), std::string::npos);
   EXPECT_NE(msg.find("disk full"), std::string::npos);
-  EXPECT_NE(msg.find(Constants::Errors::IMAGE_IO_ERROR), std::string::npos);
+  EXPECT_NE(msg.find(raytracer::constants::errors::IMAGE_IO_ERROR), std::string::npos);
 }
 
 TEST(ImageExceptionTest, IOExceptionCaughtAsImageException) {
@@ -35,7 +35,7 @@ TEST(ImageExceptionTest, IOExceptionCaughtAsImageException) {
 TEST(ImageExceptionTest, IOExceptionCaughtAsRaytracerException) {
   try {
     throw ImageIOException("p", "r");
-  } catch (const Core::RaytracerException&) {
+  } catch (const raytracer::core::RaytracerException&) {
     SUCCEED();
   } catch (...) {
     FAIL() << "not caught as RaytracerException";

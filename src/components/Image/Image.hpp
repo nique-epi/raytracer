@@ -12,7 +12,7 @@
 #include <vector>
 #include "utils/math/Color.hpp"
 
-namespace Components {
+namespace raytracer::components {
 
 class Image {
  public:
@@ -24,8 +24,8 @@ class Image {
   Image& operator=(Image&&) = default;
   ~Image() = default;
 
-  void setPixel(int x, int y, Math::Color c);
-  [[nodiscard]] Math::Color getPixel(int x, int y) const;
+  void setPixel(int x, int y, raytracer::math::Color c);
+  [[nodiscard]] raytracer::math::Color getPixel(int x, int y) const;
 
   [[nodiscard]] int getWidth() const;
   [[nodiscard]] int getHeight() const;
@@ -35,9 +35,9 @@ class Image {
  private:
   int _width;
   int _height;
-  std::vector<Math::Color> _pixels;
+  std::vector<raytracer::math::Color> _pixels;
 };
 
-}  // namespace Components
+}  // namespace raytracer::components
 
 #endif  // COMPONENTS_IMAGE_IMAGE_HPP_

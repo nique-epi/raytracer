@@ -10,7 +10,7 @@
 #include "constants/Errors.hpp"
 #include "core/Exceptions.hpp"
 
-namespace Math {
+namespace raytracer::math {
 
 Vector3D::Vector3D() : x(0.0), y(0.0), z(0.0) {}
 
@@ -32,7 +32,7 @@ double Vector3D::length() const { return std::sqrt(lengthSquared()); }
 Vector3D Vector3D::normalize() const {
   const double len = length();
   if (len == 0.0) {
-    throw Core::RaytracerException(Constants::Errors::MATH_VECTOR_ZERO_NORMALIZE);
+    throw raytracer::core::RaytracerException(raytracer::constants::errors::MATH_VECTOR_ZERO_NORMALIZE);
   }
   return {x / len, y / len, z / len};
 }
@@ -89,4 +89,4 @@ Vector3D& Vector3D::operator/=(double scalar) {
 
 Vector3D operator*(double scalar, const Vector3D& v) { return v * scalar; }
 
-}  // namespace Math
+}  // namespace raytracer::math

@@ -9,11 +9,11 @@
 #include <string>
 #include "constants/Errors.hpp"
 
-namespace Components {
+namespace raytracer::components {
 
 ImageIOException::ImageIOException(const std::string& path,
                                    const std::string& reason)
-    : ImageException(std::string(Constants::Errors::IMAGE_IO_ERROR) + " on '" +
+    : ImageException(std::string(raytracer::constants::errors::IMAGE_IO_ERROR) + " on '" +
                      path + "': " + reason) {}
 
-}  // namespace Components
+}  // namespace raytracer::components

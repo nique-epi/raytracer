@@ -10,8 +10,8 @@
 #include "utils/math/Optics.hpp"
 #include "utils/math/Vector3D.hpp"
 
-using Math::Vector3D;
-namespace Optics = Math::Optics;
+using raytracer::math::Vector3D;
+namespace Optics = raytracer::math::Optics;
 
 TEST(OpticsTest, ReflectHorizontalPlane) {
   Vector3D v(1.0, -1.0, 0.0);

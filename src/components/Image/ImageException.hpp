@@ -11,11 +11,11 @@
 #include <string>
 #include "core/Exceptions.hpp"
 
-namespace Components {
+namespace raytracer::components {
 
-class ImageException : public Core::RaytracerException {
+class ImageException : public raytracer::core::RaytracerException {
  public:
-  using Core::RaytracerException::RaytracerException;
+  using raytracer::core::RaytracerException::RaytracerException;
 };
 
 class ImageIOException : public ImageException {
@@ -23,6 +23,6 @@ class ImageIOException : public ImageException {
   ImageIOException(const std::string& path, const std::string& reason);
 };
 
-}  // namespace Components
+}  // namespace raytracer::components
 
 #endif  // COMPONENTS_IMAGE_IMAGEEXCEPTION_HPP_

@@ -10,7 +10,7 @@
 #include <array>
 #include "Ray.hpp"
 
-namespace Math {
+namespace raytracer::math {
 
 AABB::AABB() : min(0.0, 0.0, 0.0), max(0.0, 0.0, 0.0) {}
 
@@ -64,4 +64,4 @@ AABB AABB::surrounding(const AABB& a, const AABB& b) {
   return {small, big};
 }
 
-}  // namespace Math
+}  // namespace raytracer::math

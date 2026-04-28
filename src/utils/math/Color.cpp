@@ -15,7 +15,7 @@ namespace {
 constexpr double kRgbScale = 255.0;
 }  // namespace
 
-namespace Math {
+namespace raytracer::math {
 
 Color::Color() : r(0.0), g(0.0), b(0.0) {}
 
@@ -28,7 +28,7 @@ Color Color::clamp() const {
 
 Color Color::gammaCorrect(double gamma) const {
   if (gamma <= 0.0) {
-    throw Core::RaytracerException(Constants::Errors::MATH_GAMMA_INVALID);
+    throw raytracer::core::RaytracerException(raytracer::constants::errors::MATH_GAMMA_INVALID);
   }
   double inv = 1.0 / gamma;
   return {std::pow(r, inv), std::pow(g, inv), std::pow(b, inv)};
@@ -76,4 +76,4 @@ Color& Color::operator*=(double scalar) {
 
 Color operator*(double scalar, const Color& c) { return c * scalar; }
 
-}  // namespace Math
+}  // namespace raytracer::math

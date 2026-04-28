@@ -8,10 +8,10 @@
 #include "Exceptions.hpp"
 #include <utility>
 
-namespace Core {
+namespace raytracer::core {
 
 RaytracerException::RaytracerException(std::string msg) : _msg(std::move(msg)) {}
 
 const char* RaytracerException::what() const noexcept { return _msg.c_str(); }
 
-}  // namespace Core
+}  // namespace raytracer::core

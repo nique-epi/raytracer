@@ -10,7 +10,7 @@
 #include <string>
 #include "core/Exceptions.hpp"
 
-using Core::RaytracerException;
+using raytracer::core::RaytracerException;
 
 TEST(RaytracerExceptionTest, StoresMessage) {
   RaytracerException e("boom");

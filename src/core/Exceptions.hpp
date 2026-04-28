@@ -11,7 +11,7 @@
 #include <exception>
 #include <string>
 
-namespace Core {
+namespace raytracer::core {
 
 class RaytracerException : public std::exception {
  public:
@@ -22,6 +22,6 @@ class RaytracerException : public std::exception {
   std::string _msg;
 };
 
-}  // namespace Core
+}  // namespace raytracer::core
 
 #endif  // CORE_EXCEPTIONS_HPP_

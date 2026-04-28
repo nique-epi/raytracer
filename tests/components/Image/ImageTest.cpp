@@ -14,10 +14,10 @@
 #include "components/Image/ImageException.hpp"
 #include "utils/math/Color.hpp"
 
-using Components::Image;
-using Components::ImageException;
-using Components::ImageIOException;
-using Math::Color;
+using raytracer::components::Image;
+using raytracer::components::ImageException;
+using raytracer::components::ImageIOException;
+using raytracer::math::Color;
 
 TEST(ImageTest, ConstructorAllocatesBlackPixels) {
   Image img(4, 3);

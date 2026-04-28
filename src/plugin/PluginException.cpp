@@ -13,12 +13,12 @@ namespace raytracer::plugin {
 
 PluginLoadException::PluginLoadException(const std::string& path,
                                          const std::string& reason)
-    : PluginException(std::string(Constants::Errors::PLUGIN_LOAD_FAILED) +
+    : PluginException(std::string(raytracer::constants::errors::PLUGIN_LOAD_FAILED) +
                       " '" + path + "': " + reason) {}
 
 PluginSymbolException::PluginSymbolException(const std::string& path,
                                              const std::string& symbol)
-    : PluginException(std::string(Constants::Errors::PLUGIN_SYMBOL_NOT_FOUND) +
+    : PluginException(std::string(raytracer::constants::errors::PLUGIN_SYMBOL_NOT_FOUND) +
                       " '" + symbol + "' in plugin '" + path + "'") {}
 
 }  // namespace raytracer::plugin

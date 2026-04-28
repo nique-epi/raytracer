@@ -8,7 +8,7 @@
 #ifndef CONSTANTS_ERRORS_HPP_
 #define CONSTANTS_ERRORS_HPP_
 
-namespace Constants::Errors {
+namespace raytracer::constants::errors {
 
 constexpr const char* PLUGIN_LOAD_FAILED = "failed to load plugin";
 constexpr const char* PLUGIN_SYMBOL_NOT_FOUND = "failed to resolve symbol";
@@ -22,6 +22,6 @@ constexpr const char* MATH_VECTOR_ZERO_NORMALIZE =
     "cannot normalize a zero vector";
 constexpr const char* MATH_GAMMA_INVALID = "gamma must be > 0";
 
-}  // namespace Constants::Errors
+}  // namespace raytracer::constants::errors
 
 #endif  // CONSTANTS_ERRORS_HPP_

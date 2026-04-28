@@ -13,9 +13,9 @@
 
 namespace raytracer::plugin {
 
-class PluginException : public Core::RaytracerException {
+class PluginException : public raytracer::core::RaytracerException {
  public:
-  using Core::RaytracerException::RaytracerException;
+  using raytracer::core::RaytracerException::RaytracerException;
 };
 
 class PluginLoadException : public PluginException {

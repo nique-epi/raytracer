@@ -10,13 +10,13 @@
 
 #include "Vector3D.hpp"
 
-namespace Math::Optics {
+namespace raytracer::math::Optics {
 
 [[nodiscard]] Vector3D reflect(const Vector3D& v, const Vector3D& n);
 [[nodiscard]] Vector3D refract(const Vector3D& v, const Vector3D& n,
                                double ni_nt);
 [[nodiscard]] double schlick(double cosine, double refIdx);
 
-}  // namespace Math::Optics
+}  // namespace raytracer::math::Optics
 
 #endif  // MATH_OPTICS_HPP_
