@@ -25,6 +25,7 @@
 #define DOC_DOXYGEN_TEMPLATE_HPP_
 
 #include <cstddef>
+#include <iosfwd>
 #include <stdexcept>
 #include <string>
 
