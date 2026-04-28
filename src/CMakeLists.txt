@@ -17,7 +17,7 @@ if(DL_LIBRARY)
   target_link_libraries(raytracer_core PUBLIC ${DL_LIBRARY})
 endif()
 
-add_subdirectory(Math)
+add_subdirectory(utils/math)
 
 add_executable(raytracer
   main.cpp

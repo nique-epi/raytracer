@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include <cmath>
 #include <tuple>
-#include "Math/Color.hpp"
+#include "utils/math/Color.hpp"
 
 using Math::Color;
 

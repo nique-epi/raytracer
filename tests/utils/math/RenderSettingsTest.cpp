@@ -6,7 +6,7 @@
 */
 
 #include <gtest/gtest.h>
-#include "Math/RenderSettings.hpp"
+#include "utils/math/RenderSettings.hpp"
 
 using Math::RenderSettings;
 
