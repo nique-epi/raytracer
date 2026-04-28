@@ -35,13 +35,13 @@ class IObject {
   /**
    * @brief Test whether the ray hits this object in [tMin, tMax].
    *
-   * @param ray   The incoming ray.
-   * @param tMin  Minimum t value (inclusive).
-   * @param tMax  Maximum t value (inclusive).
-   * @param rec   Filled with intersection data if and only if @c true is
-   *              returned; left unmodified otherwise.
-   * @return true  if an intersection exists within [tMin, tMax].
-   * @return false otherwise.
+   * @param [in]  ray   The incoming ray.
+   * @param [in]  tMin  Minimum t value (inclusive).
+   * @param [in]  tMax  Maximum t value (inclusive).
+   * @param [out] rec   Filled with intersection data if and only if @c true is
+   *                    returned; left unmodified otherwise.
+   * @returns true  if an intersection exists within [tMin, tMax].
+   * @returns false otherwise.
    */
   virtual bool hits(const Math::Ray& ray, double tMin, double tMax,
                     Math::HitRecord& rec) const = 0;
