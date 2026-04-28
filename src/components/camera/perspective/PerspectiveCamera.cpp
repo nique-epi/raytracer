@@ -5,11 +5,10 @@
 ** perspectiveCamera
 */
 
-#include "component/camera/perspective/PerspectiveCamera.hpp"
+#include "PerspectiveCamera.hpp"
 #include <cmath>
 #include <numbers>
 #include <random>
-#include "utils/math/Ray.hpp"
 
 namespace gsl {
 template <typename T>
@@ -20,13 +19,13 @@ namespace {
 constexpr double kApertureRadiusFactor = 0.5;
 }  // namespace
 
-namespace raytracer::component::camera {
+namespace raytracer::components::camera::perspective {
 
 Perspective::Perspective() { updateCamera(); }
 
-Perspective::Perspective(const Math::Vector3D& lookFrom,
-                         const Math::Vector3D& lookAt,
-                         const Math::Vector3D& vup, double vfov,
+Perspective::Perspective(const raytracer::math::Vector3D& lookFrom,
+                         const raytracer::math::Vector3D& lookAt,
+                         const raytracer::math::Vector3D& vup, double vfov,
                          double aspectRatio, double aperture, double focusDist)
     : position(lookFrom),
       target(lookAt),
@@ -38,11 +37,13 @@ Perspective::Perspective(const Math::Vector3D& lookFrom,
   updateCamera();
 }
 
-Math::Ray Perspective::getRay(double u, double v) const {
-  Math::Vector3D rd = (aperture * kApertureRadiusFactor) * randomInUnitDisk();
-  Math::Vector3D offset = this->u * rd.x + this->v * rd.y;
-  Math::Ray ray(position + offset, lowerLeftCorner + u * horizontal +
-                                       v * vertical - position - offset);
+raytracer::math::Ray Perspective::getRay(double u, double v) const {
+  raytracer::math::Vector3D rd =
+      (aperture * kApertureRadiusFactor) * randomInUnitDisk();
+  raytracer::math::Vector3D offset = this->u * rd.x + this->v * rd.y;
+  raytracer::math::Ray ray(
+      position + offset,
+      lowerLeftCorner + u * horizontal + v * vertical - position - offset);
   return ray;
 }
 
@@ -71,22 +72,22 @@ void Perspective::updateCamera() {
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
-Math::Vector3D Perspective::randomInUnitDisk() const {
+raytracer::math::Vector3D Perspective::randomInUnitDisk() const {
   thread_local std::mt19937 gen(std::random_device{}());
   thread_local std::uniform_real_distribution<double> dist(-1.0, 1.0);
 
   while (true) {
-    Math::Vector3D p(dist(gen), dist(gen), 0.0);
+    raytracer::math::Vector3D p(dist(gen), dist(gen), 0.0);
     if (p.dot(p) < 1.0) {
       return p;
     }
   }
 }
 
-}  // namespace raytracer::component::camera
+}  // namespace raytracer::components::camera::perspective
 
 extern "C" gsl::owner<ICamera*> createCamera() {
-  return new raytracer::component::camera::Perspective();
+  return new raytracer::components::camera::perspective::Perspective();
 }
 
 extern "C" void DestroyCamera(gsl::owner<ICamera*> camera) { delete camera; }

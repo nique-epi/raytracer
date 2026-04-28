@@ -19,6 +19,7 @@ class ICamera {
   ICamera(ICamera&&) = default;
   ICamera& operator=(ICamera&&) = default;
 
-  [[nodiscard]] virtual Math::Ray getRay(double u, double v) const = 0;
+  [[nodiscard]] virtual raytracer::math::Ray getRay(double u,
+                                                    double v) const = 0;
   virtual void setResolution(int width, int height) = 0;
 };

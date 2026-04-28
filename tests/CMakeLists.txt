@@ -76,7 +76,7 @@ set_tests_properties(plugin_loader_test PROPERTIES
 )
 
 add_executable(camera_plugin_test
-	camera/PerspectiveCameraPluginTest.cpp
+	components/camera/PerspectiveCameraPluginTest.cpp
 )
 
 target_include_directories(camera_plugin_test

@@ -1,5 +1,5 @@
 add_library(raytracer_perspective_camera SHARED
-	../src/component/camera/perspective/PerspectiveCamera.cpp
+	../src/components/camera/perspective/PerspectiveCamera.cpp
 )
 
 target_link_libraries(raytracer_perspective_camera

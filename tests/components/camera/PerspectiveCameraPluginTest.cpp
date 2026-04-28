@@ -1,7 +1,7 @@
 #include <dlfcn.h>
 #include <gtest/gtest.h>
 #include <filesystem>
-#include "component/camera/ICamera.hpp"
+#include "components/camera/ICamera.hpp"
 
 namespace {
 using CreateCameraFn = ICamera* (*)();
@@ -81,7 +81,7 @@ TEST(PerspectiveCameraPluginTest, CenterRayPointsForward) {
   ASSERT_NE(camera, nullptr);
 
   camera->setResolution(1920, 1080);
-  const Math::Ray ray = camera->getRay(0.5, 0.5);
+  const raytracer::math::Ray ray = camera->getRay(0.5, 0.5);
 
   EXPECT_DOUBLE_EQ(ray.getOrigin().x, 0.0);
   EXPECT_DOUBLE_EQ(ray.getOrigin().y, 0.0);
