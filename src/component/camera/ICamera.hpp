@@ -7,12 +7,12 @@
 
 #pragma once
 
-#include "utils/Math/Ray.hpp"
+#include "utils/math/Ray.hpp"
 
 class ICamera {
  public:
-  ICamera();
-  virtual ~ICamera();
+  ICamera() = default;
+  virtual ~ICamera() = default;
 
   ICamera(const ICamera&) = default;
   ICamera& operator=(const ICamera&) = default;
