@@ -5,6 +5,7 @@
 ** IObject interface tests
 */
 
+#include <memory>
 #include <gtest/gtest.h>
 #include "primitive/IObject.hpp"
 #include "utils/math/AABB.hpp"
