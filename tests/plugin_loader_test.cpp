@@ -1,6 +1,6 @@
 #include <cassert>
 #include <filesystem>
-#include "../src/plugin/PluginLoader.hpp"
+#include "plugin/PluginLoader.hpp"
 
 int main() {
   raytracer::plugin::PluginLoader loader;
