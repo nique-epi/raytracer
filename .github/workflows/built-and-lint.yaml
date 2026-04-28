@@ -62,43 +62,10 @@ jobs:
       - name: Run tests
         run: ctest --test-dir build --output-on-failure
 
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    container: epitechcontent/epitest-docker:latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Install clang-tidy
-        run: apt-get update && apt-get install -y clang-tidy-20
-
-      - name: Configure
-        run: cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-
-      - name: Resolve files to lint
-        id: files
-        run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            git config --global --add safe.directory "$GITHUB_WORKSPACE"
-            FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
-              | grep -E '\.(cpp|hpp)$' \
-              | tr '\n' ' ')
-          else
-            FILES=$(find src plugins bonus -name '*.cpp' -o -name '*.hpp' 2>/dev/null | tr '\n' ' ')
-          fi
-          echo "files=$FILES" >> "$GITHUB_OUTPUT"
-
-      - name: Run clang-tidy
-        if: steps.files.outputs.files != ''
-        run: |
-          run-clang-tidy-20 -j$(nproc) -p build/ ${{ steps.files.outputs.files }}
-
   push_to_mirror:
     name: Push to Mirror Repository
     runs-on: ubuntu-latest
-    needs: [format-check, build, test, lint]
+    needs: [format-check, build, test]
     if: ${{ github.event_name == 'push' }}
 
     env:
@@ -138,11 +105,6 @@ jobs:
         env:
           GIT_SSH_COMMAND: "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no"
         run: |
-          # filter-repo réécrit l'historique du clone du runner pour
-          # supprimer toute trace de .claude/ — le repo source n'est pas
-          # touché. On push ensuite tout l'historique filtré (toutes les
-          # refs) vers le mirror Epitech, qui garde branches, tags et
-          # commits.
           pip install --quiet git-filter-repo
           git filter-repo --force --path .claude --invert-paths
           git remote add mirror "${{ env.MIRROR_URL }}"

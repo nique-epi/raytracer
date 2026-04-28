@@ -1,0 +1,10 @@
+target_sources(raytracer_core
+  PRIVATE
+    Vector3D.cpp
+    Ray.cpp
+    Color.cpp
+    HitRecord.cpp
+    AABB.cpp
+    RenderSettings.cpp
+    Optics.cpp
+)
