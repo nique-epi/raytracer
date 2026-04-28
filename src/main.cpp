@@ -1,7 +1,7 @@
+#include <exception>
 #include <iostream>
 #include <string_view>
 #include "core/Exceptions.hpp"
-
 namespace {
 constexpr std::string_view usage =
     "USAGE: ./raytracer <SCENE_FILE>\n"
