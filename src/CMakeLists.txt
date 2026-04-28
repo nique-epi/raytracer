@@ -1,5 +1,7 @@
+add_subdirectory(core)
 add_subdirectory(utils/math)
 add_subdirectory(plugin)
+add_subdirectory(components)
 
 add_library(raytracer_core INTERFACE)
 
@@ -10,8 +12,10 @@ target_include_directories(raytracer_core
 
 target_link_libraries(raytracer_core
   INTERFACE
+    raytracer_exceptions
     raytracer_math
     raytracer_plugin
+    raytracer_components
 )
 
 add_executable(raytracer

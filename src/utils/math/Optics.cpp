@@ -9,7 +9,7 @@
 #include <cmath>
 #include "Vector3D.hpp"
 
-namespace Math::Optics {
+namespace raytracer::math::Optics {
 
 namespace constants {
 constexpr double reflectFactor = 2.0;
@@ -39,4 +39,4 @@ double schlick(double cosine, double refIdx) {
                std::pow(constants::one - cosine, constants::schlickExponent));
 }
 
-}  // namespace Math::Optics
+}  // namespace raytracer::math::Optics

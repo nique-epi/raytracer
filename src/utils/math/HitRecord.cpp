@@ -7,11 +7,11 @@
 
 #include "HitRecord.hpp"
 
-namespace Math {
+namespace raytracer::math {
 
 void HitRecord::setFaceNormal(const Ray& ray, const Vector3D& outNormal) {
   frontFace = ray.getDirection().dot(outNormal) < 0.0;
   normal = frontFace ? outNormal : -outNormal;
 }
 
-}  // namespace Math
+}  // namespace raytracer::math
