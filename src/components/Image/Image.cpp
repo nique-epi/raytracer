@@ -13,7 +13,8 @@
 namespace {
 std::size_t pixelCount(int width, int height) {
   if (width < 0 || height < 0) {
-    throw Components::ImageException(Constants::Errors::IMAGE_NEGATIVE_DIMENSIONS);
+    throw Components::ImageException(
+        Constants::Errors::IMAGE_NEGATIVE_DIMENSIONS);
   }
   return static_cast<std::size_t>(width) * static_cast<std::size_t>(height);
 }
@@ -46,14 +47,19 @@ int Image::getWidth() const { return _width; }
 int Image::getHeight() const { return _height; }
 
 void Image::savePPM(const std::string& path) const {
-  std::ofstream out(path);
-  if (!out) {
-    throw ImageIOException(path, "cannot open file for writing");
-  }
-  out << "P3\n" << _width << ' ' << _height << "\n255\n";
-  for (const auto& pixel : _pixels) {
-    auto [r, g, b] = pixel.toRGB();
-    out << r << ' ' << g << ' ' << b << '\n';
+  std::ofstream out;
+  out.exceptions(std::ofstream::failbit | std::ofstream::badbit);
+
+  try {
+    out.open(path);
+    out << "P3\n" << _width << ' ' << _height << "\n255\n";
+    for (const auto& pixel : _pixels) {
+      auto [r, g, b] = pixel.toRGB();
+      out << r << ' ' << g << ' ' << b << '\n';
+    }
+    out.close();
+  } catch (const std::ofstream::failure& e) {
+    throw ImageIOException(path, e.what());
   }
 }
 
