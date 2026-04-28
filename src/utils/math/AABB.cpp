@@ -5,10 +5,10 @@
 ** AABB
 */
 
-#include "Math/AABB.hpp"
+#include "AABB.hpp"
 #include <algorithm>
 #include <array>
-#include "Math/Ray.hpp"
+#include "Ray.hpp"
 
 namespace Math {
 
@@ -29,7 +29,7 @@ bool AABB::hit(const Ray& ray, double tMin, double tMax) const {
     if (dir_a[i] == 0.0) {
       if (orig_a[i] < min_a[i] || orig_a[i] >= max_a[i]) {
         return false;
-}
+      }
       continue;
     }
 
@@ -39,14 +39,14 @@ bool AABB::hit(const Ray& ray, double tMin, double tMax) const {
 
     if (invD < 0.0) {
       std::swap(t0, t1);
-}
+    }
 
     tMin = std::max(t0, tMin);
     tMax = std::min(t1, tMax);
 
     if (tMax <= tMin) {
       return false;
-}
+    }
   }
   return true;
 }

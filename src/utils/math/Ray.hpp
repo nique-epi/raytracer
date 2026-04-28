@@ -8,7 +8,7 @@
 #ifndef MATH_RAY_HPP_
 #define MATH_RAY_HPP_
 
-#include "Math/Vector3D.hpp"
+#include "Vector3D.hpp"
 
 namespace Math {
 

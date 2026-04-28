@@ -9,8 +9,8 @@
 #define MATH_HITRECORD_HPP_
 
 #include <memory>
-#include "Math/Ray.hpp"
-#include "Math/Vector3D.hpp"
+#include "Ray.hpp"
+#include "Vector3D.hpp"
 
 class IMaterial;
 

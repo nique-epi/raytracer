@@ -8,8 +8,8 @@
 #ifndef MATH_AABB_HPP_
 #define MATH_AABB_HPP_
 
-#include "Math/Ray.hpp"
-#include "Math/Vector3D.hpp"
+#include "Ray.hpp"
+#include "Vector3D.hpp"
 
 namespace Math {
 

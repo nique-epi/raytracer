@@ -7,8 +7,8 @@
 
 #include <gtest/gtest.h>
 #include <cmath>
-#include "Math/Optics.hpp"
-#include "Math/Vector3D.hpp"
+#include "utils/math/Optics.hpp"
+#include "utils/math/Vector3D.hpp"
 
 using Math::Vector3D;
 namespace Optics = Math::Optics;

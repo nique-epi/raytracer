@@ -6,9 +6,9 @@
 */
 
 #include <gtest/gtest.h>
-#include "Math/AABB.hpp"
-#include "Math/Ray.hpp"
-#include "Math/Vector3D.hpp"
+#include "utils/math/AABB.hpp"
+#include "utils/math/Ray.hpp"
+#include "utils/math/Vector3D.hpp"
 
 using Math::AABB;
 using Math::Ray;

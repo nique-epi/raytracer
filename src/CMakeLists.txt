@@ -1,13 +1,18 @@
-add_library(raytracer_core STATIC)
+add_subdirectory(utils/math)
+add_subdirectory(plugin)
+
+add_library(raytracer_core INTERFACE)
 
 target_include_directories(raytracer_core
-  PUBLIC
-    ${CMAKE_SOURCE_DIR}/include
+  INTERFACE
+    ${CMAKE_SOURCE_DIR}/src
 )
 
-raytracer_enable_target_warnings(raytracer_core)
-
-add_subdirectory(Math)
+target_link_libraries(raytracer_core
+  INTERFACE
+    raytracer_math
+    raytracer_plugin
+)
 
 add_executable(raytracer
   main.cpp
@@ -15,13 +20,10 @@ add_executable(raytracer
 
 target_include_directories(raytracer
   PRIVATE
-    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/src
 )
 
-target_link_libraries(raytracer
-  PRIVATE
-    raytracer_core
-)
+target_link_libraries(raytracer PRIVATE raytracer_core)
 
 raytracer_enable_target_warnings(raytracer)
 

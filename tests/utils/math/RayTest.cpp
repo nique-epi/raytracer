@@ -6,8 +6,8 @@
 */
 
 #include <gtest/gtest.h>
-#include "Math/Ray.hpp"
-#include "Math/Vector3D.hpp"
+#include "utils/math/Ray.hpp"
+#include "utils/math/Vector3D.hpp"
 
 using Math::Ray;
 using Math::Vector3D;

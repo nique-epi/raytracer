@@ -6,9 +6,9 @@
 */
 
 #include <gtest/gtest.h>
-#include "Math/HitRecord.hpp"
-#include "Math/Ray.hpp"
-#include "Math/Vector3D.hpp"
+#include "utils/math/HitRecord.hpp"
+#include "utils/math/Ray.hpp"
+#include "utils/math/Vector3D.hpp"
 
 using Math::HitRecord;
 using Math::Ray;

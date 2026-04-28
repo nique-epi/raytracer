@@ -5,15 +5,16 @@
 ** RenderSettings
 */
 
-#include "Math/RenderSettings.hpp"
+#include "RenderSettings.hpp"
 #include <algorithm>
 #include <thread>
 
 namespace Math {
 
 RenderSettings::RenderSettings()
-    : numThreads(static_cast<int>(
-          std::max(1U, std::thread::hardware_concurrency()))) {}
+    : numThreads(
+          static_cast<int>(std::max(1U, std::thread::hardware_concurrency()))) {
+}
 
 bool RenderSettings::validate() const {
   return imageWidth > 0 && imageHeight > 0 && tileWidth > 0 && tileHeight > 0 &&

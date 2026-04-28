@@ -5,7 +5,7 @@
 ** HitRecord
 */
 
-#include "Math/HitRecord.hpp"
+#include "HitRecord.hpp"
 
 namespace Math {
 

@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include <cmath>
 #include <tuple>
-#include "Math/Color.hpp"
+#include "utils/math/Color.hpp"
 
 using Math::Color;
 
@@ -107,8 +107,18 @@ TEST(ColorTest, ClampAlreadyValid) {
 
 TEST(ColorTest, GammaCorrectInvalidThrows) {
   Color c(0.5, 0.5, 0.5);
-  EXPECT_THROW({ auto _ = c.gammaCorrect(0.0); (void)_; }, std::domain_error);
-  EXPECT_THROW({ auto _ = c.gammaCorrect(-1.0); (void)_; }, std::domain_error);
+  EXPECT_THROW(
+      {
+        auto _ = c.gammaCorrect(0.0);
+        (void)_;
+      },
+      std::domain_error);
+  EXPECT_THROW(
+      {
+        auto _ = c.gammaCorrect(-1.0);
+        (void)_;
+      },
+      std::domain_error);
 }
 
 TEST(ColorTest, GammaCorrect22) {

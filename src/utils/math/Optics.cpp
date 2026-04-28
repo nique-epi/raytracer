@@ -5,9 +5,9 @@
 ** Optics
 */
 
-#include "Math/Optics.hpp"
+#include "Optics.hpp"
 #include <cmath>
-#include "Math/Vector3D.hpp"
+#include "Vector3D.hpp"
 
 namespace Math::Optics {
 

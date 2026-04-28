@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include <cmath>
 #include <stdexcept>
-#include "Math/Vector3D.hpp"
+#include "utils/math/Vector3D.hpp"
 
 using Math::Vector3D;
 
