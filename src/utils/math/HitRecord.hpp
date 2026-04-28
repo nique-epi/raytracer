@@ -14,7 +14,7 @@
 
 class IMaterial;
 
-namespace Math {
+namespace raytracer::math {
 
 class HitRecord {
  public:
@@ -29,6 +29,6 @@ class HitRecord {
   void setFaceNormal(const Ray& ray, const Vector3D& outNormal);
 };
 
-}  // namespace Math
+}  // namespace raytracer::math
 
 #endif  // MATH_HITRECORD_HPP_

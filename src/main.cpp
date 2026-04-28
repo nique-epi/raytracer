@@ -1,14 +1,14 @@
+#include <exception>
 #include <iostream>
 #include <string_view>
-
+#include "core/Exceptions.hpp"
 namespace {
 constexpr std::string_view usage =
     "USAGE: ./raytracer <SCENE_FILE>\n"
     "SCENE_FILE: scene configuration\n";
 constexpr int error_exit_code = 84;
-}  // namespace
 
-int main(int argc, char** argv) {
+int run(int argc, char** argv) {
   if (argc == 2 && (std::string_view(argv[1]) == "-h" ||
                     std::string_view(argv[1]) == "--help")) {
     std::cout << usage;
@@ -21,4 +21,17 @@ int main(int argc, char** argv) {
   }
 
   return 0;
+}
+}  // namespace
+
+int main(int argc, char** argv) {
+  try {
+    return run(argc, argv);
+  } catch (const raytracer::core::RaytracerException& e) {
+    std::cerr << "Error: " << e.what() << '\n';
+    return error_exit_code;
+  } catch (const std::exception& e) {
+    std::cerr << "Unhandled exception: " << e.what() << '\n';
+    return error_exit_code;
+  }
 }

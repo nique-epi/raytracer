@@ -7,10 +7,10 @@
 
 #include <gtest/gtest.h>
 #include <cmath>
-#include <stdexcept>
+#include "core/Exceptions.hpp"
 #include "utils/math/Vector3D.hpp"
 
-using Math::Vector3D;
+using raytracer::math::Vector3D;
 
 TEST(Vector3DTest, DefaultConstructorIsZero) {
   Vector3D v;
@@ -57,7 +57,7 @@ TEST(Vector3DTest, NormalizeZeroVectorThrows) {
         auto _ = v.normalize();
         (void)_;
       },
-      std::domain_error);
+      raytracer::core::RaytracerException);
 }
 
 TEST(Vector3DTest, Dot) {
@@ -182,7 +182,7 @@ TEST(Vector3DTest, DivideAssign) {
 }
 
 TEST(Vector3DTest, Point3DAliasIsVector3D) {
-  Math::Point3D p(1.0, 2.0, 3.0);
+  raytracer::math::Point3D p(1.0, 2.0, 3.0);
   Vector3D v = p;
   EXPECT_DOUBLE_EQ(v.x, p.x);
 }

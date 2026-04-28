@@ -9,8 +9,8 @@
 #include "utils/math/Ray.hpp"
 #include "utils/math/Vector3D.hpp"
 
-using Math::Ray;
-using Math::Vector3D;
+using raytracer::math::Ray;
+using raytracer::math::Vector3D;
 
 TEST(RayTest, GetOriginAndDirection) {
   Vector3D origin(1.0, 2.0, 3.0);
