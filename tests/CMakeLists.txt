@@ -18,6 +18,8 @@ add_executable(raytracer_tests
   utils/math/OpticsTest.cpp
   core/ExceptionsTest.cpp
   plugin/PluginExceptionTest.cpp
+  components/Image/ImageTest.cpp
+  components/Image/ImageExceptionTest.cpp
 )
 
 target_include_directories(raytracer_tests
