@@ -13,7 +13,7 @@
 #include "utils/math/Ray.hpp"
 #include "utils/math/Vector3D.hpp"
 
-class ITransformation {};
+class ITransformation;
 
 class StubObject : public IObject {
  public:
