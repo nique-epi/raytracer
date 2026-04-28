@@ -15,18 +15,18 @@ namespace raytracer::component::camera {
 
 constexpr double DEFAULT_FOV = 90.0;
 
-class perspective : public ICamera {
+class Perspective : public ICamera {
  public:
-  perspective();
-  perspective(const Math::Vector3D& lookFrom, const Math::Vector3D& lookAt,
+  Perspective();
+  Perspective(const Math::Vector3D& lookFrom, const Math::Vector3D& lookAt,
               const Math::Vector3D& vup, double vfov, double aspectRatio,
               double aperture = 0.0, double focusDist = 1.0);
 
-  perspective(const perspective&) = default;
-  perspective& operator=(const perspective&) = default;
-  perspective(perspective&&) = default;
-  perspective& operator=(perspective&&) = default;
-  ~perspective() override = default;
+  Perspective(const Perspective&) = default;
+  Perspective& operator=(const Perspective&) = default;
+  Perspective(Perspective&&) = default;
+  Perspective& operator=(Perspective&&) = default;
+  ~Perspective() override = default;
 
   [[nodiscard]] Math::Ray getRay(double u, double v) const override;
   void setResolution(int width, int height) override;

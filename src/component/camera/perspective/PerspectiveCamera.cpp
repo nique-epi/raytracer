@@ -22,9 +22,9 @@ constexpr double kApertureRadiusFactor = 0.5;
 
 namespace raytracer::component::camera {
 
-perspective::perspective() { updateCamera(); }
+Perspective::Perspective() { updateCamera(); }
 
-perspective::perspective(const Math::Vector3D& lookFrom,
+Perspective::Perspective(const Math::Vector3D& lookFrom,
                          const Math::Vector3D& lookAt,
                          const Math::Vector3D& vup, double vfov,
                          double aspectRatio, double aperture, double focusDist)
@@ -38,7 +38,7 @@ perspective::perspective(const Math::Vector3D& lookFrom,
   updateCamera();
 }
 
-Math::Ray perspective::getRay(double u, double v) const {
+Math::Ray Perspective::getRay(double u, double v) const {
   Math::Vector3D rd = (aperture * kApertureRadiusFactor) * randomInUnitDisk();
   Math::Vector3D offset = this->u * rd.x + this->v * rd.y;
   Math::Ray ray(position + offset, lowerLeftCorner + u * horizontal +
@@ -46,12 +46,12 @@ Math::Ray perspective::getRay(double u, double v) const {
   return ray;
 }
 
-void perspective::setResolution(int width, int height) {
+void Perspective::setResolution(int width, int height) {
   aspectRatio = static_cast<double>(width) / static_cast<double>(height);
   updateCamera();
 }
 
-void perspective::updateCamera() {
+void Perspective::updateCamera() {
   // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
   double theta = fov * std::numbers::pi / 180.0;
   // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
@@ -71,9 +71,9 @@ void perspective::updateCamera() {
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
-Math::Vector3D perspective::randomInUnitDisk() const {
-  static std::mt19937 gen(std::random_device{}());
-  static std::uniform_real_distribution<double> dist(-1.0, 1.0);
+Math::Vector3D Perspective::randomInUnitDisk() const {
+  thread_local std::mt19937 gen(std::random_device{}());
+  thread_local std::uniform_real_distribution<double> dist(-1.0, 1.0);
 
   while (true) {
     Math::Vector3D p(dist(gen), dist(gen), 0.0);
@@ -86,7 +86,7 @@ Math::Vector3D perspective::randomInUnitDisk() const {
 }  // namespace raytracer::component::camera
 
 extern "C" gsl::owner<ICamera*> createCamera() {
-  return new raytracer::component::camera::perspective();
+  return new raytracer::component::camera::Perspective();
 }
 
 extern "C" void DestroyCamera(gsl::owner<ICamera*> camera) { delete camera; }
