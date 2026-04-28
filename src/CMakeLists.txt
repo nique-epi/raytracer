@@ -1,10 +1,5 @@
 add_library(raytracer_core STATIC)
 
-target_sources(raytracer_core
-  PRIVATE
-    plugin/PluginLoader.cpp
-)
-
 target_include_directories(raytracer_core
   PUBLIC
     ${CMAKE_SOURCE_DIR}/src
@@ -18,6 +13,7 @@ if(DL_LIBRARY)
 endif()
 
 add_subdirectory(utils/math)
+add_subdirectory(plugin)
 
 add_executable(raytracer
   main.cpp
