@@ -29,11 +29,6 @@
 #include <stdexcept>
 #include <string>
 
-
-// ─────────────────────────────────────────────────────────────────────────────
-// NAMESPACE
-// ─────────────────────────────────────────────────────────────────────────────
-
 /**
  * @brief Example namespace grouping related utilities.
  *
@@ -41,11 +36,6 @@
  * Leave this section out when the brief is self-explanatory.
  */
 namespace Example {
-
-
-// ─────────────────────────────────────────────────────────────────────────────
-// ENUM
-// ─────────────────────────────────────────────────────────────────────────────
 
 /**
  * @brief Axis identifiers for 3-D space.
@@ -56,11 +46,6 @@ enum class Axis {
   Z = 2, /**< Depth axis.      */
 };
 
-
-// ─────────────────────────────────────────────────────────────────────────────
-// STRUCT (plain data)
-// ─────────────────────────────────────────────────────────────────────────────
-
 /**
  * @brief Immutable pair of min/max bounds along one axis.
  */
@@ -68,11 +53,6 @@ struct Interval {
   double min; /**< Lower bound (inclusive). */
   double max; /**< Upper bound (inclusive). */
 };
-
-
-// ─────────────────────────────────────────────────────────────────────────────
-// PURE INTERFACE
-// ─────────────────────────────────────────────────────────────────────────────
 
 /**
  * @brief Contract for objects that can be serialised to a string.
@@ -95,11 +75,6 @@ class IStringifiable {
   virtual std::string toString() const = 0;
 };
 
-
-// ─────────────────────────────────────────────────────────────────────────────
-// CONCRETE CLASS
-// ─────────────────────────────────────────────────────────────────────────────
-
 /**
  * @brief Fixed-size ring buffer with a configurable element type.
  *
@@ -116,8 +91,6 @@ class IStringifiable {
 template <typename T, std::size_t N>
 class RingBuffer : public IStringifiable {
  public:
-  // ── Construction ───────────────────────────────────────────────────────────
-
   /**
    * @brief Construct an empty ring buffer.
    */
@@ -129,8 +102,6 @@ class RingBuffer : public IStringifiable {
    * @param [in] value Initial value copied into every slot.
    */
   explicit RingBuffer(const T& value);
-
-  // ── Capacity ───────────────────────────────────────────────────────────────
 
   /**
    * @brief Return the maximum number of elements this buffer can hold.
@@ -153,8 +124,6 @@ class RingBuffer : public IStringifiable {
    */
   bool empty() const;
 
-  // ── Modifiers ──────────────────────────────────────────────────────────────
-
   /**
    * @brief Insert an element at the back of the buffer.
    *
@@ -175,8 +144,6 @@ class RingBuffer : public IStringifiable {
    */
   T pop();
 
-  // ── Element access ─────────────────────────────────────────────────────────
-
   /**
    * @brief Access the element at logical index @p i (read-only).
    *
@@ -186,8 +153,6 @@ class RingBuffer : public IStringifiable {
    * @throws std::out_of_range if i >= size().
    */
   const T& at(std::size_t i) const;
-
-  // ── IStringifiable ─────────────────────────────────────────────────────────
 
   /**
    * @brief Serialise the buffer contents to a bracketed comma-separated list.
@@ -211,11 +176,6 @@ class RingBuffer : public IStringifiable {
   std::size_t tail_{0};
   std::size_t size_{0};
 };
-
-
-// ─────────────────────────────────────────────────────────────────────────────
-// FREE FUNCTION
-// ─────────────────────────────────────────────────────────────────────────────
 
 /**
  * @brief Clamp @p value to the range [@p lo, @p hi].
@@ -244,11 +204,6 @@ T clamp(T value, T lo, T hi);
  */
 double lerp(double a, double b, double t);
 
-
-// ─────────────────────────────────────────────────────────────────────────────
-// OPERATOR (associated with a class via @relates)
-// ─────────────────────────────────────────────────────────────────────────────
-
 /**
  * @brief Write a string-serialisable object to an output stream.
  *
@@ -259,11 +214,6 @@ double lerp(double a, double b, double t);
  * @relates IStringifiable
  */
 std::ostream& operator<<(std::ostream& os, const IStringifiable& obj);
-
-
-// ─────────────────────────────────────────────────────────────────────────────
-// GROUPING EXAMPLE
-// ─────────────────────────────────────────────────────────────────────────────
 
 /**
  * @defgroup math_utils Math utilities
@@ -295,11 +245,6 @@ T square(T x);
 
 /** @} */  // end of math_utils
 
-
-// ─────────────────────────────────────────────────────────────────────────────
-// DEPRECATION / TODO / WARNING / NOTE EXAMPLES
-// ─────────────────────────────────────────────────────────────────────────────
-
 /**
  * @brief Compute the dot product of two 3-D arrays.
  *
@@ -317,7 +262,6 @@ T square(T x);
  * @todo Remove once all callers have migrated to Vector3D.
  */
 double legacyDot(const double* a, const double* b);
-
 
 }  // namespace Example
 
