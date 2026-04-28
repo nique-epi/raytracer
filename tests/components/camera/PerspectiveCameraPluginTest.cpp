@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2026
+** raytracer
+** File description:
+** PerspectiveCameraPluginTest
+*/
+
 #include <dlfcn.h>
 #include <gtest/gtest.h>
 #include <filesystem>
