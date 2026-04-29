@@ -10,6 +10,8 @@
 #include <string>
 #include "components/Image/Image.hpp"
 
+namespace raytracer::output {
+
 class IImageWriter {
  public:
   IImageWriter() = default;
@@ -24,3 +26,5 @@ class IImageWriter {
                      const std::string& path) = 0;
   [[nodiscard]] virtual bool supports(const std::string& ext) const = 0;
 };
+
+}  // namespace raytracer::output

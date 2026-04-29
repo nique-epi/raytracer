@@ -13,18 +13,17 @@
 namespace raytracer::output {
 void ppm::write(const raytracer::components::Image& image,
                 const std::string& path) {
-  std::ofstream outputFile(path, std::ios::binary);
+  std::ofstream outputFile(path);
   if (!outputFile.is_open()) {
     throw core::RaytracerException(
         raytracer::constants::errors::IMAGE_CANNOT_WRITE);
-    return;
   }
   outputFile << "P3\n";
   outputFile << image.getWidth() << " " << image.getHeight() << "\n";
   outputFile << "255\n";
-  for (std::size_t i = 0; i < image.getWidth(); i++) {
-    for (std::size_t j = 0; j < image.getHeight(); j++) {
-      const auto [r, g, b] = image.getPixel(i, j).toRGB();
+  for (std::size_t y = 0; y < image.getHeight(); y++) {
+    for (std::size_t x = 0; x < image.getWidth(); x++) {
+      const auto [r, g, b] = image.getPixel(x, y).toRGB();
       outputFile << r << " " << g << " " << b << "\n";
     }
   }
