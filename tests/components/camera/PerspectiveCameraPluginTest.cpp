@@ -15,20 +15,10 @@ using CreateCameraFn = ICamera* (*)();
 using DestroyCameraFn = void (*)(ICamera*);
 
 std::filesystem::path findPluginPath() {
-  const std::filesystem::path candidates[] = {
-      std::filesystem::current_path() / "raytracer_perspective_camera.so",
-      std::filesystem::current_path() /
-          "../plugins/raytracer_perspective_camera.so",
-      std::filesystem::current_path() /
-          "../../plugins/raytracer_perspective_camera.so",
-      std::filesystem::current_path() /
-          "../../../plugins/raytracer_perspective_camera.so",
-  };
-
-  for (const auto& candidate : candidates) {
-    if (std::filesystem::exists(candidate)) {
-      return candidate;
-    }
+  const auto candidate = std::filesystem::current_path() /
+      "raytracer_perspective_camera.so";
+  if (std::filesystem::exists(candidate)) {
+    return candidate;
   }
 
   return {};
