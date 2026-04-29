@@ -24,10 +24,8 @@ void ppm::write(const raytracer::components::Image& image,
   outputFile << "255\n";
   for (std::size_t i = 0; i < image.getWidth(); i++) {
     for (std::size_t j = 0; j < image.getHeight(); j++) {
-      const auto& pixel = image.getPixel(i, j);
-      outputFile << static_cast<int>(pixel.r) << " "
-                 << static_cast<int>(pixel.g) << " "
-                 << static_cast<int>(pixel.b) << "\n";
+      const auto [r, g, b] = image.getPixel(i, j).toRGB();
+      outputFile << r << " " << g << " " << b << "\n";
     }
   }
   outputFile.close();

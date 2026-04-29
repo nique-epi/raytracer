@@ -29,6 +29,7 @@ target_include_directories(raytracer
 )
 
 target_link_libraries(raytracer PRIVATE raytracer_core)
+target_sources(raytracer PRIVATE $<TARGET_OBJECTS:raytracer_ppm>)
 
 raytracer_enable_target_warnings(raytracer)
 

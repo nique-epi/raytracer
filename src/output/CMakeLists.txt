@@ -1,4 +1,4 @@
-add_library(raytracer_ppm SHARED)
+add_library(raytracer_ppm OBJECT)
 
 target_sources(raytracer_ppm
   PRIVATE
@@ -13,12 +13,6 @@ target_include_directories(raytracer_ppm
 target_link_libraries(raytracer_ppm
   PRIVATE
     raytracer_components
-)
-
-set_target_properties(raytracer_ppm PROPERTIES
-  LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/plugins"
-  PREFIX ""
-  SUFFIX ".so"
 )
 
 raytracer_enable_target_warnings(raytracer_ppm)
