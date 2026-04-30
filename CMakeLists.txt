@@ -27,24 +27,6 @@ if(DEFINED ENV{HOMEBREW_PREFIX})
   list(APPEND LIBCONFIG_HINT_PATHS "$ENV{HOMEBREW_PREFIX}/opt/libconfig")
 endif()
 
-set(LIBCONFIG_LIBRARY_PATH_SUFFIXES
-  lib
-  lib64
-)
-
-if(CMAKE_LIBRARY_ARCHITECTURE)
-  list(APPEND LIBCONFIG_LIBRARY_PATH_SUFFIXES
-    lib/${CMAKE_LIBRARY_ARCHITECTURE}
-  )
-endif()
-
-if(UNIX AND NOT APPLE)
-  list(APPEND LIBCONFIG_LIBRARY_PATH_SUFFIXES
-    lib/x86_64-linux-gnu
-    lib/aarch64-linux-gnu
-  )
-endif()
-
 find_path(LIBCONFIG_INCLUDE_DIR
   NAMES libconfig.h++
   HINTS ${LIBCONFIG_HINT_PATHS}
@@ -52,10 +34,13 @@ find_path(LIBCONFIG_INCLUDE_DIR
 )
 
 find_library(LIBCONFIG_LIBRARY
-  NAMES config++ libconfig++
+  NAMES config++
   HINTS ${LIBCONFIG_HINT_PATHS}
-  PATH_SUFFIXES ${LIBCONFIG_LIBRARY_PATH_SUFFIXES}
+  PATH_SUFFIXES lib
 )
+
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(LIBCONFIGPP REQUIRED IMPORTED_TARGET libconfig++)
 
 add_library(raytracer_libconfig INTERFACE)
 
