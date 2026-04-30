@@ -6,6 +6,7 @@
 */
 
 #include "SceneLoaderFactory.hpp"
+#include <utility>
 
 namespace raytracer::scene {
 
