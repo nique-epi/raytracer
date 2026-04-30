@@ -13,7 +13,7 @@ target_include_directories(raytracer_plugin
 
 target_link_libraries(raytracer_plugin
   PUBLIC
-    raytracer_exceptions
+    raytracer_core
 )
 
 find_library(DL_LIBRARY dl)

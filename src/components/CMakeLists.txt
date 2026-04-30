@@ -8,7 +8,7 @@ add_subdirectory(primitive)
 target_link_libraries(raytracer_components
   PUBLIC
     raytracer_math
-    raytracer_exceptions
+    raytracer_core
 )
 
 raytracer_enable_target_warnings(raytracer_components)

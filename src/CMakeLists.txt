@@ -5,19 +5,21 @@ add_subdirectory(scene)
 add_subdirectory(components)
 add_subdirectory(output)
 
-add_library(raytracer_core INTERFACE)
+add_library(raytracer_src INTERFACE)
 
-target_include_directories(raytracer_core
+target_include_directories(raytracer_src
   INTERFACE
     ${CMAKE_SOURCE_DIR}/src
 )
 
-target_link_libraries(raytracer_core
+target_link_libraries(raytracer_src
   INTERFACE
-    raytracer_exceptions
+    raytracer_core
     raytracer_math
     raytracer_plugin
+    raytracer_scene
     raytracer_components
+    config++
 )
 
 add_executable(raytracer
@@ -29,8 +31,7 @@ target_include_directories(raytracer
     ${CMAKE_SOURCE_DIR}/src
 )
 
-target_link_libraries(raytracer PRIVATE raytracer_core)
-target_sources(raytracer PRIVATE $<TARGET_OBJECTS:raytracer_ppm>)
+target_link_libraries(raytracer PRIVATE raytracer_src)
 
 raytracer_enable_target_warnings(raytracer)
 
