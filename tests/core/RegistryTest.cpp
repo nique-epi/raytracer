@@ -6,48 +6,13 @@
 */
 
 #include <gtest/gtest.h>
-#include <libconfig.h++>
 #include <memory>
-#include <string>
 #include "core/registry/registry.hpp"
+#include "fixture/registry/RegistryFixture.hpp"
 
 using namespace raytracer::core::registry;
 
-namespace {
-
-class DummyObject final : public IObject {
- public:
-  explicit DummyObject(int v) : value(v) {}
-
-  bool hits(const raytracer::math::Ray& /*ray*/, double /*tMin*/,
-            double /*tMax*/,
-            raytracer::math::HitRecord& /*rec*/) const override {
-    return false;
-  }
-
-  [[nodiscard]] raytracer::math::AABB getBoundingBox() const override {
-    return {};
-  }
-
-  void applyTransformation(const ITransformation& /*transform*/) override {}
-
-  int value;
-};
-
-}  // namespace
-
-class RegistryTest : public ::testing::Test {
- protected:
-  void SetUp() override {
-    cfg.getRoot().add("stub", libconfig::Setting::TypeGroup);
-    stubSetting = &cfg.getRoot()["stub"];
-  }
-
-  libconfig::Config cfg;
-  libconfig::Setting* stubSetting = nullptr;
-};
-
-TEST_F(RegistryTest, RegisterAndCreateReturnsCorrectObject) {
+TEST_F(RegistryFixture, RegisterAndCreateReturnsCorrectObject) {
   ObjectRegistry registry;
   registry.registerType(
       "dummy", [](const libconfig::Setting& /*s*/) -> std::shared_ptr<IObject> {
@@ -62,7 +27,7 @@ TEST_F(RegistryTest, RegisterAndCreateReturnsCorrectObject) {
   EXPECT_EQ(d->value, 42);
 }
 
-TEST_F(RegistryTest, RegisterMultipleTypesCreatesCorrectOnes) {
+TEST_F(RegistryFixture, RegisterMultipleTypesCreatesCorrectOnes) {
   ObjectRegistry registry;
   registry.registerType(
       "alpha", [](const libconfig::Setting& /*s*/) -> std::shared_ptr<IObject> {
@@ -82,7 +47,7 @@ TEST_F(RegistryTest, RegisterMultipleTypesCreatesCorrectOnes) {
   EXPECT_EQ(dynamic_cast<DummyObject*>(b.get())->value, 2);
 }
 
-TEST_F(RegistryTest, CreatorReceivesSettingReference) {
+TEST_F(RegistryFixture, CreatorReceivesSettingReference) {
   ObjectRegistry registry;
 
   // Add a real integer value to the stub group so the creator can read it.
@@ -99,7 +64,7 @@ TEST_F(RegistryTest, CreatorReceivesSettingReference) {
   EXPECT_EQ(dynamic_cast<DummyObject*>(obj.get())->value, 99);
 }
 
-TEST_F(RegistryTest, CreateReturnsNullptrWhenCreatorReturnsNullptr) {
+TEST_F(RegistryFixture, CreateReturnsNullptrWhenCreatorReturnsNullptr) {
   ObjectRegistry registry;
   registry.registerType(
       "null_creator",
@@ -111,7 +76,7 @@ TEST_F(RegistryTest, CreateReturnsNullptrWhenCreatorReturnsNullptr) {
   EXPECT_EQ(obj, nullptr);
 }
 
-TEST_F(RegistryTest, LoadPluginWithInvalidPathDoesNotCrash) {
+TEST_F(RegistryFixture, LoadPluginWithInvalidPathDoesNotCrash) {
   ObjectRegistry registry;
   EXPECT_NO_THROW(registry.loadPlugin("/nonexistent/path/plugin.so"));
 }

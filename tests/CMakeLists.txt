@@ -26,6 +26,7 @@ add_executable(raytracer_tests
 target_include_directories(raytracer_tests
 	PRIVATE
 		${CMAKE_SOURCE_DIR}/src
+    ${LIBCONFIG_INCLUDE_DIR}
 )
 
 target_link_libraries(raytracer_tests
