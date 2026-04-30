@@ -25,26 +25,25 @@ namespace raytracer::components {
 Image::Image(int width, int height)
     : _width(width), _height(height), _pixels(pixelCount(width, height)) {}
 
-void Image::setPixel(int x, int y, raytracer::math::Color c) {
-  if (x < 0 || x >= _width || y < 0 || y >= _height) {
-    throw ImageException(raytracer::constants::errors::IMAGE_PIXEL_OUT_OF_BOUNDS);
+void Image::setPixel(std::size_t x, std::size_t y, raytracer::math::Color c) {
+  if (x >= _width || y >= _height) {
+    throw ImageException(
+        raytracer::constants::errors::IMAGE_PIXEL_OUT_OF_BOUNDS);
   }
-  _pixels[(static_cast<std::size_t>(y) * static_cast<std::size_t>(_width)) +
-          static_cast<std::size_t>(x)] = c;
+  _pixels[(y * _width) + x] = c;
 }
 
-raytracer::math::Color Image::getPixel(int x, int y) const {
-  if (x < 0 || x >= _width || y < 0 || y >= _height) {
-    throw ImageException(raytracer::constants::errors::IMAGE_PIXEL_OUT_OF_BOUNDS);
+raytracer::math::Color Image::getPixel(std::size_t x, std::size_t y) const {
+  if (x >= _width || y >= _height) {
+    throw ImageException(
+        raytracer::constants::errors::IMAGE_PIXEL_OUT_OF_BOUNDS);
   }
-  return _pixels[(static_cast<std::size_t>(y) *
-                  static_cast<std::size_t>(_width)) +
-                 static_cast<std::size_t>(x)];
+  return _pixels[(y * _width) + x];
 }
 
-int Image::getWidth() const { return _width; }
+std::size_t Image::getWidth() const { return _width; }
 
-int Image::getHeight() const { return _height; }
+std::size_t Image::getHeight() const { return _height; }
 
 void Image::savePPM(const std::string& path) const {
   std::ofstream out;

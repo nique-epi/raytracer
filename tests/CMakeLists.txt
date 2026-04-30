@@ -6,6 +6,8 @@ FetchContent_Declare(
   GIT_TAG        v1.15.2
 )
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
+set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 add_executable(raytracer_tests
@@ -16,17 +18,24 @@ add_executable(raytracer_tests
   utils/math/AABBTest.cpp
   utils/math/RenderSettingsTest.cpp
   utils/math/OpticsTest.cpp
+  scene/CFGSceneLoaderTest.cpp
   core/ExceptionsTest.cpp
   core/RegistryTest.cpp
   plugin/PluginExceptionTest.cpp
   components/Image/ImageTest.cpp
   components/Image/ImageExceptionTest.cpp
+  output/ppm/PPMTest.cpp
 )
 
 target_include_directories(raytracer_tests
 	PRIVATE
 		${CMAKE_SOURCE_DIR}/src
-    ${LIBCONFIG_INCLUDE_DIR}
+)
+
+target_compile_definitions(raytracer_tests
+  PRIVATE
+    SCENES_DIR="${CMAKE_SOURCE_DIR}/scenes"
+    SCENE_FIXTURES_DIR="${CMAKE_SOURCE_DIR}/tests/scene/fixtures/cfg"
 )
 
 target_link_libraries(raytracer_tests
@@ -34,6 +43,8 @@ target_link_libraries(raytracer_tests
     raytracer_src
     GTest::gtest_main
 )
+
+target_sources(raytracer_tests PRIVATE $<TARGET_OBJECTS:raytracer_ppm>)
 
 raytracer_enable_target_warnings(raytracer_tests)
 
@@ -74,5 +85,34 @@ add_test(
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
 set_tests_properties(plugin_loader_test PROPERTIES
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+add_executable(camera_plugin_test
+	components/camera/PerspectiveCameraPluginTest.cpp
+)
+
+target_include_directories(camera_plugin_test
+	PRIVATE
+		${CMAKE_SOURCE_DIR}/src
+)
+
+target_link_libraries(camera_plugin_test PRIVATE raytracer_core GTest::gtest_main)
+
+
+add_dependencies(camera_plugin_test raytracer_perspective_camera)
+add_custom_command(TARGET camera_plugin_test POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different
+		$<TARGET_FILE:raytracer_perspective_camera>
+		${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_FILE_NAME:raytracer_perspective_camera>
+)
+
+raytracer_enable_target_warnings(camera_plugin_test)
+
+set_target_properties(camera_plugin_test PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+gtest_discover_tests(camera_plugin_test
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )

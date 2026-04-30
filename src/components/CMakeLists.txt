@@ -1,3 +1,5 @@
+add_subdirectory(camera)
+
 add_library(raytracer_components STATIC)
 
 target_sources(raytracer_components

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.28.3)
 
 project(raytracer CXX)
 
@@ -9,50 +9,15 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(BUILD_TESTS "Build unit tests" OFF)
 option(BUILD_BONUS "Build bonus features" OFF)
 
-set(LIBCONFIG_HINT_PATHS)
+include(FetchContent)
 
-if(APPLE)
-  list(APPEND LIBCONFIG_HINT_PATHS
-    /opt/homebrew/opt/libconfig
-    /usr/local/opt/libconfig
-  )
-elseif(UNIX)
-  list(APPEND LIBCONFIG_HINT_PATHS
-    /usr
-    /usr/local
-  )
-endif()
-
-if(DEFINED ENV{HOMEBREW_PREFIX})
-  list(APPEND LIBCONFIG_HINT_PATHS "$ENV{HOMEBREW_PREFIX}/opt/libconfig")
-endif()
-
-find_path(LIBCONFIG_INCLUDE_DIR
-  NAMES libconfig.h++
-  HINTS ${LIBCONFIG_HINT_PATHS}
-  PATH_SUFFIXES include
+FetchContent_Declare(
+  libconfig
+  GIT_REPOSITORY https://github.com/hyperrealm/libconfig.git
+  GIT_TAG v1.8.2
 )
 
-find_library(LIBCONFIG_LIBRARY
-  NAMES config++
-  HINTS ${LIBCONFIG_HINT_PATHS}
-  PATH_SUFFIXES lib
-)
-
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(LIBCONFIGPP REQUIRED IMPORTED_TARGET libconfig++)
-
-add_library(raytracer_libconfig INTERFACE)
-
-target_include_directories(raytracer_libconfig
-  INTERFACE
-    ${LIBCONFIG_INCLUDE_DIR}
-)
-
-target_link_libraries(raytracer_libconfig
-  INTERFACE
-    ${LIBCONFIG_LIBRARY}
-)
+FetchContent_MakeAvailable(libconfig)
 
 if(BUILD_BONUS)
   find_package(SFML QUIET COMPONENTS graphics window system)
