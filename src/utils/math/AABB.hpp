@@ -11,7 +11,7 @@
 #include "Ray.hpp"
 #include "Vector3D.hpp"
 
-namespace Math {
+namespace raytracer::math {
 
 class AABB {
  public:
@@ -33,6 +33,6 @@ class AABB {
   [[nodiscard]] static AABB surrounding(const AABB& a, const AABB& b);
 };
 
-}  // namespace Math
+}  // namespace raytracer::math
 
 #endif  // MATH_AABB_HPP_

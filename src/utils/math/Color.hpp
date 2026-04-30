@@ -10,7 +10,7 @@
 
 #include <tuple>
 
-namespace Math {
+namespace raytracer::math {
 
 class Color {
  public:
@@ -43,6 +43,6 @@ class Color {
 
 [[nodiscard]] Color operator*(double scalar, const Color& c);
 
-}  // namespace Math
+}  // namespace raytracer::math
 
 #endif  // MATH_COLOR_HPP_

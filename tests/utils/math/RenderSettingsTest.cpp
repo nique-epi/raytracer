@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include "utils/math/RenderSettings.hpp"
 
-using Math::RenderSettings;
+using raytracer::math::RenderSettings;
 
 TEST(RenderSettingsTest, DefaultValues) {
   RenderSettings s;

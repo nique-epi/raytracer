@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <thread>
 
-namespace Math {
+namespace raytracer::math {
 
 RenderSettings::RenderSettings()
     : numThreads(
@@ -21,4 +21,4 @@ bool RenderSettings::validate() const {
          numThreads > 0 && samplesPerPixel > 0 && maxDepth > 0;
 }
 
-}  // namespace Math
+}  // namespace raytracer::math

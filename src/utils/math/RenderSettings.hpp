@@ -8,7 +8,7 @@
 #ifndef MATH_RENDERSETTINGS_HPP_
 #define MATH_RENDERSETTINGS_HPP_
 
-namespace Math {
+namespace raytracer::math {
 
 namespace defaults {
 constexpr int imageWidth = 800;
@@ -41,6 +41,6 @@ class RenderSettings {
   [[nodiscard]] bool validate() const;
 };
 
-}  // namespace Math
+}  // namespace raytracer::math
 
 #endif  // MATH_RENDERSETTINGS_HPP_
