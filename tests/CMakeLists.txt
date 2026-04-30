@@ -17,6 +17,7 @@ add_executable(raytracer_tests
   utils/math/RenderSettingsTest.cpp
   utils/math/OpticsTest.cpp
   core/ExceptionsTest.cpp
+  core/RegistryTest.cpp
   plugin/PluginExceptionTest.cpp
   components/Image/ImageTest.cpp
   components/Image/ImageExceptionTest.cpp
@@ -29,7 +30,7 @@ target_include_directories(raytracer_tests
 
 target_link_libraries(raytracer_tests
   PRIVATE
-    raytracer_core
+    raytracer_src
     GTest::gtest_main
 )
 
@@ -47,7 +48,7 @@ target_include_directories(plugin_loader_test
 		${CMAKE_SOURCE_DIR}/src
 )
 
-target_link_libraries(plugin_loader_test PRIVATE raytracer_core)
+target_link_libraries(plugin_loader_test PRIVATE raytracer_src)
 
 raytracer_enable_target_warnings(plugin_loader_test)
 

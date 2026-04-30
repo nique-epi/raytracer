@@ -14,7 +14,7 @@ target_include_directories(raytracer_components
 target_link_libraries(raytracer_components
   PUBLIC
     raytracer_math
-    raytracer_exceptions
+    raytracer_core
 )
 
 raytracer_enable_target_warnings(raytracer_components)
