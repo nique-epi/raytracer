@@ -34,8 +34,7 @@ std::shared_ptr<T> Registry<T>::create(const std::string& type,
 
 template <typename T>
 void Registry<T>::loadPlugin(const std::string& path) {
-  raytracer::plugin::PluginLoader loader;
-  void* handle = loader.load(path);
+  void* handle = pluginLoader.load(path);
   if (handle == nullptr) {
     return;
   }

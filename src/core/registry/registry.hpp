@@ -12,6 +12,7 @@
 #include <memory>
 #include <string>
 #include "components/Primitive/IObject.hpp"
+#include "plugin/PluginLoader.hpp"
 
 class ILight;
 class IMaterial;
@@ -72,6 +73,7 @@ class Registry {
 
  private:
   std::map<std::string, CreatorFn> creators;
+  raytracer::plugin::PluginLoader pluginLoader;
 };
 
 using ObjectRegistry = Registry<IObject>;
