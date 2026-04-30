@@ -29,6 +29,10 @@ template <typename T>
 std::shared_ptr<T> Registry<T>::create(const std::string& type,
                                        const libconfig::Setting& cfg) const {
   auto it = creators.find(type);
+  if (it == creators.end()) {
+    throw raytracer::core::RaytracerException("Type " + type +
+                                              " not found in registry");
+  }
   return it->second(cfg);
 }
 
@@ -40,8 +44,8 @@ void Registry<T>::loadPlugin(const std::string& path) {
   }
   using RegisterFn = void (*)(Registry<T>&);
   // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-  auto registerFn = reinterpret_cast<RegisterFn>(
-      raytracer::plugin::PluginLoader::getSymbol(
+  auto registerFn =
+      reinterpret_cast<RegisterFn>(raytracer::plugin::PluginLoader::getSymbol(
           handle, PluginSymbolTraits<T>::createSymbol));
   if (registerFn) {
     registerFn(*this);
