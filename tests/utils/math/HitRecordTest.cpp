@@ -10,9 +10,9 @@
 #include "utils/math/Ray.hpp"
 #include "utils/math/Vector3D.hpp"
 
-using Math::HitRecord;
-using Math::Ray;
-using Math::Vector3D;
+using raytracer::math::HitRecord;
+using raytracer::math::Ray;
+using raytracer::math::Vector3D;
 
 TEST(HitRecordTest, DefaultValues) {
   HitRecord rec;

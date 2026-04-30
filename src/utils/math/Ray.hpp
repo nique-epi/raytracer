@@ -10,7 +10,7 @@
 
 #include "Vector3D.hpp"
 
-namespace Math {
+namespace raytracer::math {
 
 class Ray {
  public:
@@ -31,6 +31,6 @@ class Ray {
   Vector3D _direction;
 };
 
-}  // namespace Math
+}  // namespace raytracer::math
 
 #endif  // MATH_RAY_HPP_

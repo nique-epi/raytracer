@@ -16,4 +16,9 @@ target_include_directories(raytracer_math
     ${CMAKE_SOURCE_DIR}/src
 )
 
+target_link_libraries(raytracer_math
+  PUBLIC
+    raytracer_exceptions
+)
+
 raytracer_enable_target_warnings(raytracer_math)

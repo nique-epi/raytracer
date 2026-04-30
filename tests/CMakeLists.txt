@@ -19,6 +19,10 @@ add_executable(raytracer_tests
   utils/math/RenderSettingsTest.cpp
   utils/math/OpticsTest.cpp
   scene/CFGSceneLoaderTest.cpp
+  core/ExceptionsTest.cpp
+  plugin/PluginExceptionTest.cpp
+  components/Image/ImageTest.cpp
+  components/Image/ImageExceptionTest.cpp
 )
 
 target_include_directories(raytracer_tests

@@ -8,7 +8,7 @@
 #ifndef MATH_VECTOR3D_HPP_
 #define MATH_VECTOR3D_HPP_
 
-namespace Math {
+namespace raytracer::math {
 
 class Vector3D {
  public:
@@ -48,6 +48,6 @@ class Vector3D {
 
 using Point3D = Vector3D;
 
-}  // namespace Math
+}  // namespace raytracer::math
 
 #endif  // MATH_VECTOR3D_HPP_
