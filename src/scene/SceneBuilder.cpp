@@ -11,8 +11,7 @@
 namespace raytracer::scene {
 
 void SceneBuilder::addObject(const std::string& type,
-                             const libconfig::Setting& cfg) {
-  (void)cfg;
+                             const libconfig::Setting& /*cfg*/) {
   _entries.push_back({type});
 }
 
