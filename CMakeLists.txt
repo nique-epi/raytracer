@@ -14,7 +14,7 @@ include(FetchContent)
 FetchContent_Declare(
   libconfig
   GIT_REPOSITORY https://github.com/hyperrealm/libconfig.git
-  GIT_TAG master
+  GIT_TAG v1.8.2
 )
 
 FetchContent_MakeAvailable(libconfig)
