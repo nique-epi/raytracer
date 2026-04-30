@@ -21,8 +21,8 @@ add_executable(raytracer_tests
   scene/CFGSceneLoaderTest.cpp
   core/ExceptionsTest.cpp
   plugin/PluginExceptionTest.cpp
-  components/Image/ImageTest.cpp
-  components/Image/ImageExceptionTest.cpp
+  components/image/ImageTest.cpp
+  components/image/ImageExceptionTest.cpp
   output/ppm/PPMTest.cpp
 )
 

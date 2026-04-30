@@ -2,16 +2,8 @@ add_subdirectory(camera)
 
 add_library(raytracer_components STATIC)
 
-target_sources(raytracer_components
-  PRIVATE
-    Image/Image.cpp
-    Image/ImageException.cpp
-)
-
-target_include_directories(raytracer_components
-  PUBLIC
-    ${CMAKE_SOURCE_DIR}/src
-)
+add_subdirectory(image)
+add_subdirectory(primitive)
 
 target_link_libraries(raytracer_components
   PUBLIC

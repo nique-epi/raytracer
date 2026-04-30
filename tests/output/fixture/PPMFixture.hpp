@@ -10,7 +10,7 @@
 #include <gtest/gtest.h>
 #include <cstdio>
 #include <string>
-#include "components/Image/Image.hpp"
+#include "components/image/Image.hpp"
 #include "output/ppm/ppm.hpp"
 #include "utils/math/Color.hpp"
 
