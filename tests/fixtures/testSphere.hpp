@@ -8,7 +8,7 @@
 #ifndef TESTS_FIXTURES_TESTSPHERE_HPP_
 #define TESTS_FIXTURES_TESTSPHERE_HPP_
 
-#include "components/Primitive/IObject.hpp"
+#include "components/Primitives/IObject.hpp"
 #include "utils/math/AABB.hpp"
 #include "utils/math/HitRecord.hpp"
 #include "utils/math/Ray.hpp"

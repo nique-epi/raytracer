@@ -3,7 +3,7 @@ add_subdirectory(camera)
 add_library(raytracer_components STATIC)
 
 add_subdirectory(image)
-add_subdirectory(Primitive)
+add_subdirectory(Primitives)
 
 target_link_libraries(raytracer_components
   PUBLIC
