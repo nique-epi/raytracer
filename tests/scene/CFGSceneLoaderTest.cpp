@@ -14,16 +14,14 @@ using raytracer::scene::CFGSceneLoader;
 using raytracer::scene::SceneBuilder;
 
 static const std::string ExampleCfg = SCENES_DIR "/example.cfg";
-static const std::string NoSettingsCfg =
-    FIXTURES_DIR "/scene/cfg/no_settings.cfg";
+static const std::string NoSettingsCfg = SCENE_FIXTURES_DIR "/no_settings.cfg";
 static const std::string PartialSettingsCfg =
-    FIXTURES_DIR "/scene/cfg/partial_settings.cfg";
+    SCENE_FIXTURES_DIR "/partial_settings.cfg";
 static const std::string NoPrimitivesCfg =
-    FIXTURES_DIR "/scene/cfg/no_primitives.cfg";
-static const std::string EmptyListsCfg =
-    FIXTURES_DIR "/scene/cfg/empty_lists.cfg";
-static const std::string NoCameraCfg = FIXTURES_DIR "/scene/cfg/no_camera.cfg";
-static const std::string MalformedCfg = FIXTURES_DIR "/scene/cfg/malformed.cfg";
+    SCENE_FIXTURES_DIR "/no_primitives.cfg";
+static const std::string EmptyListsCfg = SCENE_FIXTURES_DIR "/empty_lists.cfg";
+static const std::string NoCameraCfg = SCENE_FIXTURES_DIR "/no_camera.cfg";
+static const std::string MalformedCfg = SCENE_FIXTURES_DIR "/malformed.cfg";
 
 // Given: a fresh CFGSceneLoader.
 // When:  supports() is called with various file extensions.
