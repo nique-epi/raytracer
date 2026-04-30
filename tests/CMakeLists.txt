@@ -87,3 +87,32 @@ add_test(
 set_tests_properties(plugin_loader_test PROPERTIES
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
+
+add_executable(camera_plugin_test
+	components/camera/PerspectiveCameraPluginTest.cpp
+)
+
+target_include_directories(camera_plugin_test
+	PRIVATE
+		${CMAKE_SOURCE_DIR}/src
+)
+
+target_link_libraries(camera_plugin_test PRIVATE raytracer_core GTest::gtest_main)
+
+
+add_dependencies(camera_plugin_test raytracer_perspective_camera)
+add_custom_command(TARGET camera_plugin_test POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different
+		$<TARGET_FILE:raytracer_perspective_camera>
+		${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_FILE_NAME:raytracer_perspective_camera>
+)
+
+raytracer_enable_target_warnings(camera_plugin_test)
+
+set_target_properties(camera_plugin_test PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+gtest_discover_tests(camera_plugin_test
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
