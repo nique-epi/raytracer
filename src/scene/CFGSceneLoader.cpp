@@ -37,7 +37,7 @@ bool CFGSceneLoader::load(const std::string& path, SceneBuilder& builder,
 
   try {
     cfg.readFile(path.c_str());
-  } catch (const libconfig::FileIOException& fioex) {
+  } catch (const libconfig::FileIOException&) {
     std::cerr << "I/O error while reading file: " << path << "\n";
     return false;
   } catch (const libconfig::ParseException& pex) {
