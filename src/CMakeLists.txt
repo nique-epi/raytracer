@@ -17,8 +17,9 @@ target_link_libraries(raytracer_src
     raytracer_core
     raytracer_math
     raytracer_plugin
+    raytracer_scene
     raytracer_components
-    raytracer_libconfig
+    config++
 )
 
 add_executable(raytracer

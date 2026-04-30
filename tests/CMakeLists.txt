@@ -97,7 +97,7 @@ target_include_directories(camera_plugin_test
 		${CMAKE_SOURCE_DIR}/src
 )
 
-target_link_libraries(camera_plugin_test PRIVATE raytracer_core GTest::gtest_main)
+target_link_libraries(camera_plugin_test PRIVATE raytracer_core raytracer_math GTest::gtest_main)
 
 
 add_dependencies(camera_plugin_test raytracer_perspective_camera)
