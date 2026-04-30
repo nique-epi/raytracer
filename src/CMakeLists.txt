@@ -1,5 +1,6 @@
 add_subdirectory(utils/math)
 add_subdirectory(plugin)
+add_subdirectory(scene)
 
 add_library(raytracer_core INTERFACE)
 

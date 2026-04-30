@@ -6,6 +6,8 @@ FetchContent_Declare(
   GIT_TAG        v1.15.2
 )
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
+set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 add_executable(raytracer_tests
@@ -16,6 +18,7 @@ add_executable(raytracer_tests
   utils/math/AABBTest.cpp
   utils/math/RenderSettingsTest.cpp
   utils/math/OpticsTest.cpp
+  scene/CFGSceneLoaderTest.cpp
 )
 
 target_include_directories(raytracer_tests
@@ -23,9 +26,16 @@ target_include_directories(raytracer_tests
 		${CMAKE_SOURCE_DIR}/src
 )
 
+target_compile_definitions(raytracer_tests
+  PRIVATE
+    SCENES_DIR="${CMAKE_SOURCE_DIR}/scenes"
+    FIXTURES_DIR="${CMAKE_SOURCE_DIR}/tests/fixtures"
+)
+
 target_link_libraries(raytracer_tests
   PRIVATE
     raytracer_core
+    raytracer_scene
     GTest::gtest_main
 )
 
