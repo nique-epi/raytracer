@@ -15,10 +15,6 @@ template <typename T>
 using owner = T;
 }  // namespace gsl
 
-namespace {
-constexpr double kApertureRadiusFactor = 0.5;
-}  // namespace
-
 namespace raytracer::components::camera::perspective {
 
 Perspective::Perspective() { updateCamera(); }
@@ -38,8 +34,8 @@ Perspective::Perspective(const raytracer::math::Vector3D& lookFrom,
 }
 
 raytracer::math::Ray Perspective::getRay(double u, double v) const {
-  raytracer::math::Vector3D rd =
-      (aperture * kApertureRadiusFactor) * randomInUnitDisk();
+  // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
+  raytracer::math::Vector3D rd = (aperture * 0.5) * randomInUnitDisk();
   raytracer::math::Vector3D offset = this->u * rd.x + this->v * rd.y;
   raytracer::math::Ray ray(
       position + offset,
