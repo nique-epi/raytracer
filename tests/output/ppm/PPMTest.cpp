@@ -10,34 +10,19 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include "components/Image/Image.hpp"
+#include "../../fixture/output/ppm/PPMFixture.hpp"
 #include "constants/Errors.hpp"
 #include "core/Exceptions.hpp"
-#include "output/ppm/ppm.hpp"
-#include "utils/math/Color.hpp"
 
-using raytracer::components::Image;
-using raytracer::math::Color;
-using raytracer::output::ppm;
-
-TEST(PPMTest, SupportsOnlyPpmExtension) {
-  ppm writer;
-
+TEST_F(PPMFixture, SupportsOnlyPpmExtension) {
   EXPECT_TRUE(writer.supports(".ppm"));
   EXPECT_FALSE(writer.supports(".png"));
   EXPECT_FALSE(writer.supports("ppm"));
   EXPECT_FALSE(writer.supports(".PPM"));
 }
 
-TEST(PPMTest, WriteCreatesValidP3File) {
-  Image img(2, 1);
-  img.setPixel(0, 0, Color(1.0, 0.0, 0.0));
-  img.setPixel(1, 0, Color(0.0, 1.0, 0.0));
-
-  ppm writer;
-  const std::string path = testing::TempDir() + "ppm_writer_test.ppm";
-
-  writer.write(img, path);
+TEST_F(PPMFixture, WriteCreatesValidP3File) {
+  writer.write(validImage, path);
 
   std::ifstream in(path);
   ASSERT_TRUE(in.good());
@@ -50,28 +35,25 @@ TEST(PPMTest, WriteCreatesValidP3File) {
   std::istringstream content(buffer.str());
   std::string line;
 
-  ASSERT_TRUE(static_cast<bool>(std::getline(content, line)));
+  ASSERT_TRUE(std::getline(content, line));
   EXPECT_EQ(line, "P3");
 
-  ASSERT_TRUE(static_cast<bool>(std::getline(content, line)));
+  ASSERT_TRUE(std::getline(content, line));
   EXPECT_EQ(line, "2 1");
 
-  ASSERT_TRUE(static_cast<bool>(std::getline(content, line)));
+  ASSERT_TRUE(std::getline(content, line));
   EXPECT_EQ(line, "255");
 
-  ASSERT_TRUE(static_cast<bool>(std::getline(content, line)));
+  ASSERT_TRUE(std::getline(content, line));
   EXPECT_EQ(line, "255 0 0");
 
-  ASSERT_TRUE(static_cast<bool>(std::getline(content, line)));
+  ASSERT_TRUE(std::getline(content, line));
   EXPECT_EQ(line, "0 255 0");
 }
 
-TEST(PPMTest, WriteOnInvalidPathThrowsRaytracerException) {
-  Image img(1, 1);
-  ppm writer;
-
+TEST_F(PPMFixture, WriteOnInvalidPathThrowsRaytracerException) {
   try {
-    writer.write(img, "/nonexistent_dir_xyz/no_perm.ppm");
+    writer.write(invalidImage, "/nonexistent_dir_xyz/no_perm.ppm");
     FAIL() << "Expected write to throw";
   } catch (const raytracer::core::RaytracerException& e) {
     std::string msg = e.what();
