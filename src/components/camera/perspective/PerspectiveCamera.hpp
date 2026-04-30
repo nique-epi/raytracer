@@ -11,13 +11,43 @@
 #include "utils/math/Ray.hpp"
 #include "utils/math/Vector3D.hpp"
 
+/**
+ * @brief Perspective camera utilities.
+ */
 namespace raytracer::components::camera::perspective {
 
+/**
+ * @brief Default vertical field of view in degrees.
+ */
 constexpr double DEFAULT_FOV = 90.0;
 
+/**
+ * @brief Generate rays for a thin-lens perspective camera.
+ *
+ * The camera supports a configurable position, look-at target, up vector,
+ * vertical field of view, aspect ratio, aperture and focus distance.
+ */
 class Perspective : public ICamera {
  public:
+  /**
+   * @brief Construct a default perspective camera.
+   *
+   * The camera uses a unit aspect ratio, a 90-degree vertical field of view,
+   * no aperture and a focus distance of 1.
+   */
   Perspective();
+
+  /**
+   * @brief Construct a perspective camera from scene parameters.
+   *
+   * @param [in] lookFrom   Camera position.
+   * @param [in] lookAt     Point the camera looks at.
+   * @param [in] vup        Up direction used to build the camera basis.
+   * @param [in] vfov       Vertical field of view in degrees.
+   * @param [in] aspectRatio Image aspect ratio.
+   * @param [in] aperture   Lens aperture used for depth of field.
+   * @param [in] focusDist   Focus distance from the camera origin.
+   */
   Perspective(const raytracer::math::Vector3D& lookFrom,
               const raytracer::math::Vector3D& lookAt,
               const raytracer::math::Vector3D& vup, double vfov,
@@ -30,7 +60,21 @@ class Perspective : public ICamera {
   Perspective& operator=(Perspective&&) = default;
   ~Perspective() override = default;
 
+  /**
+   * @brief Compute a ray passing through normalized screen coordinates.
+   *
+   * @param [in] u Horizontal coordinate in the image plane.
+   * @param [in] v Vertical coordinate in the image plane.
+   * @returns The generated ray.
+   */
   [[nodiscard]] raytracer::math::Ray getRay(double u, double v) const override;
+
+  /**
+   * @brief Update the aspect ratio from an output resolution.
+   *
+   * @param [in] width  Output image width in pixels.
+   * @param [in] height Output image height in pixels.
+   */
   void setResolution(int width, int height) override;
 
  private:
