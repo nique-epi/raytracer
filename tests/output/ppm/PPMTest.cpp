@@ -10,7 +10,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include "../../fixture/output/ppm/PPMFixture.hpp"
+#include "../fixture/PPMFixture.hpp"
 #include "constants/Errors.hpp"
 #include "core/Exceptions.hpp"
 
