@@ -9,7 +9,15 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(BUILD_TESTS "Build unit tests" OFF)
 option(BUILD_BONUS "Build bonus features" OFF)
 
-find_package(libconfig++ QUIET)
+include(FetchContent)
+
+FetchContent_Declare(
+  libconfig
+  GIT_REPOSITORY https://github.com/hyperrealm/libconfig.git
+  GIT_TAG v1.8.2
+)
+
+FetchContent_MakeAvailable(libconfig)
 
 if(BUILD_BONUS)
   find_package(SFML QUIET COMPONENTS graphics window system)
