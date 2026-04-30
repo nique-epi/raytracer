@@ -6,7 +6,14 @@
 */
 
 #include <gtest/gtest.h>
-#include "../../fixture/components/camera/perspective/PerspectiveCameraFixture.hpp"
+#include "fixture/CameraPluginFixture.hpp"
+
+class PerspectiveCameraFixture : public CameraPluginFixture {
+ protected:
+  std::string pluginFileName() const override {
+    return "raytracer_perspective_camera.so";
+  }
+};
 
 TEST_F(PerspectiveCameraFixture, ExposesCreateAndDestroyEntryPoints) {
   ICamera* anotherCamera = createCameraFn();
