@@ -33,7 +33,7 @@ target_include_directories(raytracer_tests
 target_compile_definitions(raytracer_tests
   PRIVATE
     SCENES_DIR="${CMAKE_SOURCE_DIR}/scenes"
-    SCENE_FIXTURES_DIR="${CMAKE_SOURCE_DIR}/tests/scene/fixtures"
+    SCENE_FIXTURES_DIR="${CMAKE_SOURCE_DIR}/tests/scene/fixtures/cfg"
 )
 
 target_link_libraries(raytracer_tests
