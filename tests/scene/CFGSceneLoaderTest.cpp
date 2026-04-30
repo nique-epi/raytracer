@@ -14,10 +14,14 @@ using raytracer::scene::CFGSceneLoader;
 using raytracer::scene::SceneBuilder;
 
 static const std::string ExampleCfg = SCENES_DIR "/example.cfg";
-static const std::string NoSettingsCfg = FIXTURES_DIR "/scene/cfg/no_settings.cfg";
-static const std::string PartialSettingsCfg = FIXTURES_DIR "/scene/cfg/partial_settings.cfg";
-static const std::string NoPrimitivesCfg = FIXTURES_DIR "/scene/cfg/no_primitives.cfg";
-static const std::string EmptyListsCfg = FIXTURES_DIR "/scene/cfg/empty_lists.cfg";
+static const std::string NoSettingsCfg =
+    FIXTURES_DIR "/scene/cfg/no_settings.cfg";
+static const std::string PartialSettingsCfg =
+    FIXTURES_DIR "/scene/cfg/partial_settings.cfg";
+static const std::string NoPrimitivesCfg =
+    FIXTURES_DIR "/scene/cfg/no_primitives.cfg";
+static const std::string EmptyListsCfg =
+    FIXTURES_DIR "/scene/cfg/empty_lists.cfg";
 static const std::string NoCameraCfg = FIXTURES_DIR "/scene/cfg/no_camera.cfg";
 static const std::string MalformedCfg = FIXTURES_DIR "/scene/cfg/malformed.cfg";
 
@@ -38,7 +42,7 @@ TEST(CFGSceneLoaderTest, SupportsOnlyCfg) {
 TEST(CFGSceneLoaderTest, LoadExampleSucceeds) {
   CFGSceneLoader loader;
   SceneBuilder builder;
-  Math::RenderSettings settings;
+  raytracer::math::RenderSettings settings;
 
   EXPECT_TRUE(loader.load(ExampleCfg, builder, settings));
 }
@@ -50,7 +54,7 @@ TEST(CFGSceneLoaderTest, LoadExampleSucceeds) {
 TEST(CFGSceneLoaderTest, LoadExampleContainsExpectedObjects) {
   CFGSceneLoader loader;
   SceneBuilder builder;
-  Math::RenderSettings settings;
+  raytracer::math::RenderSettings settings;
 
   loader.load(ExampleCfg, builder, settings);
 
@@ -68,7 +72,7 @@ TEST(CFGSceneLoaderTest, LoadExampleContainsExpectedObjects) {
 TEST(CFGSceneLoaderTest, LoadExamplePopulatesSettings) {
   CFGSceneLoader loader;
   SceneBuilder builder;
-  Math::RenderSettings settings;
+  raytracer::math::RenderSettings settings;
 
   loader.load(ExampleCfg, builder, settings);
 
@@ -85,7 +89,7 @@ TEST(CFGSceneLoaderTest, LoadExamplePopulatesSettings) {
 TEST(CFGSceneLoaderTest, LoadMissingFileReturnsFalse) {
   CFGSceneLoader loader;
   SceneBuilder builder;
-  Math::RenderSettings settings;
+  raytracer::math::RenderSettings settings;
 
   EXPECT_FALSE(loader.load("/nonexistent/path/scene.cfg", builder, settings));
 }
@@ -96,7 +100,7 @@ TEST(CFGSceneLoaderTest, LoadMissingFileReturnsFalse) {
 TEST(CFGSceneLoaderTest, LoadMalformedFileReturnsFalse) {
   CFGSceneLoader loader;
   SceneBuilder builder;
-  Math::RenderSettings settings;
+  raytracer::math::RenderSettings settings;
 
   EXPECT_FALSE(loader.load(MalformedCfg, builder, settings));
 }
@@ -110,8 +114,8 @@ TEST(CFGSceneLoaderTest, LoadMalformedFileReturnsFalse) {
 TEST(CFGSceneLoaderTest, LoadWithoutSettingsBlockKeepsDefaults) {
   CFGSceneLoader loader;
   SceneBuilder builder;
-  Math::RenderSettings settings;
-  const Math::RenderSettings defaults;
+  raytracer::math::RenderSettings settings;
+  const raytracer::math::RenderSettings defaults;
 
   EXPECT_TRUE(loader.load(NoSettingsCfg, builder, settings));
 
@@ -131,8 +135,8 @@ TEST(CFGSceneLoaderTest, LoadWithoutSettingsBlockKeepsDefaults) {
 TEST(CFGSceneLoaderTest, LoadWithPartialSettingsKeepsOtherDefaults) {
   CFGSceneLoader loader;
   SceneBuilder builder;
-  Math::RenderSettings settings;
-  const Math::RenderSettings defaults;
+  raytracer::math::RenderSettings settings;
+  const raytracer::math::RenderSettings defaults;
 
   EXPECT_TRUE(loader.load(PartialSettingsCfg, builder, settings));
   EXPECT_EQ(settings.samplesPerPixel, 16);
@@ -150,7 +154,7 @@ TEST(CFGSceneLoaderTest, LoadWithPartialSettingsKeepsOtherDefaults) {
 TEST(CFGSceneLoaderTest, LoadWithoutPrimitivesSucceedsWithNoObjects) {
   CFGSceneLoader loader;
   SceneBuilder builder;
-  Math::RenderSettings settings;
+  raytracer::math::RenderSettings settings;
 
   EXPECT_TRUE(loader.load(NoPrimitivesCfg, builder, settings));
   EXPECT_EQ(builder.count("sphere"), 0u);
@@ -166,7 +170,7 @@ TEST(CFGSceneLoaderTest, LoadWithoutPrimitivesSucceedsWithNoObjects) {
 TEST(CFGSceneLoaderTest, LoadWithEmptyListsSucceedsWithNoObjects) {
   CFGSceneLoader loader;
   SceneBuilder builder;
-  Math::RenderSettings settings;
+  raytracer::math::RenderSettings settings;
 
   EXPECT_TRUE(loader.load(EmptyListsCfg, builder, settings));
   EXPECT_EQ(builder.count("sphere"), 0u);
@@ -184,7 +188,7 @@ TEST(CFGSceneLoaderTest, LoadWithEmptyListsSucceedsWithNoObjects) {
 TEST(CFGSceneLoaderTest, LoadWithoutCameraSucceedsWithNoCamera) {
   CFGSceneLoader loader;
   SceneBuilder builder;
-  Math::RenderSettings settings;
+  raytracer::math::RenderSettings settings;
 
   EXPECT_TRUE(loader.load(NoCameraCfg, builder, settings));
   EXPECT_EQ(builder.count("camera"), 0u);

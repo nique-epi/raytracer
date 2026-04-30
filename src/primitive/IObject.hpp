@@ -43,13 +43,13 @@ class IObject {
    * @returns true  if an intersection exists within [tMin, tMax].
    * @returns false otherwise.
    */
-  virtual bool hits(const Math::Ray& ray, double tMin, double tMax,
-                    Math::HitRecord& rec) const = 0;
+  virtual bool hits(const raytracer::math::Ray& ray, double tMin, double tMax,
+                    raytracer::math::HitRecord& rec) const = 0;
 
   /**
    * @brief Return the axis-aligned bounding box of this object.
    */
-  [[nodiscard]] virtual Math::AABB getBoundingBox() const = 0;
+  [[nodiscard]] virtual raytracer::math::AABB getBoundingBox() const = 0;
 
   /**
    * @brief Apply a transformation to this object in-place.

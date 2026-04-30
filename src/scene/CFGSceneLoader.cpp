@@ -32,7 +32,7 @@ bool CFGSceneLoader::supports(const std::string& ext) const {
 }
 
 bool CFGSceneLoader::load(const std::string& path, SceneBuilder& builder,
-                          Math::RenderSettings& settings) {
+                          math::RenderSettings& settings) {
   libconfig::Config cfg;
 
   try {
@@ -83,7 +83,7 @@ void CFGSceneLoader::parseCamera(const libconfig::Setting& root,
 }
 
 void CFGSceneLoader::parseSettings(const libconfig::Setting& root,
-                                   Math::RenderSettings& settings) {
+                                   math::RenderSettings& settings) {
   if (!root.exists("settings")) {
     return;
   }
