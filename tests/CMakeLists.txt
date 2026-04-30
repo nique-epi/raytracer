@@ -20,6 +20,7 @@ add_executable(raytracer_tests
   plugin/PluginExceptionTest.cpp
   components/Image/ImageTest.cpp
   components/Image/ImageExceptionTest.cpp
+  output/ppm/PPMTest.cpp
 )
 
 target_include_directories(raytracer_tests
@@ -32,6 +33,8 @@ target_link_libraries(raytracer_tests
     raytracer_core
     GTest::gtest_main
 )
+
+target_sources(raytracer_tests PRIVATE $<TARGET_OBJECTS:raytracer_ppm>)
 
 raytracer_enable_target_warnings(raytracer_tests)
 

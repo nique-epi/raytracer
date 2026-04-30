@@ -8,6 +8,7 @@
 #ifndef COMPONENTS_IMAGE_IMAGE_HPP_
 #define COMPONENTS_IMAGE_IMAGE_HPP_
 
+#include <cstddef>
 #include <string>
 #include <vector>
 #include "utils/math/Color.hpp"
@@ -24,17 +25,18 @@ class Image {
   Image& operator=(Image&&) = default;
   ~Image() = default;
 
-  void setPixel(int x, int y, raytracer::math::Color c);
-  [[nodiscard]] raytracer::math::Color getPixel(int x, int y) const;
+  void setPixel(std::size_t x, std::size_t y, raytracer::math::Color c);
+  [[nodiscard]] raytracer::math::Color getPixel(std::size_t x,
+                                                std::size_t y) const;
 
-  [[nodiscard]] int getWidth() const;
-  [[nodiscard]] int getHeight() const;
+  [[nodiscard]] std::size_t getWidth() const;
+  [[nodiscard]] std::size_t getHeight() const;
 
   void savePPM(const std::string& path) const;
 
  private:
-  int _width;
-  int _height;
+  std::size_t _width;
+  std::size_t _height;
   std::vector<raytracer::math::Color> _pixels;
 };
 
