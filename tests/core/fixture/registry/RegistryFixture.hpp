@@ -9,7 +9,7 @@
 
 #include <gtest/gtest.h>
 #include <libconfig.h++>
-#include "components/Primitive/IObject.hpp"
+#include "components/Primitives/IObject.hpp"
 
 class DummyObject final : public IObject {
  public:
