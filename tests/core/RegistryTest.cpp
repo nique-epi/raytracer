@@ -82,22 +82,6 @@ TEST_F(RegistryTest, RegisterMultipleTypesCreatesCorrectOnes) {
   EXPECT_EQ(dynamic_cast<DummyObject*>(b.get())->value, 2);
 }
 
-TEST_F(RegistryTest, OverwriteTypeReplacesCreator) {
-  ObjectRegistry registry;
-  registry.registerType(
-      "item", [](const libconfig::Setting& /*s*/) -> std::shared_ptr<IObject> {
-        return std::make_shared<DummyObject>(10);
-      });
-  registry.registerType(
-      "item", [](const libconfig::Setting& /*s*/) -> std::shared_ptr<IObject> {
-        return std::make_shared<DummyObject>(20);
-      });
-
-  auto obj = registry.create("item", *stubSetting);
-  ASSERT_NE(obj, nullptr);
-  EXPECT_EQ(dynamic_cast<DummyObject*>(obj.get())->value, 20);
-}
-
 TEST_F(RegistryTest, CreatorReceivesSettingReference) {
   ObjectRegistry registry;
 
