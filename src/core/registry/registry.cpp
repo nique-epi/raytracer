@@ -43,8 +43,8 @@ void Registry<T>::loadPlugin(const std::string& path) {
     return;
   }
   using RegisterFn = void (*)(Registry<T>&);
-  // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
   auto registerFn =
+      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       reinterpret_cast<RegisterFn>(raytracer::plugin::PluginLoader::getSymbol(
           handle, PluginSymbolTraits<T>::createSymbol));
   if (registerFn) {
