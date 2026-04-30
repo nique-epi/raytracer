@@ -17,6 +17,7 @@ constexpr const char* IMAGE_NEGATIVE_DIMENSIONS =
     "image dimensions must be non-negative";
 constexpr const char* IMAGE_PIXEL_OUT_OF_BOUNDS = "image pixel out of bounds";
 constexpr const char* IMAGE_IO_ERROR = "image I/O error";
+constexpr const char* IMAGE_CANNOT_WRITE = "cannot write image";
 
 constexpr const char* MATH_VECTOR_ZERO_NORMALIZE =
     "cannot normalize a zero vector";

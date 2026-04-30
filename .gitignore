@@ -1,7 +1,6 @@
 build/
 *.o
 *.a
-*.so
 *.gcda
 *.gcno
 *.profraw
