@@ -24,7 +24,9 @@ add_executable(raytracer_tests
   plugin/PluginExceptionTest.cpp
   components/image/ImageTest.cpp
   components/image/ImageExceptionTest.cpp
+  components/primitive/CollectionTest.cpp
   output/ppm/PPMTest.cpp
+  fixtures/testSphere.cpp
 )
 
 target_include_directories(raytracer_tests
