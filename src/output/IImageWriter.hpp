@@ -8,7 +8,7 @@
 #pragma once
 
 #include <string>
-#include "components/Image/Image.hpp"
+#include "components/image/Image.hpp"
 
 namespace raytracer::output {
 
