@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 #include <string>
-#include "components/Image/ImageException.hpp"
+#include "components/image/ImageException.hpp"
 #include "constants/Errors.hpp"
 #include "core/Exceptions.hpp"
 

@@ -10,8 +10,8 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include "components/Image/Image.hpp"
-#include "components/Image/ImageException.hpp"
+#include "components/image/Image.hpp"
+#include "components/image/ImageException.hpp"
 #include "utils/math/Color.hpp"
 
 using raytracer::components::Image;
