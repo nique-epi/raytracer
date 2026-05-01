@@ -5,8 +5,7 @@
 ** ILight
 */
 
-#ifndef COMPONENTS_LIGHT_ILIGHT_HPP_
-#define COMPONENTS_LIGHT_ILIGHT_HPP_
+#pragma once
 
 #include "utils/math/Color.hpp"
 #include "utils/math/Vector3D.hpp"
@@ -14,8 +13,6 @@
 namespace raytracer::scene {
 class Scene;
 }  // namespace raytracer::scene
-
-namespace raytracer::components::light {
 
 class ILight {
  public:
@@ -34,7 +31,3 @@ class ILight {
       const raytracer::math::Vector3D& point,
       const raytracer::scene::Scene& scene) const = 0;
 };
-
-}  // namespace raytracer::components::light
-
-#endif  // COMPONENTS_LIGHT_ILIGHT_HPP_
