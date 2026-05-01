@@ -24,6 +24,7 @@ add_executable(raytracer_tests
   plugin/PluginExceptionTest.cpp
   components/image/ImageTest.cpp
   components/image/ImageExceptionTest.cpp
+  components/material/DiffuseMaterialTest.cpp
   output/ppm/PPMTest.cpp
 )
 
@@ -114,5 +115,34 @@ set_target_properties(camera_plugin_test PROPERTIES
 )
 
 gtest_discover_tests(camera_plugin_test
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+add_executable(diffuse_plugin_test
+	components/material/DiffusePluginTest.cpp
+)
+
+target_include_directories(diffuse_plugin_test
+	PRIVATE
+		${CMAKE_SOURCE_DIR}/src
+		${CMAKE_SOURCE_DIR}/tests/components/material
+)
+
+target_link_libraries(diffuse_plugin_test PRIVATE raytracer_core raytracer_math GTest::gtest_main)
+
+add_dependencies(diffuse_plugin_test diffuse)
+add_custom_command(TARGET diffuse_plugin_test POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different
+		$<TARGET_FILE:diffuse>
+		${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_FILE_NAME:diffuse>
+)
+
+raytracer_enable_target_warnings(diffuse_plugin_test)
+
+set_target_properties(diffuse_plugin_test PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+gtest_discover_tests(diffuse_plugin_test
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
