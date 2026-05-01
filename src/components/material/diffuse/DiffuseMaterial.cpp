@@ -36,11 +36,6 @@ bool nearZero(const raytracer::math::Vector3D& v) {
 
 }  // namespace
 
-namespace gsl {
-template <typename T>
-using owner = T;
-}  // namespace gsl
-
 DiffuseMaterial::DiffuseMaterial(const raytracer::math::Color& albedo)
     : albedo(albedo) {}
 
@@ -56,9 +51,3 @@ bool DiffuseMaterial::scatter(const raytracer::math::Ray& /*in*/,
   attenuation = albedo;
   return true;
 }
-
-extern "C" gsl::owner<IMaterial*> createMaterial() {
-  return new DiffuseMaterial(raytracer::math::Color(1.0, 1.0, 1.0));
-}
-
-extern "C" void destroyMaterial(gsl::owner<IMaterial*> mat) { delete mat; }
