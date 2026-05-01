@@ -11,7 +11,7 @@
 #include <map>
 #include <memory>
 #include <string>
-#include "components/Primitive/IObject.hpp"
+#include "components/Primitives/IObject.hpp"
 #include "plugin/PluginLoader.hpp"
 
 class ILight;
