@@ -7,7 +7,6 @@
 
 #include "DiffuseMaterial.hpp"
 #include <cmath>
-#include <numbers>
 #include <random>
 #include "utils/math/HitRecord.hpp"
 #include "utils/math/Ray.hpp"
@@ -15,9 +14,7 @@
 
 namespace {
 
-namespace constants {
 constexpr double nearZeroEps = 1e-8;
-}  // namespace constants
 
 raytracer::math::Vector3D randomUnitVector() {
   thread_local std::mt19937 gen(std::random_device{}());
@@ -33,9 +30,8 @@ raytracer::math::Vector3D randomUnitVector() {
 }
 
 bool nearZero(const raytracer::math::Vector3D& v) {
-  return std::fabs(v.x) < constants::nearZeroEps &&
-         std::fabs(v.y) < constants::nearZeroEps &&
-         std::fabs(v.z) < constants::nearZeroEps;
+  return std::fabs(v.x) < nearZeroEps && std::fabs(v.y) < nearZeroEps &&
+         std::fabs(v.z) < nearZeroEps;
 }
 
 }  // namespace
