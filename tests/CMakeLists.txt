@@ -20,10 +20,13 @@ add_executable(raytracer_tests
   utils/math/OpticsTest.cpp
   scene/CFGSceneLoaderTest.cpp
   core/ExceptionsTest.cpp
+  core/RegistryTest.cpp
   plugin/PluginExceptionTest.cpp
   components/image/ImageTest.cpp
   components/image/ImageExceptionTest.cpp
+  components/Primitives/CollectionTest.cpp
   output/ppm/PPMTest.cpp
+  fixtures/SphereFixture.cpp
 )
 
 target_include_directories(raytracer_tests
@@ -39,8 +42,7 @@ target_compile_definitions(raytracer_tests
 
 target_link_libraries(raytracer_tests
   PRIVATE
-    raytracer_core
-    raytracer_scene
+    raytracer_src
     GTest::gtest_main
 )
 
@@ -60,7 +62,7 @@ target_include_directories(plugin_loader_test
 		${CMAKE_SOURCE_DIR}/src
 )
 
-target_link_libraries(plugin_loader_test PRIVATE raytracer_core)
+target_link_libraries(plugin_loader_test PRIVATE raytracer_src)
 
 raytracer_enable_target_warnings(plugin_loader_test)
 
@@ -97,7 +99,7 @@ target_include_directories(camera_plugin_test
 		${CMAKE_SOURCE_DIR}/src
 )
 
-target_link_libraries(camera_plugin_test PRIVATE raytracer_core GTest::gtest_main)
+target_link_libraries(camera_plugin_test PRIVATE raytracer_core raytracer_math GTest::gtest_main)
 
 
 add_dependencies(camera_plugin_test raytracer_perspective_camera)
