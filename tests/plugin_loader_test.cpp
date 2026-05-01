@@ -15,8 +15,7 @@ int main() {
       raytracer::plugin::PluginLoader::getSymbol(handle, "fake_plugin_value");
   assert(symbol != nullptr);
 
-  auto* value = static_cast<int*>(symbol);
-  assert(*value == 42);
+  assert(*static_cast<int*>(symbol) == 42);
 
   loader.unloadAll();
   assert(loader.getHandles().empty());

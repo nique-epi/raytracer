@@ -100,7 +100,7 @@ target_include_directories(camera_plugin_test
 		${CMAKE_SOURCE_DIR}/src
 )
 
-target_link_libraries(camera_plugin_test PRIVATE raytracer_core raytracer_math GTest::gtest_main)
+target_link_libraries(camera_plugin_test PRIVATE raytracer_core raytracer_math GTest::gtest_main ${CMAKE_DL_LIBS})
 
 
 add_dependencies(camera_plugin_test raytracer_perspective_camera)
@@ -130,7 +130,7 @@ target_include_directories(diffuse_plugin_test
 		${CMAKE_SOURCE_DIR}/tests/components/material
 )
 
-target_link_libraries(diffuse_plugin_test PRIVATE raytracer_core raytracer_math GTest::gtest_main)
+target_link_libraries(diffuse_plugin_test PRIVATE raytracer_core raytracer_math GTest::gtest_main ${CMAKE_DL_LIBS})
 
 add_dependencies(diffuse_plugin_test diffuse)
 add_custom_command(TARGET diffuse_plugin_test POST_BUILD
