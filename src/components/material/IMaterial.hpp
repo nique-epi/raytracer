@@ -14,9 +14,9 @@
 #define MATERIAL_IMATERIAL_HPP_
 
 #include "utils/math/Color.hpp"
+#include "utils/math/Ray.hpp"
 
 namespace raytracer::math {
-class Ray;
 class HitRecord;
 }  // namespace raytracer::math
 
