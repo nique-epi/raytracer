@@ -2,17 +2,17 @@
 ** EPITECH PROJECT, 2026
 ** raytracer
 ** File description:
-** TestSphere fixture for unit tests
+** SphereFixture fixture for unit tests
 */
 
-#include "testSphere.hpp"
+#include "SphereFixture.hpp"
 #include <cmath>
 
-TestSphere::TestSphere(const raytracer::math::Vector3D& c, double r)
+SphereFixture::SphereFixture(const raytracer::math::Vector3D& c, double r)
     : center_(c), radius_(r) {}
 
-bool TestSphere::hits(const raytracer::math::Ray& ray, double tMin, double tMax,
-                      raytracer::math::HitRecord& rec) const {
+bool SphereFixture::hits(const raytracer::math::Ray& ray, double tMin,
+                         double tMax, raytracer::math::HitRecord& rec) const {
   const raytracer::math::Vector3D oc = ray.getOrigin() - center_;
   const raytracer::math::Vector3D dir = ray.getDirection();
   const double a = dir.dot(dir);
@@ -39,11 +39,11 @@ bool TestSphere::hits(const raytracer::math::Ray& ray, double tMin, double tMax,
   return true;
 }
 
-raytracer::math::AABB TestSphere::getBoundingBox() const {
+raytracer::math::AABB SphereFixture::getBoundingBox() const {
   raytracer::math::Vector3D r(radius_, radius_, radius_);
   return raytracer::math::AABB(center_ - r, center_ + r);
 }
 
-void TestSphere::applyTransformation(const ITransformation&) {
+void SphereFixture::applyTransformation(const ITransformation&) {
   /* noop for test */
 }

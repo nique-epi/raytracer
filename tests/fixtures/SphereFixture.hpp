@@ -2,11 +2,11 @@
 ** EPITECH PROJECT, 2026
 ** raytracer
 ** File description:
-** TestSphere fixture for unit tests
+** SphereFixture fixture for unit tests
 */
 
-#ifndef TESTS_FIXTURES_TESTSPHERE_HPP_
-#define TESTS_FIXTURES_TESTSPHERE_HPP_
+#ifndef TESTS_FIXTURES_SPHEREFIXTURE_HPP_
+#define TESTS_FIXTURES_SPHEREFIXTURE_HPP_
 
 #include "components/Primitives/IObject.hpp"
 #include "utils/math/AABB.hpp"
@@ -15,9 +15,9 @@
 #include "utils/math/Vector3D.hpp"
 
 // Minimal test sphere implementing IObject for unit testing
-class TestSphere : public IObject {
+class SphereFixture : public IObject {
  public:
-  TestSphere(const raytracer::math::Vector3D& c, double r);
+  SphereFixture(const raytracer::math::Vector3D& c, double r);
 
   bool hits(const raytracer::math::Ray& ray, double tMin, double tMax,
             raytracer::math::HitRecord& rec) const override;
@@ -31,4 +31,4 @@ class TestSphere : public IObject {
   double radius_;
 };
 
-#endif  // TESTS_FIXTURES_TESTSPHERE_HPP_
+#endif  // TESTS_FIXTURES_SPHEREFIXTURE_HPP_

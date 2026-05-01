@@ -26,7 +26,7 @@ add_executable(raytracer_tests
   components/image/ImageExceptionTest.cpp
   components/Primitives/CollectionTest.cpp
   output/ppm/PPMTest.cpp
-  fixtures/testSphere.cpp
+  fixtures/SphereFixture.cpp
 )
 
 target_include_directories(raytracer_tests

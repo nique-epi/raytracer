@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <memory>
-#include "../../fixtures/testSphere.hpp"
+#include "../../fixtures/SphereFixture.hpp"
 #include "components/Primitives/Collection.hpp"
 #include "utils/math/HitRecord.hpp"
 #include "utils/math/Ray.hpp"
@@ -13,9 +13,9 @@ TEST(CollectionTest, PicksNearestOfThreeSpheres) {
   Collection col;
 
   // place spheres along -Z axis at z = -1, -2, -3
-  col.add(std::make_shared<TestSphere>(Vector3D(0, 0, -3), 0.5));
-  col.add(std::make_shared<TestSphere>(Vector3D(0, 0, -2), 0.5));
-  col.add(std::make_shared<TestSphere>(Vector3D(0, 0, -1), 0.5));
+  col.add(std::make_shared<SphereFixture>(Vector3D(0, 0, -3), 0.5));
+  col.add(std::make_shared<SphereFixture>(Vector3D(0, 0, -2), 0.5));
+  col.add(std::make_shared<SphereFixture>(Vector3D(0, 0, -1), 0.5));
 
   Ray r(Vector3D(0, 0, 0), Vector3D(0, 0, -1));
   HitRecord rec;
