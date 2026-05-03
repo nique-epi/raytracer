@@ -21,14 +21,15 @@ class HitRecord;
 }  // namespace raytracer::math
 
 /**
- * @brief Contract shared by all scene materials.
+ * @brief Pure interface shared by all scene materials.
  *
  * A material describes how a surface interacts with light: it defines
  * how an incoming ray is scattered (or absorbed) and whether the surface
  * itself emits radiance.
  *
- * Implementors must override scatter(). emitted() may be left at its default
- * (returns black) for non-emissive materials.
+ * @note Prefer inheriting from AMaterial rather than IMaterial directly —
+ *       AMaterial provides a sensible default for emitted() (returns black)
+ *       so non-emissive materials do not need to override it.
  */
 class IMaterial {
  public:
@@ -60,12 +61,9 @@ class IMaterial {
   /**
    * @brief Return the radiance emitted by this material.
    *
-   * The default implementation returns black (no emission), making this
-   * method optional for non-emissive materials such as Lambertian or metal.
-   *
-   * @returns Emitted color; defaults to Color(0, 0, 0).
+   * @returns Emitted color. Non-emissive materials return black.
    */
-  virtual raytracer::math::Color emitted() const;
+  virtual raytracer::math::Color emitted() const = 0;
 };
 
 #endif  // MATERIAL_IMATERIAL_HPP_
