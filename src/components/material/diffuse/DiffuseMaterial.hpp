@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "components/material/IMaterial.hpp"
+#include "components/material/abstract/AMaterial.hpp"
 #include "utils/math/Color.hpp"
 
 /**
@@ -15,8 +15,9 @@
  *
  * Scatters incoming rays uniformly in the hemisphere above the surface
  * normal. The attenuation is always equal to the albedo.
+ * Inherits the default non-emissive emitted() from AMaterial.
  */
-class DiffuseMaterial : public IMaterial {
+class DiffuseMaterial : public AMaterial {
  public:
   explicit DiffuseMaterial(const raytracer::math::Color& albedo);
 

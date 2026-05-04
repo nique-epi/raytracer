@@ -18,7 +18,7 @@ raytracer_enable_target_warnings(raytracer_perspective_camera)
 
 add_library(diffuse SHARED
 	../src/components/material/diffuse/DiffuseMaterial.cpp
-	../src/components/material/IMaterial.cpp
+	../src/components/material/abstract/AMaterial.cpp
 )
 
 target_link_libraries(diffuse
