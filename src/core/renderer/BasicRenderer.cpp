@@ -2,11 +2,12 @@
 ** EPITECH PROJECT, 2026
 ** raytracer
 ** File description:
-**
+** BasicRenderer
 */
 
 #include "BasicRenderer.hpp"
 #include <limits>
+#include <utility>
 #include "components/material/IMaterial.hpp"
 #include "utils/math/Color.hpp"
 #include "utils/math/Ray.hpp"
