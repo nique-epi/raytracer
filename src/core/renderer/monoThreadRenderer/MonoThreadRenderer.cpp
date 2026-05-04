@@ -2,10 +2,10 @@
 ** EPITECH PROJECT, 2026
 ** raytracer
 ** File description:
-** BasicRenderer
+** MonoThreadRenderer
 */
 
-#include "BasicRenderer.hpp"
+#include "MonoThreadRenderer.hpp"
 #include <limits>
 #include <utility>
 #include "components/material/IMaterial.hpp"
@@ -14,9 +14,9 @@
 
 namespace raytracer::core {
 
-components::Image BasicRenderer::render(const components::Collection& scene,
-                                        const ICamera& camera,
-                                        const math::RenderSettings& settings) {
+components::Image MonoThreadRenderer::render(
+    const Scene& scene, const ICamera& camera,
+    const math::RenderSettings& settings) {
   const int width = settings.imageWidth;
   const int height = settings.imageHeight;
   components::Image image(width, height);
@@ -45,13 +45,12 @@ components::Image BasicRenderer::render(const components::Collection& scene,
   return image;
 }
 
-void BasicRenderer::setProgressCallback(std::function<void(double)> fn) {
+void MonoThreadRenderer::setProgressCallback(std::function<void(double)> fn) {
   _progressCallback = std::move(fn);
 }
 
-math::Color BasicRenderer::castRay(const math::Ray& ray,
-                                   const components::Collection& scene,
-                                   int depth) {
+math::Color MonoThreadRenderer::castRay(const math::Ray& ray,
+                                        const Scene& scene, int depth) {
   if (depth <= 0) {
     return {0, 0, 0};
   }
@@ -64,8 +63,8 @@ math::Color BasicRenderer::castRay(const math::Ray& ray,
   return {0, 0, 0};
 }
 
-math::Color BasicRenderer::computeLighting(const math::Ray& inRay,
-                                           const math::HitRecord& rec) {
+math::Color MonoThreadRenderer::computeLighting(const math::Ray& inRay,
+                                                const math::HitRecord& rec) {
   if (rec.material) {
     math::Color attenuation(0, 0, 0);
     math::Ray scattered(math::Vector3D(0, 0, 0), math::Vector3D(0, 0, 1));

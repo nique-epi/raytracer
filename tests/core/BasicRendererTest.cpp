@@ -2,18 +2,23 @@
 ** EPITECH PROJECT, 2026
 ** raytracer
 ** File description:
-** BasicRendererTest
+** MonoThreadRendererTest
 */
 
 #include <gtest/gtest.h>
 #include <memory>
+#include <type_traits>
 #include "../fixtures/OrthoCameraFixture.hpp"
 #include "../fixtures/SphereFixture.hpp"
 #include "components/Primitives/Collection.hpp"
-#include "core/renderer/BasicRenderer.hpp"
+#include "core/renderer/IRenderer.hpp"
+#include "core/renderer/monoThreadRenderer/MonoThreadRenderer.hpp"
 #include "utils/math/RenderSettings.hpp"
 
-TEST(BasicRendererTest, RendersOneSphereAndHashStable) {
+static_assert(std::is_base_of_v<raytracer::core::IRenderer,
+                                raytracer::core::MonoThreadRenderer>);
+
+TEST(MonoThreadRendererTest, RendersOneSphereAndHashStable) {
   raytracer::components::Collection scene;
 
   auto sphere =
@@ -26,7 +31,7 @@ TEST(BasicRendererTest, RendersOneSphereAndHashStable) {
   settings.imageHeight = 101;
   settings.maxDepth = 1;
 
-  raytracer::core::BasicRenderer renderer;
+  raytracer::core::MonoThreadRenderer renderer;
   int progressCalls = 0;
   renderer.setProgressCallback([&](double) { progressCalls++; });
 
