@@ -21,7 +21,7 @@ class DiffusePluginFixture : public ::testing::Test {
 
   void SetUp() override {
     const auto candidate =
-        std::filesystem::current_path() / "diffuse.so";
+        std::filesystem::current_path() / "DiffuseMaterial.so";
     if (!std::filesystem::exists(candidate)) {
       throw std::runtime_error("Could not find diffuse.so");
     }

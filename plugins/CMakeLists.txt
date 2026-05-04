@@ -16,21 +16,21 @@ set_target_properties(raytracer_perspective_camera
 
 raytracer_enable_target_warnings(raytracer_perspective_camera)
 
-add_library(diffuse SHARED
+add_library(DiffuseMaterial SHARED
 	../src/components/material/diffuse/DiffuseMaterial.cpp
 	../src/components/material/abstract/AMaterial.cpp
 )
 
-target_link_libraries(diffuse
+target_link_libraries(DiffuseMaterial
 	PRIVATE
 		raytracer_material
 )
 
-set_target_properties(diffuse
+set_target_properties(DiffuseMaterial
 	PROPERTIES
 		PREFIX ""
 		SUFFIX ".so"
 		LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/plugins"
 )
 
-raytracer_enable_target_warnings(diffuse)
+raytracer_enable_target_warnings(DiffuseMaterial)

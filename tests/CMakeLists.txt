@@ -131,11 +131,11 @@ target_include_directories(diffuse_plugin_test
 
 target_link_libraries(diffuse_plugin_test PRIVATE raytracer_core raytracer_math GTest::gtest_main ${CMAKE_DL_LIBS})
 
-add_dependencies(diffuse_plugin_test diffuse)
+add_dependencies(diffuse_plugin_test DiffuseMaterial)
 add_custom_command(TARGET diffuse_plugin_test POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different
-		$<TARGET_FILE:diffuse>
-		${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_FILE_NAME:diffuse>
+		$<TARGET_FILE:DiffuseMaterial>
+		${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_FILE_NAME:DiffuseMaterial>
 )
 
 raytracer_enable_target_warnings(diffuse_plugin_test)
