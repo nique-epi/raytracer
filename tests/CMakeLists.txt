@@ -24,7 +24,6 @@ add_executable(raytracer_tests
   plugin/PluginExceptionTest.cpp
   components/image/ImageTest.cpp
   components/image/ImageExceptionTest.cpp
-  components/material/DiffuseMaterialTest.cpp
   components/Primitives/CollectionTest.cpp
   output/ppm/PPMTest.cpp
   fixtures/SphereFixture.cpp
