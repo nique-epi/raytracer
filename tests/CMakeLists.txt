@@ -26,6 +26,8 @@ add_executable(raytracer_tests
   components/image/ImageExceptionTest.cpp
   components/Primitives/CollectionTest.cpp
   output/ppm/PPMTest.cpp
+  ApplicationTest.cpp
+  ArgsParserTest.cpp
   fixtures/SphereFixture.cpp
 )
 
@@ -46,7 +48,10 @@ target_link_libraries(raytracer_tests
     GTest::gtest_main
 )
 
-target_sources(raytracer_tests PRIVATE $<TARGET_OBJECTS:raytracer_ppm>)
+target_sources(raytracer_tests PRIVATE
+  $<TARGET_OBJECTS:raytracer_ppm>
+  $<TARGET_OBJECTS:raytracer_application>
+)
 
 raytracer_enable_target_warnings(raytracer_tests)
 

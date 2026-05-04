@@ -22,8 +22,26 @@ target_link_libraries(raytracer_src
     config++
 )
 
+add_library(raytracer_application OBJECT
+  Application.cpp
+  ArgsParser.cpp
+)
+
+target_include_directories(raytracer_application
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/src
+)
+
+target_link_libraries(raytracer_application
+  PRIVATE
+    raytracer_scene
+    raytracer_math
+)
+
 add_executable(raytracer
   main.cpp
+  $<TARGET_OBJECTS:raytracer_application>
+  $<TARGET_OBJECTS:raytracer_ppm>
 )
 
 target_include_directories(raytracer

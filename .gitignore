@@ -4,6 +4,7 @@ build/
 *.gcda
 *.gcno
 *.profraw
+*.ppm
 .cache/
 compile_commands.json
 Makefile
