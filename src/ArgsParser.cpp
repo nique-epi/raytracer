@@ -10,7 +10,7 @@
 
 namespace raytracer {
 
-std::optional<AppConfig> ArgsParser::parse(int argc, char** argv) {
+std::optional<AppConfig> ArgsParser::parse(int argc, const char** argv) {
   if (argc == 2 && (std::string_view(argv[1]) == "-h" ||
                     std::string_view(argv[1]) == "--help")) {
     return HelpRequest{};

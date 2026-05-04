@@ -19,7 +19,7 @@ using raytracer::SceneRequest;
 // Then:  returns nullopt — too few arguments.
 TEST(ArgsParserTest, NoArgsReturnsNullopt) {
   const char* args[] = {"raytracer"};
-  EXPECT_FALSE(ArgsParser::parse(1, const_cast<char**>(args)).has_value());
+  EXPECT_FALSE(ArgsParser::parse(1, args).has_value());
 }
 
 // Given: three arguments (argc=3).
@@ -27,7 +27,7 @@ TEST(ArgsParserTest, NoArgsReturnsNullopt) {
 // Then:  returns nullopt — too many arguments.
 TEST(ArgsParserTest, TooManyArgsReturnsNullopt) {
   const char* args[] = {"raytracer", "scene.cfg", "extra"};
-  EXPECT_FALSE(ArgsParser::parse(3, const_cast<char**>(args)).has_value());
+  EXPECT_FALSE(ArgsParser::parse(3, args).has_value());
 }
 
 // Given: argv[1] is "-h".
@@ -35,7 +35,7 @@ TEST(ArgsParserTest, TooManyArgsReturnsNullopt) {
 // Then:  returns a HelpRequest variant.
 TEST(ArgsParserTest, ShortHelpFlagReturnsHelpRequest) {
   const char* args[] = {"raytracer", "-h"};
-  const auto result = ArgsParser::parse(2, const_cast<char**>(args));
+  const auto result = ArgsParser::parse(2, args);
   ASSERT_TRUE(result.has_value());
   EXPECT_TRUE(std::holds_alternative<HelpRequest>(*result));
 }
@@ -45,7 +45,7 @@ TEST(ArgsParserTest, ShortHelpFlagReturnsHelpRequest) {
 // Then:  returns a HelpRequest variant.
 TEST(ArgsParserTest, LongHelpFlagReturnsHelpRequest) {
   const char* args[] = {"raytracer", "--help"};
-  const auto result = ArgsParser::parse(2, const_cast<char**>(args));
+  const auto result = ArgsParser::parse(2, args);
   ASSERT_TRUE(result.has_value());
   EXPECT_TRUE(std::holds_alternative<HelpRequest>(*result));
 }
@@ -55,7 +55,7 @@ TEST(ArgsParserTest, LongHelpFlagReturnsHelpRequest) {
 // Then:  returns a SceneRequest variant (not nullopt, not HelpRequest).
 TEST(ArgsParserTest, ScenePathReturnsSceneRequest) {
   const char* args[] = {"raytracer", "scenes/example.cfg"};
-  const auto result = ArgsParser::parse(2, const_cast<char**>(args));
+  const auto result = ArgsParser::parse(2, args);
   ASSERT_TRUE(result.has_value());
   EXPECT_TRUE(std::holds_alternative<SceneRequest>(*result));
 }
@@ -65,7 +65,7 @@ TEST(ArgsParserTest, ScenePathReturnsSceneRequest) {
 // Then:  the SceneRequest's scenePath equals "scenes/example.cfg".
 TEST(ArgsParserTest, ScenePathIsPreservedInSceneRequest) {
   const char* args[] = {"raytracer", "scenes/example.cfg"};
-  const auto result = ArgsParser::parse(2, const_cast<char**>(args));
+  const auto result = ArgsParser::parse(2, args);
   ASSERT_TRUE(result.has_value());
   ASSERT_TRUE(std::holds_alternative<SceneRequest>(*result));
   EXPECT_EQ(std::get<SceneRequest>(*result).scenePath, "scenes/example.cfg");
@@ -76,7 +76,7 @@ TEST(ArgsParserTest, ScenePathIsPreservedInSceneRequest) {
 // Then:  it is treated as a scene path (SceneRequest), not a HelpRequest.
 TEST(ArgsParserTest, UnknownFlagTreatedAsScenePath) {
   const char* args[] = {"raytracer", "--version"};
-  const auto result = ArgsParser::parse(2, const_cast<char**>(args));
+  const auto result = ArgsParser::parse(2, args);
   ASSERT_TRUE(result.has_value());
   EXPECT_TRUE(std::holds_alternative<SceneRequest>(*result));
 }

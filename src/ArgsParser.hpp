@@ -22,7 +22,7 @@ using AppConfig = std::variant<HelpRequest, SceneRequest>;
 
 class ArgsParser {
  public:
-  [[nodiscard]] static std::optional<AppConfig> parse(int argc, char** argv);
+  [[nodiscard]] static std::optional<AppConfig> parse(int argc, const char** argv);
 };
 
 }  // namespace raytracer

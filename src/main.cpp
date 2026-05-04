@@ -22,7 +22,7 @@ constexpr int error_exit_code = 84;
 
 int main(int argc, char** argv) {
   try {
-    const auto config = raytracer::ArgsParser::parse(argc, argv);
+    const auto config = raytracer::ArgsParser::parse(argc, const_cast<const char**>(argv));
     if (!config) {
       std::cerr << usage;
       return error_exit_code;
