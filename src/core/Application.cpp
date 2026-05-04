@@ -6,15 +6,15 @@
 */
 
 #include "Application.hpp"
-#include <iostream>
 #include <memory>
+#include "Exceptions.hpp"
 #include "components/image/Image.hpp"
 #include "output/ppm/ppm.hpp"
 #include "scene/CFGSceneLoader.hpp"
 #include "scene/SceneBuilder.hpp"
 #include "utils/math/RenderSettings.hpp"
 
-namespace raytracer {
+namespace raytracer::core {
 
 Application::Application() {
   _factory.registerLoader(std::make_shared<scene::CFGSceneLoader>());
@@ -23,20 +23,19 @@ Application::Application() {
 int Application::run(const std::string& scenePath) {
   const auto loader = _factory.getLoader(scenePath);
   if (!loader) {
-    std::cerr << "No loader available for: " << scenePath << "\n";
-    return ErrorExitCode;
+    throw RaytracerException("No loader available for: " + scenePath);
   }
 
   scene::SceneBuilder builder;
   math::RenderSettings settings;
 
   if (!loader->load(scenePath, builder, settings)) {
-    return ErrorExitCode;
+    throw RaytracerException("Failed to load scene: " + scenePath);
   }
 
   if (!settings.validate()) {
-    std::cerr << "Invalid render settings loaded from: " << scenePath << "\n";
-    return ErrorExitCode;
+    throw RaytracerException("Invalid render settings loaded from: " +
+                             scenePath);
   }
 
   components::Image image(settings.imageWidth, settings.imageHeight);
@@ -45,4 +44,4 @@ int Application::run(const std::string& scenePath) {
   return 0;
 }
 
-}  // namespace raytracer
+}  // namespace raytracer::core

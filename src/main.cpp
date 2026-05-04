@@ -9,8 +9,8 @@
 #include <iostream>
 #include <string_view>
 #include <variant>
-#include "Application.hpp"
-#include "ArgsParser.hpp"
+#include "core/Application.hpp"
+#include "core/ArgsParser.hpp"
 #include "core/Exceptions.hpp"
 
 namespace {
@@ -22,17 +22,17 @@ constexpr int error_exit_code = 84;
 
 int main(int argc, char** argv) {
   try {
-    const auto config = raytracer::ArgsParser::parse(argc, const_cast<const char**>(argv));
+    const auto config = raytracer::core::ArgsParser::parse(
+        argc, const_cast<const char**>(argv));
     if (!config) {
-      std::cerr << usage;
-      return error_exit_code;
+      throw raytracer::core::RaytracerException(std::string(usage));
     }
-    if (std::holds_alternative<raytracer::HelpRequest>(*config)) {
+    if (std::holds_alternative<raytracer::core::HelpRequest>(*config)) {
       std::cout << usage;
       return 0;
     }
-    return raytracer::Application{}.run(
-        std::get<raytracer::SceneRequest>(*config).scenePath);
+    return raytracer::core::Application{}.run(
+        std::get<raytracer::core::SceneRequest>(*config).scenePath);
   } catch (const raytracer::core::RaytracerException& e) {
     std::cerr << "Error: " << e.what() << '\n';
     return error_exit_code;

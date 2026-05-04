@@ -8,7 +8,7 @@
 #include "ArgsParser.hpp"
 #include <string_view>
 
-namespace raytracer {
+namespace raytracer::core {
 
 std::optional<AppConfig> ArgsParser::parse(int argc, const char** argv) {
   if (argc == 2 && (std::string_view(argv[1]) == "-h" ||
@@ -21,4 +21,4 @@ std::optional<AppConfig> ArgsParser::parse(int argc, const char** argv) {
   return SceneRequest{argv[1]};
 }
 
-}  // namespace raytracer
+}  // namespace raytracer::core

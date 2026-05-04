@@ -8,54 +8,36 @@
 #include <gtest/gtest.h>
 #include <cstdio>
 #include <fstream>
-#include <iostream>
-#include <sstream>
-#include <streambuf>
 #include <string>
-#include "Application.hpp"
+#include "core/Application.hpp"
+#include "core/Exceptions.hpp"
 
 static const std::string ValidCfg = SCENES_DIR "/example.cfg";
 static const std::string InvalidDimensionsCfg = SCENE_FIXTURES_DIR "/invalid_dimensions.cfg";
 static const std::string OutputPpm = "out.ppm";
 
-namespace {
-
-struct StderrCapture {
-  StderrCapture() : _old(std::cerr.rdbuf(_buf.rdbuf())) {}
-  ~StderrCapture() { std::cerr.rdbuf(_old); }
-  std::string str() const { return _buf.str(); }
-
- private:
-  std::ostringstream _buf;
-  std::streambuf* _old;
-};
-
-}  // namespace
-
 // Given: a .cfg whose settings block has imageWidth=0 and imageHeight=0.
 // When:  run() is called.
-// Then:  returns 84 and writes a diagnostic to stderr.
-TEST(ApplicationTest, InvalidSettingsReturns84) {
-  StderrCapture err;
-  EXPECT_EQ(raytracer::Application{}.run(InvalidDimensionsCfg), 84);
-  EXPECT_FALSE(err.str().empty());
+// Then:  throws RaytracerException (invalid render settings).
+TEST(ApplicationTest, InvalidSettingsThrows) {
+  EXPECT_THROW(raytracer::core::Application{}.run(InvalidDimensionsCfg),
+               raytracer::core::RaytracerException);
 }
 
 // Given: a file path whose extension has no registered loader (e.g. ".txt").
 // When:  run() is called.
-// Then:  returns 84 and writes a diagnostic to stderr.
-TEST(ApplicationTest, UnknownExtensionReturns84) {
-  StderrCapture err;
-  EXPECT_EQ(raytracer::Application{}.run("scene.txt"), 84);
-  EXPECT_FALSE(err.str().empty());
+// Then:  throws RaytracerException (no loader available).
+TEST(ApplicationTest, UnknownExtensionThrows) {
+  EXPECT_THROW(raytracer::core::Application{}.run("scene.txt"),
+               raytracer::core::RaytracerException);
 }
 
 // Given: a .cfg path that does not exist on disk.
 // When:  run() is called.
-// Then:  returns 84 (CFGSceneLoader reports the I/O error to stderr).
-TEST(ApplicationTest, NonExistentFileReturns84) {
-  StderrCapture err;
-  EXPECT_EQ(raytracer::Application{}.run("/nonexistent/scene.cfg"), 84);
+// Then:  throws RaytracerException (failed to load scene).
+TEST(ApplicationTest, NonExistentFileThrows) {
+  EXPECT_THROW(raytracer::core::Application{}.run("/nonexistent/scene.cfg"),
+               raytracer::core::RaytracerException);
 }
 
 // Given: the canonical example.cfg scene file.
@@ -63,7 +45,7 @@ TEST(ApplicationTest, NonExistentFileReturns84) {
 // Then:  returns 0 and produces out.ppm on disk.
 TEST(ApplicationTest, ValidSceneReturns0AndWritesPPM) {
   std::remove(OutputPpm.c_str());
-  EXPECT_EQ(raytracer::Application{}.run(ValidCfg), 0);
+  EXPECT_EQ(raytracer::core::Application{}.run(ValidCfg), 0);
   std::ifstream f(OutputPpm);
   EXPECT_TRUE(f.good());
   std::remove(OutputPpm.c_str());
@@ -74,7 +56,7 @@ TEST(ApplicationTest, ValidSceneReturns0AndWritesPPM) {
 // Then:  out.ppm starts with the P3 PPM header.
 TEST(ApplicationTest, ValidSceneOutputsP3Header) {
   std::remove(OutputPpm.c_str());
-  raytracer::Application{}.run(ValidCfg);
+  raytracer::core::Application{}.run(ValidCfg);
 
   std::ifstream f(OutputPpm);
   std::string magic;
@@ -88,7 +70,7 @@ TEST(ApplicationTest, ValidSceneOutputsP3Header) {
 // Then:  out.ppm contains "1920 1080" in its header.
 TEST(ApplicationTest, ValidSceneOutputsCorrectDimensions) {
   std::remove(OutputPpm.c_str());
-  raytracer::Application{}.run(ValidCfg);
+  raytracer::core::Application{}.run(ValidCfg);
 
   std::ifstream f(OutputPpm);
   std::string content((std::istreambuf_iterator<char>(f)),

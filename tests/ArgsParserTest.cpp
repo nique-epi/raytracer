@@ -7,12 +7,12 @@
 
 #include <gtest/gtest.h>
 #include <variant>
-#include "ArgsParser.hpp"
+#include "core/ArgsParser.hpp"
 
-using raytracer::AppConfig;
-using raytracer::ArgsParser;
-using raytracer::HelpRequest;
-using raytracer::SceneRequest;
+using raytracer::core::AppConfig;
+using raytracer::core::ArgsParser;
+using raytracer::core::HelpRequest;
+using raytracer::core::SceneRequest;
 
 // Given: only the program name (argc=1).
 // When:  parse() is called.

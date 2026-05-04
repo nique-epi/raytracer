@@ -9,7 +9,7 @@
 #include <string>
 #include "scene/SceneLoaderFactory.hpp"
 
-namespace raytracer {
+namespace raytracer::core {
 
 class Application {
  public:
@@ -24,8 +24,7 @@ class Application {
   int run(const std::string& scenePath);
 
  private:
-  static constexpr int ErrorExitCode = 84;
   scene::SceneLoaderFactory _factory;
 };
 
-}  // namespace raytracer
+}  // namespace raytracer::core
