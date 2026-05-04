@@ -21,7 +21,7 @@ const PluginLoader::HandleMap& PluginLoader::getHandles() const noexcept {
 void* PluginLoader::load(const std::string& path) {
   // NOLINTNEXTLINE(concurrency-mt-unsafe)
   (void)dlerror();
-  void* handle = dlopen(path.c_str(), RTLD_NOW | RTLD_LOCAL);
+  void* handle = dlopen(path.c_str(), RTLD_NOW | RTLD_GLOBAL);
   if (handle == nullptr) {
     // NOLINTNEXTLINE(concurrency-mt-unsafe)
     const char* error = dlerror();
