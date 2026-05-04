@@ -100,7 +100,7 @@ target_include_directories(camera_plugin_test
 		${CMAKE_SOURCE_DIR}/src
 )
 
-target_link_libraries(camera_plugin_test PRIVATE raytracer_core raytracer_math GTest::gtest_main)
+target_link_libraries(camera_plugin_test PRIVATE raytracer_core raytracer_math GTest::gtest_main ${CMAKE_DL_LIBS})
 
 
 add_dependencies(camera_plugin_test raytracer_perspective_camera)
@@ -117,5 +117,34 @@ set_target_properties(camera_plugin_test PROPERTIES
 )
 
 gtest_discover_tests(camera_plugin_test
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+add_executable(diffuse_plugin_test
+	components/material/DiffusePluginTest.cpp
+)
+
+target_include_directories(diffuse_plugin_test
+	PRIVATE
+		${CMAKE_SOURCE_DIR}/src
+		${CMAKE_SOURCE_DIR}/tests/components/material
+)
+
+target_link_libraries(diffuse_plugin_test PRIVATE raytracer_core raytracer_math GTest::gtest_main ${CMAKE_DL_LIBS})
+
+add_dependencies(diffuse_plugin_test DiffuseMaterial)
+add_custom_command(TARGET diffuse_plugin_test POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different
+		$<TARGET_FILE:DiffuseMaterial>
+		${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_FILE_NAME:DiffuseMaterial>
+)
+
+raytracer_enable_target_warnings(diffuse_plugin_test)
+
+set_target_properties(diffuse_plugin_test PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+gtest_discover_tests(diffuse_plugin_test
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
