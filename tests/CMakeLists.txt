@@ -25,7 +25,6 @@ add_executable(raytracer_tests
   components/image/ImageTest.cpp
   components/image/ImageExceptionTest.cpp
   components/Primitives/CollectionTest.cpp
-  components/Primitives/SphereTest.cpp
   output/ppm/PPMTest.cpp
   fixtures/SphereFixture.cpp
 )
@@ -146,5 +145,34 @@ set_target_properties(diffuse_plugin_test PROPERTIES
 )
 
 gtest_discover_tests(diffuse_plugin_test
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+add_executable(sphere_plugin_test
+	components/Primitives/SpherePluginTest.cpp
+)
+
+target_include_directories(sphere_plugin_test
+	PRIVATE
+		${CMAKE_SOURCE_DIR}/src
+		${CMAKE_SOURCE_DIR}/tests/components/Primitives
+)
+
+target_link_libraries(sphere_plugin_test PRIVATE raytracer_core raytracer_plugin raytracer_math config++ GTest::gtest_main)
+
+add_dependencies(sphere_plugin_test Sphere)
+add_custom_command(TARGET sphere_plugin_test POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different
+		$<TARGET_FILE:Sphere>
+		${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_FILE_NAME:Sphere>
+)
+
+raytracer_enable_target_warnings(sphere_plugin_test)
+
+set_target_properties(sphere_plugin_test PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+gtest_discover_tests(sphere_plugin_test
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
