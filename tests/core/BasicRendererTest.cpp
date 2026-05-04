@@ -42,7 +42,7 @@ TEST(BasicRendererTest, RendersOneSphereAndHashStable) {
     }
   }
 
-  EXPECT_GT(colorSum, 0.0);
+  EXPECT_NEAR(colorSum, 14384.8087479, 1e-5);
 
   auto centerPixel = img.getPixel(50, 50);
   EXPECT_NEAR(centerPixel.r, 0.5, 1e-4);

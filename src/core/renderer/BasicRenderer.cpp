@@ -30,8 +30,10 @@ components::Image BasicRenderer::render(const components::Collection& scene,
     }
     // NOLINTNEXTLINE(altera-id-dependent-backward-branch)
     for (int x = 0; x < width; ++x) {
-      const double u = static_cast<double>(x) / (width - 1);
-      const double v = static_cast<double>(height - 1 - y) / (height - 1);
+      const double u = (width > 1) ? static_cast<double>(x) / (width - 1) : 0.5;
+      const double v = (height > 1)
+                           ? static_cast<double>(height - 1 - y) / (height - 1)
+                           : 0.5;
       const math::Ray ray = camera.getRay(u, v);
       const math::Color pixelColor = castRay(ray, scene, settings.maxDepth);
       image.setPixel(x, y, pixelColor);
