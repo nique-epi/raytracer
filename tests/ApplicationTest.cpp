@@ -8,7 +8,9 @@
 #include <gtest/gtest.h>
 #include <cstdio>
 #include <fstream>
+#include <iostream>
 #include <sstream>
+#include <streambuf>
 #include <string>
 #include "Application.hpp"
 
