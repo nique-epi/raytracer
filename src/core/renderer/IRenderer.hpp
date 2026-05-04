@@ -5,8 +5,7 @@
 ** IRenderer
 */
 
-#ifndef CORE_RENDERER_IRENDERER_HPP_
-#define CORE_RENDERER_IRENDERER_HPP_
+#pragma once
 
 #include <functional>
 #include "components/Primitives/Collection.hpp"
@@ -34,5 +33,3 @@ class IRenderer {
 };
 
 }  // namespace raytracer::core
-
-#endif  // CORE_RENDERER_IRENDERER_HPP_

@@ -10,8 +10,7 @@
  * @brief Basic single-threaded renderer implementation.
  */
 
-#ifndef CORE_RENDERER_MONOTHREADRENDERER_MONOTHREADRENDERER_HPP_
-#define CORE_RENDERER_MONOTHREADRENDERER_MONOTHREADRENDERER_HPP_
+#pragma once
 
 #include <functional>
 #include "../IRenderer.hpp"
@@ -48,5 +47,3 @@ class MonoThreadRenderer : public IRenderer {
 };
 
 }  // namespace raytracer::core
-
-#endif  // CORE_RENDERER_MONOTHREADRENDERER_MONOTHREADRENDERER_HPP_
