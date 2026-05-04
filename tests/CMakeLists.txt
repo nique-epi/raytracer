@@ -159,6 +159,7 @@ target_include_directories(sphere_plugin_test
 )
 
 target_link_libraries(sphere_plugin_test PRIVATE raytracer_core raytracer_plugin raytracer_math config++ GTest::gtest_main)
+target_link_options(sphere_plugin_test PRIVATE $<$<PLATFORM_ID:Linux>:-rdynamic>)
 
 add_dependencies(sphere_plugin_test Sphere)
 add_custom_command(TARGET sphere_plugin_test POST_BUILD
