@@ -21,12 +21,14 @@ add_executable(raytracer_tests
   scene/CFGSceneLoaderTest.cpp
   core/ExceptionsTest.cpp
   core/RegistryTest.cpp
+  core/BasicRendererTest.cpp
   plugin/PluginExceptionTest.cpp
   components/image/ImageTest.cpp
   components/image/ImageExceptionTest.cpp
   components/Primitives/CollectionTest.cpp
   output/ppm/PPMTest.cpp
   fixtures/SphereFixture.cpp
+  fixtures/OrthoCameraFixture.cpp
 )
 
 target_include_directories(raytracer_tests

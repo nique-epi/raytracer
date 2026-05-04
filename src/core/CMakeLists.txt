@@ -4,6 +4,7 @@ target_sources(raytracer_core
   PRIVATE
     Exceptions.cpp
     registry/registry.cpp
+    renderer/BasicRenderer.cpp
 )
 
 target_include_directories(raytracer_core
