@@ -34,6 +34,11 @@ int Application::run(const std::string& scenePath) {
     return ErrorExitCode;
   }
 
+  if (!settings.validate()) {
+    std::cerr << "Invalid render settings loaded from: " << scenePath << "\n";
+    return ErrorExitCode;
+  }
+
   components::Image image(settings.imageWidth, settings.imageHeight);
   output::ppm writer;
   writer.write(image, "out.ppm");

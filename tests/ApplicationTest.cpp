@@ -15,6 +15,7 @@
 #include "Application.hpp"
 
 static const std::string ValidCfg = SCENES_DIR "/example.cfg";
+static const std::string InvalidDimensionsCfg = SCENE_FIXTURES_DIR "/invalid_dimensions.cfg";
 static const std::string OutputPpm = "out.ppm";
 
 namespace {
@@ -30,6 +31,15 @@ struct StderrCapture {
 };
 
 }  // namespace
+
+// Given: a .cfg whose settings block has imageWidth=0 and imageHeight=0.
+// When:  run() is called.
+// Then:  returns 84 and writes a diagnostic to stderr.
+TEST(ApplicationTest, InvalidSettingsReturns84) {
+  StderrCapture err;
+  EXPECT_EQ(raytracer::Application{}.run(InvalidDimensionsCfg), 84);
+  EXPECT_FALSE(err.str().empty());
+}
 
 // Given: a file path whose extension has no registered loader (e.g. ".txt").
 // When:  run() is called.
