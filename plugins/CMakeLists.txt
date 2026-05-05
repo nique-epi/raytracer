@@ -34,3 +34,22 @@ set_target_properties(DiffuseMaterial
 )
 
 raytracer_enable_target_warnings(DiffuseMaterial)
+
+add_library(Sphere SHARED
+	../src/components/Primitives/sphere/Sphere.cpp
+)
+
+target_link_libraries(Sphere
+	PRIVATE
+		raytracer_math
+		raytracer_plugin
+)
+
+set_target_properties(Sphere
+	PROPERTIES
+		PREFIX ""
+		SUFFIX ".so"
+		LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/plugins"
+)
+
+raytracer_enable_target_warnings(Sphere)
