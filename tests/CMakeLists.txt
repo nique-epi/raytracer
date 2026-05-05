@@ -196,6 +196,33 @@ set_target_properties(translation_transformation_test PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-gtest_discover_tests(translation_transformation_test
+gtest_discover_tests(translation_transformation_test)
+add_executable(sphere_plugin_test
+	components/Primitives/SpherePluginTest.cpp
+)
+
+target_include_directories(sphere_plugin_test
+	PRIVATE
+		${CMAKE_SOURCE_DIR}/src
+		${CMAKE_SOURCE_DIR}/tests/components/Primitives
+)
+
+target_link_libraries(sphere_plugin_test PRIVATE raytracer_core raytracer_plugin raytracer_math config++ GTest::gtest_main)
+target_link_options(sphere_plugin_test PRIVATE $<$<PLATFORM_ID:Linux>:-rdynamic>)
+
+add_dependencies(sphere_plugin_test Sphere)
+add_custom_command(TARGET sphere_plugin_test POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different
+		$<TARGET_FILE:Sphere>
+		${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_FILE_NAME:Sphere>
+)
+
+raytracer_enable_target_warnings(sphere_plugin_test)
+
+set_target_properties(sphere_plugin_test PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+gtest_discover_tests(sphere_plugin_test
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
