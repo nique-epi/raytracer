@@ -6,6 +6,7 @@
 */
 
 #include <gtest/gtest.h>
+#include <cmath>
 #include <memory>
 #include "components/Transformations/Rotation/Rotation.hpp"
 #include "utils/math/Vector3D.hpp"
@@ -25,6 +26,36 @@ TEST_F(RotationTransformationTest, DefaultRotationIsIdentity) {
   EXPECT_DOUBLE_EQ(result.x, 1.0);
   EXPECT_DOUBLE_EQ(result.y, 2.0);
   EXPECT_DOUBLE_EQ(result.z, 3.0);
+}
+
+TEST_F(RotationTransformationTest, ConstructorInitializesAxisAndAngle) {
+  const double halfPi = std::acos(-1.0) / 2.0;
+  Rotation custom(Vector3D(0.0, 0.0, 1.0), halfPi);
+  Vector3D result = custom.apply(Vector3D(1.0, 0.0, 0.0));
+
+  EXPECT_NEAR(result.x, 0.0, 1e-12);
+  EXPECT_NEAR(result.y, 1.0, 1e-12);
+  EXPECT_NEAR(result.z, 0.0, 1e-12);
+}
+
+TEST_F(RotationTransformationTest, SettersKeepMatrixInSync) {
+  const double halfPi = std::acos(-1.0) / 2.0;
+
+  rotation.setAxis(Vector3D(0.0, 0.0, 1.0));
+  rotation.setAngle(halfPi);
+
+  Vector3D rotated = rotation.apply(Vector3D(1.0, 0.0, 0.0));
+
+  EXPECT_NEAR(rotated.x, 0.0, 1e-12);
+  EXPECT_NEAR(rotated.y, 1.0, 1e-12);
+  EXPECT_NEAR(rotated.z, 0.0, 1e-12);
+
+  rotation.setRotation(Vector3D(0.0, 0.0, 1.0), 0.0);
+  Vector3D reset = rotation.apply(Vector3D(1.0, 2.0, 3.0));
+
+  EXPECT_DOUBLE_EQ(reset.x, 1.0);
+  EXPECT_DOUBLE_EQ(reset.y, 2.0);
+  EXPECT_DOUBLE_EQ(reset.z, 3.0);
 }
 
 TEST_F(RotationTransformationTest, ApplyToNormalPreservesDirection) {

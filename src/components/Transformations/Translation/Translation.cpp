@@ -15,7 +15,14 @@ using owner = T;
 }  // namespace gsl
 
 namespace raytracer::components::transformation {
+Translation::Translation(const raytracer::math::Vector3D& offset)
+    : _offset(offset) {}
+
 Translation::~Translation() = default;
+
+void Translation::setOffset(const raytracer::math::Vector3D& offset) {
+  _offset = offset;
+}
 
 raytracer::math::Vector3D Translation::apply(
     const raytracer::math::Vector3D& point) const {
@@ -28,8 +35,7 @@ raytracer::math::Vector3D Translation::applyToNormal(
 }
 
 std::shared_ptr<ITransformation> Translation::inverse() const {
-  auto inverseTransform = std::make_shared<Translation>();
-  inverseTransform->_offset = -_offset;
+  auto inverseTransform = std::make_shared<Translation>(-_offset);
   return inverseTransform;
 }
 
@@ -39,6 +45,6 @@ extern "C" gsl::owner<ITransformation*> createTransformations() {
   return new raytracer::components::transformation::Translation();
 }
 
-extern "C" void DestroyTransformations(gsl::owner<ITransformation*> transform) {
+extern "C" void destroyTransformations(gsl::owner<ITransformation*> transform) {
   delete transform;
 }

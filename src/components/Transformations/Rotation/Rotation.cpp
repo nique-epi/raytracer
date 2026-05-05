@@ -15,6 +15,34 @@ using owner = T;
 
 namespace raytracer::components::transformation {
 
+Rotation::Rotation() : _axis(0.0, 0.0, 1.0) { syncRotationMatrix(); }
+
+Rotation::Rotation(const raytracer::math::Vector3D& axis, double angle)
+    : _axis(axis), _angle(angle) {
+  syncRotationMatrix();
+}
+
+void Rotation::setAxis(const raytracer::math::Vector3D& axis) {
+  _axis = axis;
+  syncRotationMatrix();
+}
+
+void Rotation::setAngle(double angle) {
+  _angle = angle;
+  syncRotationMatrix();
+}
+
+void Rotation::setRotation(const raytracer::math::Vector3D& axis,
+                           double angle) {
+  _axis = axis;
+  _angle = angle;
+  syncRotationMatrix();
+}
+
+void Rotation::syncRotationMatrix() {
+  _rotationMatrix = raytracer::math::Matrix4x4::rotation(_angle, _axis);
+}
+
 raytracer::math::Vector3D Rotation::apply(
     const raytracer::math::Vector3D& point) const {
   return _rotationMatrix.transformPoint(point);
@@ -26,11 +54,7 @@ raytracer::math::Vector3D Rotation::applyToNormal(
 }
 
 std::shared_ptr<ITransformation> Rotation::inverse() const {
-  auto inverseTransform = std::make_shared<Rotation>();
-  inverseTransform->_axis = _axis;
-  inverseTransform->_angle = -_angle;
-  inverseTransform->_rotationMatrix =
-      raytracer::math::Matrix4x4::rotation(-_angle, _axis);
+  auto inverseTransform = std::make_shared<Rotation>(_axis, -_angle);
   return inverseTransform;
 }
 }  // namespace raytracer::components::transformation
@@ -39,6 +63,6 @@ extern "C" gsl::owner<ITransformation*> createTransformations() {
   return new raytracer::components::transformation::Rotation();
 }
 
-extern "C" void DestroyTransformations(gsl::owner<ITransformation*> transform) {
+extern "C" void destroyTransformations(gsl::owner<ITransformation*> transform) {
   delete transform;
 }

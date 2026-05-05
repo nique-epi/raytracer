@@ -27,6 +27,24 @@ TEST_F(TranslationTransformationTest, DefaultTranslationIsIdentity) {
   EXPECT_DOUBLE_EQ(result.z, 3.0);
 }
 
+TEST_F(TranslationTransformationTest, ConstructorInitializesOffset) {
+  Translation moved(Vector3D(2.0, -1.0, 0.5));
+  Vector3D result = moved.apply(Vector3D(1.0, 2.0, 3.0));
+
+  EXPECT_DOUBLE_EQ(result.x, 3.0);
+  EXPECT_DOUBLE_EQ(result.y, 1.0);
+  EXPECT_DOUBLE_EQ(result.z, 3.5);
+}
+
+TEST_F(TranslationTransformationTest, SetterUpdatesOffset) {
+  translation.setOffset(Vector3D(4.0, 5.0, 6.0));
+  Vector3D result = translation.apply(Vector3D(1.0, 2.0, 3.0));
+
+  EXPECT_DOUBLE_EQ(result.x, 5.0);
+  EXPECT_DOUBLE_EQ(result.y, 7.0);
+  EXPECT_DOUBLE_EQ(result.z, 9.0);
+}
+
 TEST_F(TranslationTransformationTest, ApplyToNormalReturnsNormal) {
   Vector3D normal(1.0, 0.0, 0.0);
   Vector3D result = translation.applyToNormal(normal);
