@@ -32,7 +32,7 @@ class Sphere : public IObject {
   double radius_;
   std::shared_ptr<IMaterial> material_;
 
-  static void computeUV(const math::Vector3D& p, double& u, double& v);
+  static void computeUV(const math::Vector3D& unitSphere, double& u, double& v);
 };
 
 }  // namespace raytracer::components::primitives
