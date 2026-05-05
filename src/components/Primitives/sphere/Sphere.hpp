@@ -5,8 +5,7 @@
 ** Sphere
 */
 
-#ifndef PRIMITIVES_SPHERE_SPHERE_HPP_
-#define PRIMITIVES_SPHERE_SPHERE_HPP_
+#pragma once
 
 #include <memory>
 #include "components/Primitives/IObject.hpp"
@@ -37,5 +36,3 @@ class Sphere : public IObject {
 };
 
 }  // namespace raytracer::components::primitives
-
-#endif  // PRIMITIVES_SPHERE_SPHERE_HPP_
