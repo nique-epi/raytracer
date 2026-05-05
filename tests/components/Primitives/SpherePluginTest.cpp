@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 #include <memory>
-#include "fixture/SpherePluginFixture.hpp"
+#include "fixtures/SpherePluginFixture.hpp"
 #include "utils/math/HitRecord.hpp"
 #include "utils/math/Ray.hpp"
 #include "utils/math/Vector3D.hpp"
