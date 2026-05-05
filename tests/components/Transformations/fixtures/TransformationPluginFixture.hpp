@@ -50,16 +50,17 @@ class TransformationPluginFixture : public ::testing::Test {
           makeErrorMessage("Failed to open plugin", error));
     }
 
-    createTransformationFn = loadSymbol<CreateTransformationFn>("createCamera");
+    createTransformationFn =
+        loadSymbol<CreateTransformationFn>("createTransformation");
     destroyTransformationFn =
-        loadSymbol<DestroyTransformationFn>("DestroyCamera");
+        loadSymbol<DestroyTransformationFn>("DestroyTransformation");
 
     if (createTransformationFn == nullptr) {
-      throw std::runtime_error("Failed to resolve createCamera");
+      throw std::runtime_error("Failed to resolve createTransformation");
     }
 
     if (destroyTransformationFn == nullptr) {
-      throw std::runtime_error("Failed to resolve DestroyCamera");
+      throw std::runtime_error("Failed to resolve DestroyTransformation");
     }
 
     transformation = createTransformationFn();
