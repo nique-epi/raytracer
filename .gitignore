@@ -4,6 +4,7 @@ build/
 *.gcda
 *.gcno
 *.profraw
+*.ppm
 .cache/
 compile_commands.json
 Makefile
@@ -15,3 +16,4 @@ tests/*.xml
 
 # Sujet PDF — laissé en local, pas commit
 G-OOP-400_raytracer.pdf
+*.so
