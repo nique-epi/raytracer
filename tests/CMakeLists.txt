@@ -32,6 +32,7 @@ add_executable(raytracer_tests
   ArgsParserTest.cpp
   fixtures/SphereFixture.cpp
   fixtures/OrthoCameraFixture.cpp
+
 )
 
 target_include_directories(raytracer_tests
@@ -140,6 +141,7 @@ target_include_directories(diffuse_plugin_test
 target_link_libraries(diffuse_plugin_test PRIVATE raytracer_core raytracer_math GTest::gtest_main ${CMAKE_DL_LIBS})
 
 add_dependencies(diffuse_plugin_test DiffuseMaterial)
+
 add_custom_command(TARGET diffuse_plugin_test POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different
 		$<TARGET_FILE:DiffuseMaterial>
@@ -153,5 +155,47 @@ set_target_properties(diffuse_plugin_test PROPERTIES
 )
 
 gtest_discover_tests(diffuse_plugin_test
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+add_executable(rotation_transformation_test
+	components/Transformations/RotationTransformationTests.cpp
+)
+
+target_include_directories(rotation_transformation_test
+	PRIVATE
+		${CMAKE_SOURCE_DIR}/src
+)
+
+target_link_libraries(rotation_transformation_test PRIVATE raytracer_rotation raytracer_math GTest::gtest_main)
+
+raytracer_enable_target_warnings(rotation_transformation_test)
+
+set_target_properties(rotation_transformation_test PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+gtest_discover_tests(rotation_transformation_test
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+add_executable(translation_transformation_test
+	components/Transformations/TranslationTransformationTests.cpp
+)
+
+target_include_directories(translation_transformation_test
+	PRIVATE
+		${CMAKE_SOURCE_DIR}/src
+)
+
+target_link_libraries(translation_transformation_test PRIVATE raytracer_translation raytracer_math GTest::gtest_main)
+
+raytracer_enable_target_warnings(translation_transformation_test)
+
+set_target_properties(translation_transformation_test PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+gtest_discover_tests(translation_transformation_test
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )

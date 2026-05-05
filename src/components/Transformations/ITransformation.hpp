@@ -15,10 +15,10 @@ class ITransformation {
   virtual ~ITransformation() = default;
   ITransformation() = default;
 
-  ITransformation(const ITransformation& other) = delete;
-  ITransformation& operator=(const ITransformation& other) = delete;
-  ITransformation(ITransformation&& other) = delete;
-  ITransformation& operator=(ITransformation&& other) = delete;
+  ITransformation(const ITransformation& other) = default;
+  ITransformation& operator=(const ITransformation& other) = default;
+  ITransformation(ITransformation&& other) noexcept = default;
+  ITransformation& operator=(ITransformation&& other) noexcept = default;
 
   [[nodiscard]] virtual raytracer::math::Vector3D apply(
       const raytracer::math::Vector3D& point) const = 0;

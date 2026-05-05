@@ -10,7 +10,9 @@
 #include <array>
 #include <vector>
 #include "utils/math/Vector3D.hpp"
+
 namespace raytracer::math {
+
 class Matrix4x4 {
  public:
   Matrix4x4();
@@ -20,7 +22,7 @@ class Matrix4x4 {
   Matrix4x4(const Matrix4x4& other);
   Matrix4x4& operator=(const Matrix4x4& other);
   Matrix4x4(Matrix4x4&& other) noexcept;
-  Matrix4x4& operator=(Matrix4x4&& other) = delete;
+  Matrix4x4& operator=(Matrix4x4&& other) noexcept;
 
   Matrix4x4 operator+(const Matrix4x4& other) const;
   [[nodiscard]] Vector3D transformPoint(const Vector3D& point) const;
@@ -30,7 +32,7 @@ class Matrix4x4 {
   static Matrix4x4 identity();
   static Matrix4x4 translation(const Vector3D& vector);
   static Matrix4x4 scaling(const Vector3D& vector);
-  static Matrix4x4 rotation(float angle, const Vector3D& axis);
+  static Matrix4x4 rotation(double angle, const Vector3D& axis);
 
  protected:
  private:

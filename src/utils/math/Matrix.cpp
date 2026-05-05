@@ -45,6 +45,18 @@ Matrix4x4::Matrix4x4(Matrix4x4&& other) noexcept
   other._cols = 0;
 }
 
+Matrix4x4& Matrix4x4::operator=(Matrix4x4&& other) noexcept {
+  if (this == &other) {
+    return *this;
+  }
+  _rows = other._rows;
+  _cols = other._cols;
+  _matrixData = std::move(other._matrixData);
+  other._rows = 0;
+  other._cols = 0;
+  return *this;
+}
+
 Matrix4x4 Matrix4x4::operator+(const Matrix4x4& other) const {
   if (_rows != other._rows || _cols != other._cols) {
     throw std::invalid_argument(
@@ -209,12 +221,12 @@ Matrix4x4 Matrix4x4::scaling(const Vector3D& vector) {
   return result;
 }
 
-Matrix4x4 Matrix4x4::rotation(float angle, const Vector3D& axis) {
+Matrix4x4 Matrix4x4::rotation(double angle, const Vector3D& axis) {
   const Vector3D normalizedAxis = axis.normalize();
   const double x = normalizedAxis.x;
   const double y = normalizedAxis.y;
   const double z = normalizedAxis.z;
-  const auto radians = static_cast<double>(angle);
+  const auto radians = (angle);
   const double c = std::cos(radians);
   const double s = std::sin(radians);
   const double t = 1.0 - c;
