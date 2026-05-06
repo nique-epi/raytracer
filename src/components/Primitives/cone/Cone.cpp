@@ -67,11 +67,12 @@ bool Cone::hits(const math::Ray& ray, double tMin, double tMax,
     return h >= 0.0 && h <= height_;
   };
 
-  double t = (-halfB - sqrtDisc) / a;
-  if (!isValidHit(t)) {
-    t = (-halfB + sqrtDisc) / a;
-    if (!isValidHit(t)) return false;
-  }
+  const double t1 = (-halfB - sqrtDisc) / a;
+  const double t2 = (-halfB + sqrtDisc) / a;
+  double t = tMax + 1.0;
+  if (isValidHit(t1)) t = t1;
+  if (isValidHit(t2) && t2 < t) t = t2;
+  if (t > tMax) return false;
 
   rec.t = t;
   rec.point = ray.at(t);
