@@ -6,6 +6,7 @@
 */
 
 #include "Scene.hpp"
+#include <utility>
 
 namespace raytracer::scene {
 
