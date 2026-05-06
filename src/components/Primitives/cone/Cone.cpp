@@ -54,15 +54,21 @@ bool Cone::hits(const math::Ray& ray, double tMin, double tMax,
   const double halfB = dD * dw - cos2 * wd;
   const double c = dw * dw - cos2 * ww;
 
-  if (std::abs(a) < epsilon) return false;
+  if (std::abs(a) < epsilon) {
+    return false;
+  }
 
   const double discriminant = halfB * halfB - a * c;
-  if (discriminant < 0.0) return false;
+  if (discriminant < 0.0) {
+    return false;
+  }
 
   const double sqrtDisc = std::sqrt(discriminant);
 
   auto isValidHit = [&](double t) -> bool {
-    if (t < tMin || t > tMax) return false;
+    if (t < tMin || t > tMax) {
+      return false;
+    }
     const double h = (ray.at(t) - apex_).dot(axis_);
     return h >= 0.0 && h <= height_;
   };
@@ -70,9 +76,15 @@ bool Cone::hits(const math::Ray& ray, double tMin, double tMax,
   const double t1 = (-halfB - sqrtDisc) / a;
   const double t2 = (-halfB + sqrtDisc) / a;
   double t = tMax + 1.0;
-  if (isValidHit(t1)) t = t1;
-  if (isValidHit(t2) && t2 < t) t = t2;
-  if (t > tMax) return false;
+  if (isValidHit(t1)) {
+    t = t1;
+  }
+  if (isValidHit(t2) && t2 < t) {
+    t = t2;
+  }
+  if (t > tMax) {
+    return false;
+  }
 
   rec.t = t;
   rec.point = ray.at(t);
@@ -82,7 +94,9 @@ bool Cone::hits(const math::Ray& ray, double tMin, double tMax,
   const math::Vector3D lateral = v - axis_ * h;
   const double lateralLen = lateral.length();
 
-  if (lateralLen < epsilon) return false;
+  if (lateralLen < epsilon) {
+    return false;
+  }
 
   const math::Vector3D lateralHat = lateral / lateralLen;
   const math::Vector3D outNormal = lateralHat * cosAngle_ - axis_ * sinAngle_;
