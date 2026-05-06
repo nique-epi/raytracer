@@ -14,6 +14,7 @@ target_include_directories(raytracer_scene
 target_link_libraries(raytracer_scene
   PUBLIC
     raytracer_core
+    raytracer_components
     config++
     config
 )
