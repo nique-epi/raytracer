@@ -15,6 +15,7 @@
 #include "core/registry/registry.hpp"
 #include "utils/math/AABB.hpp"
 #include "utils/math/HitRecord.hpp"
+#include "utils/math/Constants.hpp"
 #include "utils/math/Ray.hpp"
 #include "utils/math/Vector3D.hpp"
 
@@ -26,14 +27,15 @@ using owner = T;
 namespace raytracer::components::primitives {
 
 namespace {
-constexpr double minRadius = 1e-8;
 constexpr double twoPi = 2.0 * std::numbers::pi;
 }  // namespace
+
+using raytracer::math::constants::epsilon;
 
 Sphere::Sphere(const math::Vector3D& center, double radius,
                std::shared_ptr<IMaterial> material)
     : center_(center),
-      radius_(std::max(minRadius, radius)),
+      radius_(std::max(epsilon, radius)),
       material_(std::move(material)) {}
 
 bool Sphere::hits(const math::Ray& ray, double tMin, double tMax,

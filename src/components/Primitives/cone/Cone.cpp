@@ -15,6 +15,7 @@
 #include "core/registry/registry.hpp"
 #include "utils/math/AABB.hpp"
 #include "utils/math/HitRecord.hpp"
+#include "utils/math/Constants.hpp"
 #include "utils/math/Ray.hpp"
 #include "utils/math/Vector3D.hpp"
 
@@ -25,9 +26,7 @@ using owner = T;
 
 namespace raytracer::components::primitives {
 
-namespace {
-constexpr double epsilon = 1e-8;
-}  // namespace
+using raytracer::math::constants::epsilon;
 
 Cone::Cone(const math::Vector3D& apex, const math::Vector3D& axis, double angle,
            double height, std::shared_ptr<IMaterial> material)
