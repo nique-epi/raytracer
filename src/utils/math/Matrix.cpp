@@ -8,7 +8,7 @@
 #include "Matrix.hpp"
 #include <array>
 #include <cmath>
-#include <stdexcept>
+#include <string_view>
 #include <utility>
 
 namespace {
@@ -20,7 +20,7 @@ Matrix4x4::Matrix4x4() : Matrix4x4(4, 4) {}
 
 Matrix4x4::Matrix4x4(int rows, int cols) : _rows(rows), _cols(cols) {
   if (rows <= 0 || cols <= 0) {
-    throw std::invalid_argument("matrix dimensions must be positive");
+    return;
   }
   _matrixData.resize(_rows, std::vector<double>(_cols, 0.0));
 }
@@ -59,8 +59,8 @@ Matrix4x4& Matrix4x4::operator=(Matrix4x4&& other) noexcept {
 
 Matrix4x4 Matrix4x4::operator+(const Matrix4x4& other) const {
   if (_rows != other._rows || _cols != other._cols) {
-    throw std::invalid_argument(
-        "Matrices must have the same dimensions for addition.");
+    // NOLINTNEXTLINE(modernize-return-braced-init-list)
+    return Matrix4x4();
   }
   Matrix4x4 result(_rows, _cols);
   for (int i = 0; i < _rows; ++i) {
@@ -73,7 +73,8 @@ Matrix4x4 Matrix4x4::operator+(const Matrix4x4& other) const {
 
 Vector3D Matrix4x4::transformPoint(const Vector3D& point) const {
   if (_rows != 4 || _cols != 4) {
-    throw std::invalid_argument("point transformation requires a 4x4 matrix");
+    // NOLINTNEXTLINE(modernize-return-braced-init-list)
+    return Vector3D(0, 0, 0);
   }
 
   const double x = (_matrixData[0][0] * point.x) +
@@ -97,8 +98,8 @@ Vector3D Matrix4x4::transformPoint(const Vector3D& point) const {
 
 Vector3D Matrix4x4::transformDirection(const Vector3D& direction) const {
   if (_rows != 4 || _cols != 4) {
-    throw std::invalid_argument(
-        "direction transformation requires a 4x4 matrix");
+    // NOLINTNEXTLINE(modernize-return-braced-init-list)
+    return Vector3D(0, 0, 0);
   }
 
   return {
@@ -112,7 +113,8 @@ Vector3D Matrix4x4::transformDirection(const Vector3D& direction) const {
 
 Matrix4x4 Matrix4x4::inverse() const {
   if (_rows != 4 || _cols != 4) {
-    throw std::invalid_argument("inverse requires a 4x4 matrix");
+    // NOLINTNEXTLINE(modernize-return-braced-init-list)
+    return Matrix4x4();
   }
   AugmentedMatrix augmented = makeAugmentedMatrix(*this);
   for (std::size_t pivot = 0; pivot < MATRIX_SIZE; ++pivot) {
@@ -148,7 +150,7 @@ std::size_t Matrix4x4::findPivotRow(const AugmentedMatrix& matrix,
     }
   }
   if (bestAbs <= EPSILON) {
-    throw std::invalid_argument("matrix is singular and cannot be inverted");
+    return pivot;
   }
   return bestRow;
 }

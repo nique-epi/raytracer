@@ -17,10 +17,10 @@ class Translation : public ITransformation {
   explicit Translation(const raytracer::math::Vector3D& offset);
   ~Translation() override;
 
-    Translation(const Translation& other) = default;
-    Translation& operator=(const Translation& other) = default;
-    Translation(Translation&& other) noexcept = default;
-    Translation& operator=(Translation&& other) noexcept = default;
+  Translation(const Translation& other) = default;
+  Translation& operator=(const Translation& other) = default;
+  Translation(Translation&& other) noexcept = default;
+  Translation& operator=(Translation&& other) noexcept = default;
 
   void setOffset(const raytracer::math::Vector3D& offset);
 
@@ -31,7 +31,7 @@ class Translation : public ITransformation {
   [[nodiscard]] std::shared_ptr<ITransformation> inverse() const override;
 
  private:
-  raytracer::math::Vector3D _offset;
+  raytracer::math::Vector3D offset_;
 };
 
 }  // namespace raytracer::components::transformation

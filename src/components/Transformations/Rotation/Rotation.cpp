@@ -15,46 +15,46 @@ using owner = T;
 
 namespace raytracer::components::transformation {
 
-Rotation::Rotation() : _axis(0.0, 0.0, 1.0) { syncRotationMatrix(); }
+Rotation::Rotation() : axis_(0.0, 0.0, 1.0) { syncRotationMatrix(); }
 
 Rotation::Rotation(const raytracer::math::Vector3D& axis, double angle)
-    : _axis(axis), _angle(angle) {
+    : axis_(axis), angle_(angle) {
   syncRotationMatrix();
 }
 
 void Rotation::setAxis(const raytracer::math::Vector3D& axis) {
-  _axis = axis;
+  axis_ = axis;
   syncRotationMatrix();
 }
 
 void Rotation::setAngle(double angle) {
-  _angle = angle;
+  angle_ = angle;
   syncRotationMatrix();
 }
 
 void Rotation::setRotation(const raytracer::math::Vector3D& axis,
                            double angle) {
-  _axis = axis;
-  _angle = angle;
+  axis_ = axis;
+  angle_ = angle;
   syncRotationMatrix();
 }
 
 void Rotation::syncRotationMatrix() {
-  _rotationMatrix = raytracer::math::Matrix4x4::rotation(_angle, _axis);
+  rotationMatrix_ = raytracer::math::Matrix4x4::rotation(angle_, axis_);
 }
 
 raytracer::math::Vector3D Rotation::apply(
     const raytracer::math::Vector3D& point) const {
-  return _rotationMatrix.transformPoint(point);
+  return rotationMatrix_.transformPoint(point);
 }
 
 raytracer::math::Vector3D Rotation::applyToNormal(
     const raytracer::math::Vector3D& normal) const {
-  return _rotationMatrix.transformDirection(normal).normalize();
+  return rotationMatrix_.transformDirection(normal).normalize();
 }
 
 std::shared_ptr<ITransformation> Rotation::inverse() const {
-  auto inverseTransform = std::make_shared<Rotation>(_axis, -_angle);
+  auto inverseTransform = std::make_shared<Rotation>(axis_, -angle_);
   return inverseTransform;
 }
 }  // namespace raytracer::components::transformation

@@ -16,17 +16,17 @@ using owner = T;
 
 namespace raytracer::components::transformation {
 Translation::Translation(const raytracer::math::Vector3D& offset)
-    : _offset(offset) {}
+    : offset_(offset) {}
 
 Translation::~Translation() = default;
 
 void Translation::setOffset(const raytracer::math::Vector3D& offset) {
-  _offset = offset;
+  offset_ = offset;
 }
 
 raytracer::math::Vector3D Translation::apply(
     const raytracer::math::Vector3D& point) const {
-  return point + _offset;
+  return point + offset_;
 }
 
 raytracer::math::Vector3D Translation::applyToNormal(
@@ -35,7 +35,7 @@ raytracer::math::Vector3D Translation::applyToNormal(
 }
 
 std::shared_ptr<ITransformation> Translation::inverse() const {
-  auto inverseTransform = std::make_shared<Translation>(-_offset);
+  auto inverseTransform = std::make_shared<Translation>(-offset_);
   return inverseTransform;
 }
 

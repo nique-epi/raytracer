@@ -34,7 +34,6 @@ class Matrix4x4 {
   static Matrix4x4 scaling(const Vector3D& vector);
   static Matrix4x4 rotation(double angle, const Vector3D& axis);
 
- protected:
  private:
   static constexpr std::size_t MATRIX_SIZE = 4;
   static constexpr std::size_t AUGMENTED_COLUMNS = 8;
