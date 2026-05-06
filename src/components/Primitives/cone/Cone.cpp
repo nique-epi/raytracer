@@ -24,6 +24,11 @@ template <typename T>
 using owner = T;
 }  // namespace gsl
 
+namespace {
+constexpr double defaultAngle = std::numbers::pi / 4.0;
+constexpr double defaultHeight = 1.0;
+}  // namespace
+
 namespace raytracer::components::primitives {
 
 using raytracer::math::constants::epsilon;
@@ -48,16 +53,16 @@ bool Cone::computeQuadraticCoeffs(const math::Ray& ray, double& quadA,
   const double originLengthSquared = originToApex.dot(originToApex);
   const double cosAngleSquared = cosAngle_ * cosAngle_;
 
-  quadA = dirAxisProjection * dirAxisProjection - cosAngleSquared * dirLengthSquared;
-  quadHalfB = dirAxisProjection * originAxisProjection - cosAngleSquared * originDirDot;
-  quadC = originAxisProjection * originAxisProjection - cosAngleSquared * originLengthSquared;
+  quadA = (dirAxisProjection * dirAxisProjection) - (cosAngleSquared * dirLengthSquared);
+  quadHalfB = (dirAxisProjection * originAxisProjection) - (cosAngleSquared * originDirDot);
+  quadC = (originAxisProjection * originAxisProjection) - (cosAngleSquared * originLengthSquared);
   return std::abs(quadA) >= epsilon;
 }
 
 double Cone::findClosestValidRoot(const math::Ray& ray, double tMin,
                                    double tMax, double quadA, double quadHalfB,
                                    double quadC) const {
-  const double discriminant = quadHalfB * quadHalfB - quadA * quadC;
+  const double discriminant = (quadHalfB * quadHalfB) - (quadA * quadC);
   if (discriminant < 0.0) {
     return -1.0;
   }
@@ -133,9 +138,9 @@ math::AABB Cone::getBoundingBox() const {
   const double baseRadius = height_ * std::tan(angle_);
 
   const math::Vector3D extent(
-      baseRadius * std::sqrt(std::max(0.0, 1.0 - axis_.x * axis_.x)),
-      baseRadius * std::sqrt(std::max(0.0, 1.0 - axis_.y * axis_.y)),
-      baseRadius * std::sqrt(std::max(0.0, 1.0 - axis_.z * axis_.z)));
+      baseRadius * std::sqrt(std::max(0.0, 1.0 - (axis_.x * axis_.x))),
+      baseRadius * std::sqrt(std::max(0.0, 1.0 - (axis_.y * axis_.y))),
+      baseRadius * std::sqrt(std::max(0.0, 1.0 - (axis_.z * axis_.z))));
 
   const math::AABB apexBox(apex_, apex_);
   const math::AABB baseBox(baseCenter - extent, baseCenter + extent);
@@ -152,8 +157,8 @@ extern "C" void createPrimitive(
       "cone", [](const libconfig::Setting&) -> std::shared_ptr<IObject> {
         return std::make_shared<raytracer::components::primitives::Cone>(
             raytracer::math::Vector3D(0.0, 0.0, 0.0),
-            raytracer::math::Vector3D(0.0, 1.0, 0.0), std::numbers::pi / 4.0,
-            1.0, nullptr);
+            raytracer::math::Vector3D(0.0, 1.0, 0.0),
+            defaultAngle, defaultHeight, nullptr);
       });
 }
 
