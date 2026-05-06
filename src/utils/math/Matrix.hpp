@@ -25,6 +25,7 @@ class Matrix4x4 {
   Matrix4x4& operator=(Matrix4x4&& other) noexcept;
 
   Matrix4x4 operator+(const Matrix4x4& other) const;
+  [[nodiscard]] bool operator==(const Matrix4x4& other) const;
   [[nodiscard]] Vector3D transformPoint(const Vector3D& point) const;
   [[nodiscard]] Vector3D transformDirection(const Vector3D& direction) const;
   [[nodiscard]] Matrix4x4 inverse() const;

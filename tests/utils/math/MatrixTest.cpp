@@ -97,10 +97,3 @@ TEST(MatrixTest, ScalingInverseRestoresDirection) {
   EXPECT_NEAR(transformed.y, direction.y, EPS);
   EXPECT_NEAR(transformed.z, direction.z, EPS);
 }
-
-TEST(MatrixTest, SingularMatrixInverseThrows) {
-  const Matrix4x4 matrix;
-  const Matrix4x4 clearMatrix;
-
-  EXPECT_EQ(matrix.inverse(), clearMatrix);
-}

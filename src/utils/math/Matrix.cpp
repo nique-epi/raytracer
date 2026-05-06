@@ -71,6 +71,20 @@ Matrix4x4 Matrix4x4::operator+(const Matrix4x4& other) const {
   return result;
 }
 
+bool Matrix4x4::operator==(const Matrix4x4& other) const {
+  if (_rows != other._rows || _cols != other._cols) {
+    return false;
+  }
+  for (int i = 0; i < _rows; ++i) {
+    for (int j = 0; j < _cols; ++j) {
+      if (std::abs(_matrixData[i][j] - other._matrixData[i][j]) > EPSILON) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 Vector3D Matrix4x4::transformPoint(const Vector3D& point) const {
   if (_rows != 4 || _cols != 4) {
     // NOLINTNEXTLINE(modernize-return-braced-init-list)
