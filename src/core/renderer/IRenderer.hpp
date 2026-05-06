@@ -8,7 +8,7 @@
 #pragma once
 
 #include <functional>
-#include "components/Primitives/Collection.hpp"
+#include "components/Primitives/Collection/Collection.hpp"
 #include "components/camera/ICamera.hpp"
 #include "components/image/Image.hpp"
 #include "utils/math/RenderSettings.hpp"
