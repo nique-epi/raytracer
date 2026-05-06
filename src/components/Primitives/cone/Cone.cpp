@@ -14,8 +14,8 @@
 #include "components/Primitives/IObject.hpp"
 #include "core/registry/registry.hpp"
 #include "utils/math/AABB.hpp"
-#include "utils/math/HitRecord.hpp"
 #include "utils/math/Constants.hpp"
+#include "utils/math/HitRecord.hpp"
 #include "utils/math/Ray.hpp"
 #include "utils/math/Vector3D.hpp"
 
@@ -38,67 +38,91 @@ Cone::Cone(const math::Vector3D& apex, const math::Vector3D& axis, double angle,
       sinAngle_(std::sin(angle)),
       material_(std::move(material)) {}
 
-bool Cone::hits(const math::Ray& ray, double tMin, double tMax,
-                math::HitRecord& rec) const {
-  const math::Vector3D w = ray.getOrigin() - apex_;
+bool Cone::computeQuadraticCoeffs(const math::Ray& ray, double& quadA,
+                                   double& quadHalfB, double& quadC) const {
+  const math::Vector3D originToApex = ray.getOrigin() - apex_;
+  const double dirAxisProjection = ray.getDirection().dot(axis_);
+  const double originAxisProjection = originToApex.dot(axis_);
+  const double dirLengthSquared = ray.getDirection().dot(ray.getDirection());
+  const double originDirDot = originToApex.dot(ray.getDirection());
+  const double originLengthSquared = originToApex.dot(originToApex);
+  const double cosAngleSquared = cosAngle_ * cosAngle_;
 
-  const double dD = ray.getDirection().dot(axis_);
-  const double dw = w.dot(axis_);
-  const double dd = ray.getDirection().dot(ray.getDirection());
-  const double wd = w.dot(ray.getDirection());
-  const double ww = w.dot(w);
+  quadA = dirAxisProjection * dirAxisProjection - cosAngleSquared * dirLengthSquared;
+  quadHalfB = dirAxisProjection * originAxisProjection - cosAngleSquared * originDirDot;
+  quadC = originAxisProjection * originAxisProjection - cosAngleSquared * originLengthSquared;
+  return std::abs(quadA) >= epsilon;
+}
 
-  const double cos2 = cosAngle_ * cosAngle_;
-  const double a = dD * dD - cos2 * dd;
-  const double halfB = dD * dw - cos2 * wd;
-  const double c = dw * dw - cos2 * ww;
-
-  if (std::abs(a) < epsilon) {
-    return false;
-  }
-
-  const double discriminant = halfB * halfB - a * c;
+double Cone::findClosestValidRoot(const math::Ray& ray, double tMin,
+                                   double tMax, double quadA, double quadHalfB,
+                                   double quadC) const {
+  const double discriminant = quadHalfB * quadHalfB - quadA * quadC;
   if (discriminant < 0.0) {
-    return false;
+    return -1.0;
   }
 
-  const double sqrtDisc = std::sqrt(discriminant);
+  const double sqrtDiscriminant = std::sqrt(discriminant);
+  const double nearRoot = (-quadHalfB - sqrtDiscriminant) / quadA;
+  const double farRoot = (-quadHalfB + sqrtDiscriminant) / quadA;
 
-  auto isValidHit = [&](double t) -> bool {
+  auto isWithinBounds = [&](double t) -> bool {
     if (t < tMin || t > tMax) {
       return false;
     }
-    const double h = (ray.at(t) - apex_).dot(axis_);
-    return h >= 0.0 && h <= height_;
+    const double axialProjection = (ray.at(t) - apex_).dot(axis_);
+    return axialProjection >= 0.0 && axialProjection <= height_;
   };
 
-  const double t1 = (-halfB - sqrtDisc) / a;
-  const double t2 = (-halfB + sqrtDisc) / a;
-  double t = tMax + 1.0;
-  if (isValidHit(t1)) {
-    t = t1;
+  double closestT = tMax + 1.0;
+  if (isWithinBounds(nearRoot)) {
+    closestT = nearRoot;
   }
-  if (isValidHit(t2) && t2 < t) {
-    t = t2;
+  if (isWithinBounds(farRoot) && farRoot < closestT) {
+    closestT = farRoot;
   }
-  if (t > tMax) {
+  return closestT > tMax ? -1.0 : closestT;
+}
+
+bool Cone::computeOutwardNormal(const math::Vector3D& hitPoint,
+                                 math::Vector3D& outNormal) const {
+  const math::Vector3D apexToHit = hitPoint - apex_;
+  const double axialProjection = apexToHit.dot(axis_);
+  const math::Vector3D lateral = apexToHit - axis_ * axialProjection;
+  const double lateralLength = lateral.length();
+
+  if (lateralLength < epsilon) {
+    return false;
+  }
+  const math::Vector3D lateralHat = lateral / lateralLength;
+  outNormal = lateralHat * cosAngle_ - axis_ * sinAngle_;
+  return true;
+}
+
+bool Cone::hits(const math::Ray& ray, double tMin, double tMax,
+                math::HitRecord& rec) const {
+  double quadA = 0.0;
+  double quadHalfB = 0.0;
+  double quadC = 0.0;
+
+  if (!computeQuadraticCoeffs(ray, quadA, quadHalfB, quadC)) {
     return false;
   }
 
-  rec.t = t;
-  rec.point = ray.at(t);
-
-  const math::Vector3D v = rec.point - apex_;
-  const double h = v.dot(axis_);
-  const math::Vector3D lateral = v - axis_ * h;
-  const double lateralLen = lateral.length();
-
-  if (lateralLen < epsilon) {
+  const double closestT = findClosestValidRoot(ray, tMin, tMax,
+                                               quadA, quadHalfB, quadC);
+  if (closestT < 0.0) {
     return false;
   }
 
-  const math::Vector3D lateralHat = lateral / lateralLen;
-  const math::Vector3D outNormal = lateralHat * cosAngle_ - axis_ * sinAngle_;
+  rec.t = closestT;
+  rec.point = ray.at(closestT);
+
+  math::Vector3D outNormal;
+  if (!computeOutwardNormal(rec.point, outNormal)) {
+    return false;
+  }
+
   rec.setFaceNormal(ray, outNormal);
   rec.material = material_;
   return true;

@@ -35,6 +35,38 @@ class Cone : public IObject {
   double cosAngle_;
   double sinAngle_;
   std::shared_ptr<IMaterial> material_;
+
+  /**
+   * @brief Compute the quadratic coefficients for the ray-cone intersection.
+   *
+   * @param [in]  ray       The incoming ray.
+   * @param [out] quadA     Coefficient of t².
+   * @param [out] quadHalfB Half-coefficient of t (uses half-b convention).
+   * @param [out] quadC     Constant coefficient.
+   * @returns false if the equation degenerates (ray parallel to cone surface).
+   */
+  bool computeQuadraticCoeffs(const math::Ray& ray, double& quadA,
+                               double& quadHalfB, double& quadC) const;
+
+  /**
+   * @brief Find the smallest t in [tMin, tMax] that hits the finite cone.
+   *
+   * @returns The closest valid t, or -1.0 if no valid root exists.
+   */
+  double findClosestValidRoot(const math::Ray& ray, double tMin, double tMax,
+                               double quadA, double quadHalfB,
+                               double quadC) const;
+
+  /**
+   * @brief Compute the outward surface normal at a hit point.
+   *
+   * @param [in]  hitPoint  The intersection point on the cone surface.
+   * @param [out] outNormal Filled with the outward normal if @c true is
+   *                        returned.
+   * @returns false if the hit point is at the apex (degenerate normal).
+   */
+  bool computeOutwardNormal(const math::Vector3D& hitPoint,
+                             math::Vector3D& outNormal) const;
 };
 
 }  // namespace raytracer::components::primitives
