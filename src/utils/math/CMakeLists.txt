@@ -9,6 +9,7 @@ target_sources(raytracer_math
     AABB.cpp
     RenderSettings.cpp
     Optics.cpp
+    Matrix.cpp
 )
 
 target_include_directories(raytracer_math

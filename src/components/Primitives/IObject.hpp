@@ -8,20 +8,11 @@
 #ifndef PRIMITIVE_IOBJECT_HPP_
 #define PRIMITIVE_IOBJECT_HPP_
 
+#include "components/Transformations/ITransformation.hpp"
 #include "utils/math/AABB.hpp"
 #include "utils/math/HitRecord.hpp"
 #include "utils/math/Ray.hpp"
 
-class ITransformation;
-
-/**
- * @brief Contract shared by all scene objects (primitives, collections,
- *        transformed objects, meshes).
- *
- * Conventions:
- *  - @p tMin and @p tMax are **inclusive** bounds on the ray parameter t.
- *  - @p rec is written only when the method returns @c true.
- */
 class IObject {
  public:
   IObject() = default;
