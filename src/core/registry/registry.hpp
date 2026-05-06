@@ -124,8 +124,8 @@ class Registry {
   void loadPlugin(const std::string& path);
 
  private:
-  std::map<std::string, CreatorFn> creators;
   raytracer::plugin::PluginLoader pluginLoader;
+  std::map<std::string, CreatorFn> creators;
 };
 
 /**

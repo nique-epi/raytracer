@@ -24,6 +24,8 @@ target_link_libraries(raytracer_src
 
 add_executable(raytracer
   main.cpp
+  $<TARGET_OBJECTS:raytracer_application>
+  $<TARGET_OBJECTS:raytracer_ppm>
 )
 
 target_include_directories(raytracer
