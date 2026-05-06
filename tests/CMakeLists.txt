@@ -10,6 +10,8 @@ set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
 set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+add_subdirectory(helpers)
+
 add_executable(raytracer_tests
   utils/math/Vector3DTest.cpp
 	utils/math/MatrixTest.cpp
@@ -49,6 +51,7 @@ target_compile_definitions(raytracer_tests
 target_link_libraries(raytracer_tests
   PRIVATE
     raytracer_src
+    raytracer_tests_helpers
     GTest::gtest_main
 )
 

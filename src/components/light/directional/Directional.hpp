@@ -38,9 +38,9 @@ class Directional : public ILight {
 
   [[nodiscard]] double getIntensity() const override;
 
-  [[nodiscard]] bool isOccluded(const raytracer::math::Vector3D& point,
-                                const raytracer::scene::Scene& scene)
-      const override;
+  [[nodiscard]] bool isOccluded(
+      const raytracer::math::Vector3D& point,
+      const raytracer::scene::Scene& scene) const override;
 
  private:
   raytracer::math::Vector3D direction =
