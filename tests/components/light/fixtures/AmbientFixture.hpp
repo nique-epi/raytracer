@@ -13,6 +13,6 @@ class AmbientFixture : public LightFixture {
   void SetUp() override { LightFixture::SetUp(); }
   void TearDown() override { LightFixture::TearDown(); }
   std::string pluginFileName() const override {
-    return "raytracer_ambient_light.so";
+    return "ambient.so";
   }
 };

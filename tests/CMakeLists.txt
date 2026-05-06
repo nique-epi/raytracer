@@ -126,8 +126,6 @@ raytracer_enable_target_warnings(raytracer_tests)
 
 gtest_discover_tests(raytracer_tests)
 
-# === Plugin loader test (custom: own fake_plugin, manual add_test) ==
-
 add_executable(plugin_loader_test
 	plugin_loader_test.cpp
 )
@@ -165,9 +163,8 @@ set_tests_properties(plugin_loader_test PROPERTIES
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-# === Per-component plugin & integration tests ======================
-
 add_subdirectory(components/camera)
+add_subdirectory(components/light)
 add_subdirectory(components/material)
 add_subdirectory(components/Primitives)
 add_subdirectory(components/Transformations)

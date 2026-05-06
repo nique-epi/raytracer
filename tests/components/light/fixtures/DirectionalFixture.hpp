@@ -14,6 +14,6 @@ class DirectionalLightFixture : public LightFixture {
   void SetUp() override { LightFixture::SetUp(); }
   void TearDown() override { LightFixture::TearDown(); }
   std::string pluginFileName() const override {
-    return "raytracer_directional_light.so";
+    return "directional.so";
   }
 };
