@@ -5,6 +5,7 @@ add_library(raytracer_components STATIC)
 add_subdirectory(image)
 add_subdirectory(material)
 add_subdirectory(Primitives)
+add_subdirectory(Transformations)
 
 target_link_libraries(raytracer_components
   PUBLIC

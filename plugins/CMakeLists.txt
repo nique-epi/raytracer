@@ -35,6 +35,39 @@ set_target_properties(DiffuseMaterial
 
 raytracer_enable_target_warnings(DiffuseMaterial)
 
+add_library(raytracer_rotation_transformation SHARED
+    ../src/components/Transformations/Rotation/Rotation.cpp
+)
+
+target_link_libraries(raytracer_rotation_transformation
+    PRIVATE
+        raytracer_transformations
+)
+
+set_target_properties(raytracer_rotation_transformation PROPERTIES
+    PREFIX ""
+    SUFFIX ".so"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/plugins"
+)
+
+raytracer_enable_target_warnings(raytracer_rotation_transformation)
+
+add_library(raytracer_translation_transformation SHARED
+    ../src/components/Transformations/Translation/Translation.cpp
+)
+
+target_link_libraries(raytracer_translation_transformation
+    PRIVATE
+        raytracer_transformations
+)
+
+set_target_properties(raytracer_translation_transformation PROPERTIES
+    PREFIX ""
+    SUFFIX ".so"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/plugins"
+)
+
+raytracer_enable_target_warnings(raytracer_translation_transformation)
 add_library(Sphere SHARED
 	../src/components/Primitives/sphere/Sphere.cpp
 )
