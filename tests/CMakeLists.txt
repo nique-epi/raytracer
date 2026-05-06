@@ -20,6 +20,7 @@ add_executable(raytracer_tests
   utils/math/RenderSettingsTest.cpp
   utils/math/OpticsTest.cpp
   scene/CFGSceneLoaderTest.cpp
+  scene/SceneTest.cpp
   core/ExceptionsTest.cpp
   core/RegistryTest.cpp
   core/BasicRendererTest.cpp
