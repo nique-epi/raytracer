@@ -86,3 +86,22 @@ set_target_properties(Sphere
 )
 
 raytracer_enable_target_warnings(Sphere)
+
+add_library(Cone SHARED
+	../src/components/Primitives/cone/Cone.cpp
+)
+
+target_link_libraries(Cone
+	PRIVATE
+		raytracer_math
+		raytracer_plugin
+)
+
+set_target_properties(Cone
+	PROPERTIES
+		PREFIX ""
+		SUFFIX ".so"
+		LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/plugins"
+)
+
+raytracer_enable_target_warnings(Cone)
