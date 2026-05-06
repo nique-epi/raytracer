@@ -184,3 +184,33 @@ set_target_properties(sphere_plugin_test PROPERTIES
 gtest_discover_tests(sphere_plugin_test
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
+
+add_executable(cone_plugin_test
+	components/Primitives/ConePluginTest.cpp
+)
+
+target_include_directories(cone_plugin_test
+	PRIVATE
+		${CMAKE_SOURCE_DIR}/src
+		${CMAKE_SOURCE_DIR}/tests/components/Primitives
+)
+
+target_link_libraries(cone_plugin_test PRIVATE raytracer_core raytracer_plugin raytracer_math config++ GTest::gtest_main)
+target_link_options(cone_plugin_test PRIVATE $<$<PLATFORM_ID:Linux>:-rdynamic>)
+
+add_dependencies(cone_plugin_test Cone)
+add_custom_command(TARGET cone_plugin_test POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different
+		$<TARGET_FILE:Cone>
+		${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_FILE_NAME:Cone>
+)
+
+raytracer_enable_target_warnings(cone_plugin_test)
+
+set_target_properties(cone_plugin_test PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+gtest_discover_tests(cone_plugin_test
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
