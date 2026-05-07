@@ -1,0 +1,46 @@
+/*
+** EPITECH PROJECT, 2026
+** raytracer
+** File description:
+** AmbientLight
+*/
+
+#include "AmbientLight.hpp"
+
+namespace gsl {
+template <typename T>
+using owner = T;
+}  // namespace gsl
+
+namespace raytracer::components::light::ambient {
+
+Ambient::Ambient() = default;
+
+Ambient::Ambient(const raytracer::math::Color& color, double intensity)
+    : color(color), intensity(intensity) {}
+
+raytracer::math::Color Ambient::illuminate(
+    const raytracer::math::Vector3D& /*point*/,
+    const raytracer::scene::Scene& /*scene*/) const {
+  return color * intensity;
+}
+
+raytracer::math::Vector3D Ambient::getDirection(
+    const raytracer::math::Vector3D& /*point*/) const {
+  return {0.0, 0.0, 0.0};
+}
+
+double Ambient::getIntensity() const { return intensity; }
+
+bool Ambient::isOccluded(const raytracer::math::Vector3D& /*point*/,
+                         const raytracer::scene::Scene& /*scene*/) const {
+  return false;
+}
+
+}  // namespace raytracer::components::light::ambient
+
+extern "C" gsl::owner<ILight*> createLight() {
+  return new raytracer::components::light::ambient::Ambient();
+}
+
+extern "C" void DestroyLight(gsl::owner<ILight*> light) { delete light; }

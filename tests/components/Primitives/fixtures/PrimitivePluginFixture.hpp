@@ -8,8 +8,8 @@
 #pragma once
 
 #include <gtest/gtest.h>
-#include <libconfig.h++>
 #include <filesystem>
+#include <libconfig.h++>
 #include <memory>
 #include <stdexcept>
 #include <string>

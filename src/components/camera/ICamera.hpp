@@ -11,13 +11,7 @@
 
 class ICamera {
  public:
-  ICamera() = default;
   virtual ~ICamera() = default;
-
-  ICamera(const ICamera&) = default;
-  ICamera& operator=(const ICamera&) = default;
-  ICamera(ICamera&&) = default;
-  ICamera& operator=(ICamera&&) = default;
 
   [[nodiscard]] virtual raytracer::math::Ray getRay(double u,
                                                     double v) const = 0;
