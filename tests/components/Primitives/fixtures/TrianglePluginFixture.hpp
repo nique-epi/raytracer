@@ -8,8 +8,8 @@
 #pragma once
 
 #include <memory>
+#include "PrimitivePluginFixture.hpp"
 #include "components/Primitives/IObject.hpp"
-#include "fixtures/PrimitivePluginFixture.hpp"
 
 class TrianglePluginFixture : public PrimitivePluginFixture {
  public:
