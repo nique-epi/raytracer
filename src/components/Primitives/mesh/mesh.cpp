@@ -5,9 +5,27 @@
 ** mesh
 */
 
-#include "components/Primitives/mesh/mesh.hpp"
+#include "components/Primitives/mesh/Mesh.hpp"
+#include <memory>
+#include <utility>
+#include "components/Primitives/IObject.hpp"
+#include "core/registry/registry.hpp"
+
+namespace gsl {
+template <typename T>
+using owner = T;
+}  // namespace gsl
 
 namespace raytracer::components::primitives {
+
+Mesh::Mesh(std::vector<std::shared_ptr<Triangle>> triangles)
+    : triangles_(std::move(triangles)) {}
+
+void Mesh::addTriangle(std::shared_ptr<Triangle> triangle) {
+  triangles_.push_back(std::move(triangle));
+  bboxDirty_ = true;
+}
+
 bool Mesh::hits(const raytracer::math::Ray& ray, double tMin, double tMax,
                 raytracer::math::HitRecord& rec) const {
   if (!getBoundingBox().hit(ray, tMin, tMax)) {
@@ -18,7 +36,7 @@ bool Mesh::hits(const raytracer::math::Ray& ray, double tMin, double tMax,
 
   for (const auto& triangle : triangles_) {
     raytracer::math::HitRecord tempRec;
-    if (triangle.hits(ray, tMin, closestSoFar, tempRec)) {
+    if (triangle->hits(ray, tMin, closestSoFar, tempRec)) {
       hitAnything = true;
       closestSoFar = tempRec.t;
       rec = tempRec;
@@ -35,10 +53,10 @@ raytracer::math::AABB Mesh::getBoundingBox() const {
     return {raytracer::math::Vector3D(0.0, 0.0, 0.0),
             raytracer::math::Vector3D(0.0, 0.0, 0.0)};
   }
-  raytracer::math::AABB box = triangles_[0].getBoundingBox();
+  raytracer::math::AABB box = triangles_[0]->getBoundingBox();
   for (size_t i = 1; i < triangles_.size(); ++i) {
-    box =
-        raytracer::math::AABB::surrounding(box, triangles_[i].getBoundingBox());
+    box = raytracer::math::AABB::surrounding(box,
+                                             triangles_[i]->getBoundingBox());
   }
   bboxDirty_ = false;
   cachedBox_ = box;
@@ -47,8 +65,21 @@ raytracer::math::AABB Mesh::getBoundingBox() const {
 
 void Mesh::applyTransformation(const ITransformation& transform) {
   for (auto& triangle : triangles_) {
-    triangle.applyTransformation(transform);
+    triangle->applyTransformation(transform);
   }
   bboxDirty_ = true;
 }
 }  // namespace raytracer::components::primitives
+
+extern "C" void createPrimitive(
+    raytracer::core::registry::Registry<IObject>& registry) {
+  registry.registerType(
+      "mesh", [](const libconfig::Setting&) -> std::shared_ptr<IObject> {
+        return std::make_shared<raytracer::components::primitives::Mesh>();
+      });
+}
+
+extern "C" void destroyPrimitive(
+    gsl::owner<raytracer::components::primitives::Mesh*> obj) {
+  delete obj;
+}

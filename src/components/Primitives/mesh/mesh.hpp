@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <memory>
 #include <vector>
 #include "components/Primitives/IObject.hpp"
 #include "components/Primitives/triangle/Triangle.hpp"
@@ -15,14 +16,13 @@ namespace raytracer::components::primitives {
 class Mesh : public IObject {
  public:
   Mesh() = default;
-  explicit Mesh(const std::vector<Triangle>& triangles)
-      : triangles_(triangles) {}
+  explicit Mesh(std::vector<std::shared_ptr<Triangle>> triangles);
   ~Mesh() override = default;
 
-  Mesh(const Mesh&);
-  Mesh& operator=(const Mesh&);
-  Mesh(Mesh&&) noexcept;
-  Mesh& operator=(Mesh&&) noexcept;
+  Mesh(const Mesh&) = delete;
+  Mesh& operator=(const Mesh&) = delete;
+  Mesh(Mesh&&) = delete;
+  Mesh& operator=(Mesh&&) = delete;
 
   bool hits(const raytracer::math::Ray& ray, double tMin, double tMax,
             raytracer::math::HitRecord& rec) const override;
@@ -31,13 +31,11 @@ class Mesh : public IObject {
 
   void applyTransformation(const ITransformation& transform) override;
 
-  void addTriangle(const Triangle& triangle) {
-    triangles_.push_back(triangle);
-    bboxDirty_ = true;
-  }
+  void addTriangle(std::shared_ptr<Triangle> triangle);
 
  private:
-  std::vector<raytracer::components::primitives::Triangle> triangles_;
+  std::vector<std::shared_ptr<raytracer::components::primitives::Triangle>>
+      triangles_;
   mutable bool bboxDirty_ = true;
   mutable raytracer::math::AABB cachedBox_;
 };

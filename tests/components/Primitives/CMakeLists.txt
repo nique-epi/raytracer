@@ -24,3 +24,12 @@ raytracer_add_test(
 	INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
 	EXPORT_DYNAMIC
 )
+
+raytracer_add_test(
+	NAME mesh_plugin_test
+	SOURCES MeshPluginTest.cpp
+	PLUGINS raytracer_mesh_primitive
+	LIBS raytracer_core raytracer_plugin raytracer_math config++
+	INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
+	EXPORT_DYNAMIC
+)
