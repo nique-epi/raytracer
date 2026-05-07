@@ -19,10 +19,10 @@ class Triangle : public IObject {
            const math::Point3D& vertex2, std::shared_ptr<IMaterial> material);
   ~Triangle() override;
 
-  Triangle(const Triangle&) = delete;
-  Triangle& operator=(const Triangle&) = delete;
-  Triangle(Triangle&&) = delete;
-  Triangle& operator=(Triangle&&) = delete;
+  Triangle(const Triangle&);
+  Triangle& operator=(const Triangle&);
+  Triangle(Triangle&&) noexcept;
+  Triangle& operator=(Triangle&&) noexcept;
 
   bool hits(const raytracer::math::Ray& ray, double tMin, double tMax,
             raytracer::math::HitRecord& rec) const override;

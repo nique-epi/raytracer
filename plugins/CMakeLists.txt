@@ -163,3 +163,23 @@ set_target_properties(raytracer_triangle_primitive
 )
 
 raytracer_enable_target_warnings(raytracer_triangle_primitive)
+
+add_library(raytracer_mesh_primitive SHARED
+	../src/components/Primitives/mesh/Mesh.cpp
+)
+
+target_link_libraries(raytracer_mesh_primitive
+	PRIVATE
+		raytracer_math
+		raytracer_plugin
+)
+
+set_target_properties(raytracer_mesh_primitive
+	PROPERTIES
+		PREFIX ""
+		OUTPUT_NAME "Mesh"
+		SUFFIX ".so"
+		LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/plugins"
+)
+
+raytracer_enable_target_warnings(raytracer_mesh_primitive)
