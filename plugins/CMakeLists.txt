@@ -143,3 +143,23 @@ set_target_properties(raytracer_directional_light
 )
 
 raytracer_enable_target_warnings(raytracer_directional_light)
+
+add_library(raytracer_triangle_primitive SHARED
+	../src/components/Primitives/triangle/Triangle.cpp
+)
+
+target_link_libraries(raytracer_triangle_primitive
+	PRIVATE
+		raytracer_math
+		raytracer_plugin
+)
+
+set_target_properties(raytracer_triangle_primitive
+	PROPERTIES
+		PREFIX ""
+		OUTPUT_NAME "Triangle"
+		SUFFIX ".so"
+		LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/plugins"
+)
+
+raytracer_enable_target_warnings(raytracer_triangle_primitive)

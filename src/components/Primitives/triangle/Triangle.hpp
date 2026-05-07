@@ -8,12 +8,15 @@
 #pragma once
 
 #include "components/Primitives/IObject.hpp"
+#include "utils/math/Vector3D.hpp"
 
-namespace raytracer::primitives {
+namespace raytracer::components::primitives {
 
 class Triangle : public IObject {
  public:
   Triangle();
+  Triangle(const math::Point3D& vertex0, const math::Point3D& vertex1,
+           const math::Point3D& vertex2, std::shared_ptr<IMaterial> material);
   ~Triangle() override;
 
   Triangle(const Triangle&) = delete;
@@ -27,6 +30,10 @@ class Triangle : public IObject {
   [[nodiscard]] raytracer::math::AABB getBoundingBox() const override;
 
   void applyTransformation(const ITransformation& transform) override;
+
+ private:
+  std::shared_ptr<IMaterial> material_;
+  raytracer::math::Point3D vertex0_, vertex1_, vertex2_;
 };
 
-}  // namespace raytracer::primitives
+}  // namespace raytracer::components::primitives
