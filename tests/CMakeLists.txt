@@ -10,9 +10,74 @@ set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
 set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+include(GoogleTest)
+
+add_subdirectory(helpers)
+
+function(raytracer_add_test)
+	set(options EXPORT_DYNAMIC)
+	set(oneValueArgs NAME)
+	set(multiValueArgs SOURCES PLUGINS LIBS INCLUDES)
+	cmake_parse_arguments(ARG
+		"${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN}
+	)
+
+	if(NOT ARG_NAME)
+		message(FATAL_ERROR "raytracer_add_test: NAME is required")
+	endif()
+	if(NOT ARG_SOURCES)
+		message(FATAL_ERROR "raytracer_add_test(${ARG_NAME}): SOURCES is required")
+	endif()
+
+	add_executable(${ARG_NAME} ${ARG_SOURCES})
+
+	target_include_directories(${ARG_NAME}
+		PRIVATE
+			${CMAKE_SOURCE_DIR}/src
+			${ARG_INCLUDES}
+	)
+
+	target_link_libraries(${ARG_NAME}
+		PRIVATE
+			raytracer_tests_helpers
+			GTest::gtest_main
+			${ARG_LIBS}
+	)
+
+	if(ARG_EXPORT_DYNAMIC)
+		target_link_options(${ARG_NAME}
+			PRIVATE
+				$<$<PLATFORM_ID:Linux>:-rdynamic>
+		)
+	endif()
+
+	if(ARG_PLUGINS)
+		add_dependencies(${ARG_NAME} ${ARG_PLUGINS})
+		foreach(plugin IN LISTS ARG_PLUGINS)
+			add_custom_command(TARGET ${ARG_NAME} POST_BUILD
+				COMMAND ${CMAKE_COMMAND} -E copy_if_different
+					$<TARGET_FILE:${plugin}>
+					${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_FILE_NAME:${plugin}>
+			)
+		endforeach()
+	endif()
+
+	raytracer_enable_target_warnings(${ARG_NAME})
+
+	set_target_properties(${ARG_NAME}
+		PROPERTIES
+			RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+	)
+
+	gtest_discover_tests(${ARG_NAME}
+		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+	)
+endfunction()
+
+
 add_executable(raytracer_tests
   utils/math/Vector3DTest.cpp
-	utils/math/MatrixTest.cpp
+  utils/math/MatrixTest.cpp
   utils/math/RayTest.cpp
   utils/math/ColorTest.cpp
   utils/math/HitRecordTest.cpp
@@ -33,7 +98,6 @@ add_executable(raytracer_tests
   ArgsParserTest.cpp
   fixtures/SphereFixture.cpp
   fixtures/OrthoCameraFixture.cpp
-
 )
 
 target_include_directories(raytracer_tests
@@ -50,6 +114,7 @@ target_compile_definitions(raytracer_tests
 target_link_libraries(raytracer_tests
   PRIVATE
     raytracer_src
+    raytracer_tests_helpers
     GTest::gtest_main
 )
 
@@ -60,7 +125,6 @@ target_sources(raytracer_tests PRIVATE
 
 raytracer_enable_target_warnings(raytracer_tests)
 
-include(GoogleTest)
 gtest_discover_tests(raytracer_tests)
 
 add_executable(plugin_loader_test
@@ -100,130 +164,8 @@ set_tests_properties(plugin_loader_test PROPERTIES
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-add_executable(camera_plugin_test
-	components/camera/PerspectiveCameraPluginTest.cpp
-)
-
-target_include_directories(camera_plugin_test
-	PRIVATE
-		${CMAKE_SOURCE_DIR}/src
-)
-
-target_link_libraries(camera_plugin_test PRIVATE raytracer_core raytracer_math GTest::gtest_main ${CMAKE_DL_LIBS})
-
-
-add_dependencies(camera_plugin_test raytracer_perspective_camera)
-add_custom_command(TARGET camera_plugin_test POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy_if_different
-		$<TARGET_FILE:raytracer_perspective_camera>
-		${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_FILE_NAME:raytracer_perspective_camera>
-)
-
-raytracer_enable_target_warnings(camera_plugin_test)
-
-set_target_properties(camera_plugin_test PROPERTIES
-	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-)
-
-gtest_discover_tests(camera_plugin_test
-	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-)
-
-add_executable(diffuse_plugin_test
-	components/material/DiffusePluginTest.cpp
-)
-
-target_include_directories(diffuse_plugin_test
-	PRIVATE
-		${CMAKE_SOURCE_DIR}/src
-		${CMAKE_SOURCE_DIR}/tests/components/material
-)
-
-target_link_libraries(diffuse_plugin_test PRIVATE raytracer_core raytracer_math GTest::gtest_main ${CMAKE_DL_LIBS})
-
-add_dependencies(diffuse_plugin_test DiffuseMaterial)
-
-add_custom_command(TARGET diffuse_plugin_test POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy_if_different
-		$<TARGET_FILE:DiffuseMaterial>
-		${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_FILE_NAME:DiffuseMaterial>
-)
-
-raytracer_enable_target_warnings(diffuse_plugin_test)
-
-set_target_properties(diffuse_plugin_test PROPERTIES
-	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-)
-
-gtest_discover_tests(diffuse_plugin_test
-	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-)
-
-add_executable(rotation_transformation_test
-	components/Transformations/RotationTransformationTests.cpp
-)
-
-target_include_directories(rotation_transformation_test
-	PRIVATE
-		${CMAKE_SOURCE_DIR}/src
-)
-
-target_link_libraries(rotation_transformation_test PRIVATE raytracer_rotation raytracer_math GTest::gtest_main)
-
-raytracer_enable_target_warnings(rotation_transformation_test)
-
-set_target_properties(rotation_transformation_test PROPERTIES
-	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-)
-
-gtest_discover_tests(rotation_transformation_test
-	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-)
-
-add_executable(translation_transformation_test
-	components/Transformations/TranslationTransformationTests.cpp
-)
-
-target_include_directories(translation_transformation_test
-	PRIVATE
-		${CMAKE_SOURCE_DIR}/src
-)
-
-target_link_libraries(translation_transformation_test PRIVATE raytracer_translation raytracer_math GTest::gtest_main)
-
-raytracer_enable_target_warnings(translation_transformation_test)
-
-set_target_properties(translation_transformation_test PROPERTIES
-	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-)
-
-gtest_discover_tests(translation_transformation_test)
-add_executable(sphere_plugin_test
-	components/Primitives/SpherePluginTest.cpp
-)
-
-target_include_directories(sphere_plugin_test
-	PRIVATE
-		${CMAKE_SOURCE_DIR}/src
-		${CMAKE_SOURCE_DIR}/tests/components/Primitives
-)
-
-target_link_libraries(sphere_plugin_test PRIVATE raytracer_core raytracer_plugin raytracer_math config++ GTest::gtest_main)
-target_link_options(sphere_plugin_test PRIVATE $<$<PLATFORM_ID:Linux>:-rdynamic>)
-
-add_dependencies(sphere_plugin_test Sphere)
-add_custom_command(TARGET sphere_plugin_test POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy_if_different
-		$<TARGET_FILE:Sphere>
-		${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_FILE_NAME:Sphere>
-)
-
-raytracer_enable_target_warnings(sphere_plugin_test)
-
-set_target_properties(sphere_plugin_test PROPERTIES
-	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-)
-
-gtest_discover_tests(sphere_plugin_test
-	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-)
+add_subdirectory(components/camera)
+add_subdirectory(components/light)
+add_subdirectory(components/material)
+add_subdirectory(components/Primitives)
+add_subdirectory(components/Transformations)
