@@ -2,6 +2,7 @@ add_library(raytracer_scene STATIC
   CFGSceneLoader.cpp
   SceneLoaderFactory.cpp
   SceneBuilder.cpp
+  Scene.cpp
 )
 
 target_include_directories(raytracer_scene
@@ -13,6 +14,7 @@ target_include_directories(raytracer_scene
 target_link_libraries(raytracer_scene
   PUBLIC
     raytracer_core
+    raytracer_components
     config++
     config
 )
