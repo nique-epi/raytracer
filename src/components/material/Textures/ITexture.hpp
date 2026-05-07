@@ -5,15 +5,12 @@
  ** ITexture
  */
 
-/**
- * @file ITexture.hpp
- * @brief Pure interface for texture sampling.
- */
-
 #pragma once
 
 #include "utils/math/Color.hpp"
 #include "utils/math/Vector3D.hpp"
+
+namespace raytracer::materials {
 
 /**
  * @brief Pure interface for texture sampling.
@@ -42,9 +39,11 @@ class ITexture {
    *
    * @param [in] u Texture horizontal coordinate (normalized, [0, 1]).
    * @param [in] v Texture vertical coordinate (normalized, [0, 1]).
-   * @param [in] point 3-D position used for texture modulation (e.g., displacement).
+   * @param [in] point 3-D position used for texture modulation (e.g.,
+   * displacement).
    * @returns The sampled color at (u, v) at position @p point.
    */
   [[nodiscard]] virtual raytracer::math::Color sample(
       double u, double v, const raytracer::math::Vector3D& point) const = 0;
 };
+}  // namespace raytracer::materials
