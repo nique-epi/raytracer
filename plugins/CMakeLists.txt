@@ -165,7 +165,7 @@ set_target_properties(raytracer_triangle_primitive
 raytracer_enable_target_warnings(raytracer_triangle_primitive)
 
 add_library(raytracer_mesh_primitive SHARED
-	../src/components/Primitives/mesh/Mesh.cpp
+	../src/components/Primitives/mesh/mesh.cpp
 )
 
 target_link_libraries(raytracer_mesh_primitive
