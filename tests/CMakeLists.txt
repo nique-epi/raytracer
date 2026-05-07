@@ -98,6 +98,7 @@ add_executable(raytracer_tests
   ArgsParserTest.cpp
   fixtures/SphereFixture.cpp
   fixtures/OrthoCameraFixture.cpp
+  scene/fixtures/NullLightFixture.cpp
 )
 
 target_include_directories(raytracer_tests

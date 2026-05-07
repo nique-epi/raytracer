@@ -9,17 +9,11 @@
 #include <memory>
 #include "../fixtures/OrthoCameraFixture.hpp"
 #include "../fixtures/SphereFixture.hpp"
+#include "fixtures/NullLightFixture.hpp"
 #include "scene/Scene.hpp"
 #include "utils/math/HitRecord.hpp"
 #include "utils/math/Ray.hpp"
 #include "utils/math/Vector3D.hpp"
-
-class ILight {
- public:
-  virtual ~ILight() = default;
-};
-
-class StubLight : public ILight {};
 
 using namespace raytracer::math;
 using namespace raytracer::scene;
@@ -68,8 +62,8 @@ TEST(SceneTest, GetLightsEmptyByDefault) {
 
 TEST(SceneTest, AddLightIncreasesCount) {
   Scene scene;
-  scene.addLight(std::make_shared<StubLight>());
-  scene.addLight(std::make_shared<StubLight>());
+  scene.addLight(std::make_shared<NullLightFixture>());
+  scene.addLight(std::make_shared<NullLightFixture>());
   EXPECT_EQ(scene.getLights().size(), 2u);
 }
 

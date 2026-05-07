@@ -12,10 +12,9 @@
 #include "components/Primitives/Collection.hpp"
 #include "components/Primitives/IObject.hpp"
 #include "components/camera/ICamera.hpp"
+#include "components/light/ILight.hpp"
 #include "utils/math/HitRecord.hpp"
 #include "utils/math/Ray.hpp"
-
-class ILight;
 
 namespace raytracer::scene {
 
