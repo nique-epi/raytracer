@@ -5,7 +5,7 @@
 ** mesh
 */
 
-#include "components/Primitives/mesh/Mesh.hpp"
+#include "components/Primitives/mesh/mesh.hpp"
 #include <memory>
 #include <utility>
 #include "components/Primitives/IObject.hpp"
