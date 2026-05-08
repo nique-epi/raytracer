@@ -16,10 +16,10 @@ namespace raytracer::components::material {
 class Glossy : public AMaterial {
  public:
   Glossy() = default;
+  ~Glossy() override = default;
 
   Glossy(double fuzz, const math::Color& albedo)
       : fuzz(std::clamp(fuzz, 0.0, 1.0)), albedo(albedo) {}
-  ~Glossy() override;
 
   Glossy(const Glossy&) = delete;
   Glossy& operator=(const Glossy&) = delete;
