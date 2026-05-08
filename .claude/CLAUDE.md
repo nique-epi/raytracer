@@ -214,3 +214,31 @@ ray-generation step.
 **Exemple interdit :** lire `ITransformation.hpp` pour utiliser `apply()` / `applyToNormal()` sans en laisser de trace en mémoire.
 
 **Exemple correct :** après avoir lu `ITransformation.hpp`, mettre à jour `project_component_structure.md` avec la signature de ses méthodes, puis mettre à jour `MEMORY.md`.
+
+### R5 — Pas de préfixe `k` pour les constantes
+
+**Règle :** les constantes (`constexpr`, `const`, valeurs d'`enum`) ne doivent **pas** être préfixées par `k` (style Google). Utiliser un nom direct en `camelCase` ou en `UPPER_SNAKE_CASE` selon le contexte.
+
+**Pourquoi :** le préfixe `k` est une convention Google qui n'apporte rien au-delà de ce que `constexpr` / `const` / `enum` expriment déjà au type system. Elle pollue la lecture sans ajouter d'information. Le projet utilise déjà des constantes sans préfixe (`epsilon` dans `Constants.hpp`, `DEFAULT_FOV` dans `PerspectiveCamera.hpp`).
+
+**À appliquer :** toute nouvelle constante. Les constantes existantes en `kFoo` doivent être renommées dès qu'on touche au fichier.
+
+**Exemple interdit :**
+
+```cpp
+constexpr double kShadowRayTMin = 0.001;
+constexpr int kMaxDepth = 10;
+constexpr double kEpsilon = 1e-9;
+```
+
+**Exemple correct :**
+
+```cpp
+constexpr double shadowRayTMin = 0.001;
+constexpr int maxDepth = 10;
+constexpr double epsilon = 1e-9;
+
+// UPPER_SNAKE_CASE accepté pour les constantes "publiques" exposées
+// dans un header :
+constexpr double DEFAULT_FOV = 90.0;
+```
