@@ -6,6 +6,7 @@
 */
 
 #include <gtest/gtest.h>
+#include <limits>
 #include "fixtures/CylinderPluginFixture.hpp"
 #include "utils/math/HitRecord.hpp"
 #include "utils/math/Ray.hpp"
@@ -67,6 +68,16 @@ TEST_F(CylinderPluginFixture, FrontFaceNormal) {
   HitRecord rec;
   ASSERT_TRUE(cylinder->hits(ray, 0.001, 1000.0, rec));
   EXPECT_TRUE(rec.frontFace);
+}
+
+TEST_F(CylinderPluginFixture, HeightMissWithInfiniteTMax) {
+  IObject* cylinder = makeCylinder(
+      Vector3D(0.0, 0.0, 0.0), Vector3D(0.0, 1.0, 0.0), radius, height);
+  // Ray aimed at the curved surface but at y=2, well outside [-0.5, 0.5]
+  Ray ray(Vector3D(2.0, 2.0, 0.0), Vector3D(-1.0, 0.0, 0.0));
+  HitRecord rec;
+  const double inf = std::numeric_limits<double>::infinity();
+  EXPECT_FALSE(cylinder->hits(ray, 0.001, inf, rec));
 }
 
 TEST_F(CylinderPluginFixture, BoundingBoxCoversAxis) {

@@ -32,33 +32,46 @@ class Cylinder : public IObject {
   math::Vector3D axis_;
   double radius_;
   double height_;
-  std::shared_ptr<IMaterial> material_;
+  std::shared_ptr<IMaterial> material_ = nullptr;
 
   /**
    * @brief Compute quadratic coefficients for ray-cylinder intersection.
    *
-   * @param [in]  ray    The incoming ray.
-   * @param [out] a      Coefficient of t².
-   * @param [out] halfB  Half-coefficient of t (half-b convention).
-   * @param [out] c      Constant coefficient.
+   * The cylinder surface equation is solved by projecting the ray onto the
+   * plane perpendicular to the axis, reducing the problem to a 2-D circle
+   * intersection. The resulting quadratic is:
+   *   perpDirLengthSq·t² + 2·perpDirOriginDot·t + perpOriginSqMinusRadiusSq = 0
+   *
+   * @param [in]  ray                        The incoming ray.
+   * @param [out] perpDirLengthSq            |D_perp|² — squared length of the
+   *                                         direction component perpendicular
+   *                                         to the cylinder axis.
+   * @param [out] perpDirOriginDot           D_perp · w_perp — dot product of
+   *                                         the perpendicular direction and the
+   *                                         perpendicular origin offset.
+   * @param [out] perpOriginSqMinusRadiusSq  |w_perp|² − r² — squared radial
+   *                                         distance from the axis minus the
+   *                                         squared radius.
    * @returns false if the ray is parallel to the cylinder axis (degenerate).
    */
-  bool computeQuadraticCoeffs(const math::Ray& ray, double& a, double& halfB,
-                              double& c) const;
+  bool computeQuadraticCoeffs(const math::Ray& ray, double& perpDirLengthSq,
+                              double& perpDirOriginDot,
+                              double& perpOriginSqMinusRadiusSq) const;
 
   /**
    * @brief Find the smallest t in [tMin, tMax] that hits the cylinder body.
    *
-   * @param [in] ray    The incoming ray.
-   * @param [in] tMin   Lower bound for t.
-   * @param [in] tMax   Upper bound for t.
-   * @param [in] a      Coefficient of t².
-   * @param [in] halfB  Half-coefficient of t.
-   * @param [in] c      Constant coefficient.
+   * @param [in] ray                        The incoming ray.
+   * @param [in] tMin                       Lower bound for t.
+   * @param [in] tMax                       Upper bound for t.
+   * @param [in] perpDirLengthSq            |D_perp|² — see computeQuadraticCoeffs.
+   * @param [in] perpDirOriginDot           D_perp · w_perp — see computeQuadraticCoeffs.
+   * @param [in] perpOriginSqMinusRadiusSq  |w_perp|² − r² — see computeQuadraticCoeffs.
    * @returns The closest valid t, or -1.0 if no valid root exists.
    */
   double findClosestValidRoot(const math::Ray& ray, double tMin, double tMax,
-                              double a, double halfB, double c) const;
+                              double perpDirLengthSq, double perpDirOriginDot,
+                              double perpOriginSqMinusRadiusSq) const;
 };
 
 }  // namespace raytracer::components::primitives

@@ -11,7 +11,6 @@
 #include <limits>
 #include <memory>
 #include <utility>
-#include "components/Primitives/IObject.hpp"
 #include "components/Transformations/ITransformation.hpp"
 #include "utils/math/AABB.hpp"
 #include "utils/math/Constants.hpp"
@@ -23,6 +22,10 @@ namespace gsl {
 template <typename T>
 using owner = T;
 }  // namespace gsl
+
+namespace {
+constexpr double positiveInfinity = std::numeric_limits<double>::infinity();
+}  // namespace
 
 namespace raytracer::components::primitives {
 
@@ -37,32 +40,37 @@ Cylinder::Cylinder(const math::Vector3D& center, const math::Vector3D& axis,
       height_(height),
       material_(std::move(material)) {}
 
-bool Cylinder::computeQuadraticCoeffs(const math::Ray& ray, double& a,
-                                      double& halfB, double& c) const {
-  const math::Vector3D w = ray.getOrigin() - center_;
+bool Cylinder::computeQuadraticCoeffs(const math::Ray& ray,
+                                      double& perpDirLengthSq,
+                                      double& perpDirOriginDot,
+                                      double& perpOriginSqMinusRadiusSq) const {
+  const math::Vector3D originToCenter = ray.getOrigin() - center_;
   const double dAxisProj = ray.getDirection().dot(axis_);
-  const double wAxisProj = w.dot(axis_);
+  const double originAxisProj = originToCenter.dot(axis_);
   const math::Vector3D dPerp = ray.getDirection() - axis_ * dAxisProj;
-  const math::Vector3D wPerp = w - axis_ * wAxisProj;
+  const math::Vector3D originPerp = originToCenter - axis_ * originAxisProj;
 
-  a = dPerp.dot(dPerp);
-  halfB = dPerp.dot(wPerp);
-  c = wPerp.dot(wPerp) - (radius_ * radius_);
+  perpDirLengthSq = dPerp.dot(dPerp);
+  perpDirOriginDot = dPerp.dot(originPerp);
+  perpOriginSqMinusRadiusSq = originPerp.dot(originPerp) - (radius_ * radius_);
 
-  return a >= epsilon;
+  return perpDirLengthSq >= epsilon;
 }
 
 double Cylinder::findClosestValidRoot(const math::Ray& ray, double tMin,
-                                      double tMax, double a, double halfB,
-                                      double c) const {
-  const double discriminant = (halfB * halfB) - (a * c);
+                                      double tMax, double perpDirLengthSq,
+                                      double perpDirOriginDot,
+                                      double perpOriginSqMinusRadiusSq) const {
+  const double discriminant = (perpDirOriginDot * perpDirOriginDot) -
+                              (perpDirLengthSq * perpOriginSqMinusRadiusSq);
   if (discriminant < 0.0) {
     return -1.0;
   }
 
-  const double sqrtDisc = std::sqrt(discriminant);
-  const double nearRoot = (-halfB - sqrtDisc) / a;
-  const double farRoot = (-halfB + sqrtDisc) / a;
+  const double nearRoot =  // NOLINT(cppcoreguidelines-init-variables)
+      (-perpDirOriginDot - std::sqrt(discriminant)) / perpDirLengthSq;
+  const double farRoot =  // NOLINT(cppcoreguidelines-init-variables)
+      (-perpDirOriginDot + std::sqrt(discriminant)) / perpDirLengthSq;
 
   auto isWithinBounds = [&](double t) -> bool {
     if (t < tMin || t > tMax) {
@@ -76,27 +84,30 @@ double Cylinder::findClosestValidRoot(const math::Ray& ray, double tMin,
     return axialCoord >= -halfH && axialCoord <= halfH;
   };
 
-  double closestT = tMax + 1.0;
+  double closestT = -1.0;
   if (isWithinBounds(nearRoot)) {
     closestT = nearRoot;
   }
-  if (isWithinBounds(farRoot) && farRoot < closestT) {
+  if (isWithinBounds(farRoot) && (closestT < 0.0 || farRoot < closestT)) {
     closestT = farRoot;
   }
-  return closestT > tMax ? -1.0 : closestT;
+  return closestT;
 }
 
 bool Cylinder::hits(const math::Ray& ray, double tMin, double tMax,
                     math::HitRecord& rec) const {
-  double a = 0.0;
-  double halfB = 0.0;
-  double c = 0.0;
+  double perpDirLengthSq = 0.0;
+  double perpDirOriginDot = 0.0;
+  double perpOriginSqMinusRadiusSq = 0.0;
 
-  if (!computeQuadraticCoeffs(ray, a, halfB, c)) {
+  if (!computeQuadraticCoeffs(ray, perpDirLengthSq, perpDirOriginDot,
+                              perpOriginSqMinusRadiusSq)) {
     return false;
   }
 
-  const double closestT = findClosestValidRoot(ray, tMin, tMax, a, halfB, c);
+  const double closestT =
+      findClosestValidRoot(ray, tMin, tMax, perpDirLengthSq, perpDirOriginDot,
+                           perpOriginSqMinusRadiusSq);
   if (closestT < 0.0) {
     return false;
   }
@@ -116,8 +127,8 @@ bool Cylinder::hits(const math::Ray& ray, double tMin, double tMax,
 
 math::AABB Cylinder::getBoundingBox() const {
   if (height_ <= 0.0) {
-    constexpr double inf = std::numeric_limits<double>::infinity();
-    return {{-inf, -inf, -inf}, {inf, inf, inf}};
+    return {{-positiveInfinity, -positiveInfinity, -positiveInfinity},
+            {positiveInfinity, positiveInfinity, positiveInfinity}};
   }
 
   const double halfH = height_ / 2.0;
@@ -138,10 +149,9 @@ void Cylinder::applyTransformation(const ITransformation& /*transform*/) {}
 
 extern "C" gsl::owner<IObject*> createPrimitive(
     const raytracer::math::Vector3D& center,
-    const raytracer::math::Vector3D& axis,
-    double radius, double height) {
-  return new raytracer::components::primitives::Cylinder(
-      center, axis, radius, height, nullptr);
+    const raytracer::math::Vector3D& axis, double radius, double height) {
+  return new raytracer::components::primitives::Cylinder(center, axis, radius,
+                                                         height, nullptr);
 }
 
 extern "C" void destroyPrimitive(gsl::owner<IObject*> obj) { delete obj; }
