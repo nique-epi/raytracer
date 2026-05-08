@@ -17,6 +17,14 @@ raytracer_add_test(
 )
 
 raytracer_add_test(
+	NAME plane_plugin_test
+	SOURCES PlanePluginTest.cpp
+	PLUGINS Plane
+	LIBS raytracer_math
+	INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+raytracer_add_test(
 	NAME cylinder_plugin_test
 	SOURCES CylinderPluginTest.cpp
 	PLUGINS Cylinder
