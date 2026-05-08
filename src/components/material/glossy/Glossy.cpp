@@ -12,9 +12,6 @@
 #include "utils/math/Vector3D.hpp"
 
 namespace raytracer::components::material {
-Glossy::Glossy() = default;
-
-Glossy::~Glossy() = default;
 
 bool Glossy::scatter(const raytracer::math::Ray& in,
                      const raytracer::math::HitRecord& rec,

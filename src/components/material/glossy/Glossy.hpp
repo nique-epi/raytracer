@@ -15,7 +15,8 @@ namespace raytracer::components::material {
 
 class Glossy : public AMaterial {
  public:
-  Glossy();
+  Glossy() = default;
+
   Glossy(double fuzz, const math::Color& albedo)
       : fuzz(std::clamp(fuzz, 0.0, 1.0)), albedo(albedo) {}
   ~Glossy() override;
@@ -33,5 +34,5 @@ class Glossy : public AMaterial {
  private:
   double fuzz{0.0};
   math::Color albedo{1.0, 1.0, 1.0};
-};  // namespace raytracerclassGlossy:public AMaterial
+};
 }  // namespace raytracer::components::material
