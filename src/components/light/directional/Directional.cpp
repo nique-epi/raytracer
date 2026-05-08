@@ -8,6 +8,7 @@
 #include "Directional.hpp"
 #include <limits>
 #include "scene/Scene.hpp"
+#include "utils/math/Constants.hpp"
 #include "utils/math/HitRecord.hpp"
 #include "utils/math/Ray.hpp"
 
@@ -15,17 +16,6 @@ namespace gsl {
 template <typename T>
 using owner = T;
 }  // namespace gsl
-
-namespace {
-
-// Small positive tMin for shadow-ray queries: defends against
-// self-intersection / shadow acne when the ray origin sits on (or
-// very close to) the emitting surface, even after the caller has
-// offset @p point by `normal * epsilon`. Mirrors the 0.001 used in
-// MonoThreadRenderer for primary rays — keep these in sync.
-constexpr double shadowRayTMin = 0.001;
-
-}  // namespace
 
 namespace raytracer::components::light::directional {
 
@@ -55,7 +45,7 @@ bool Directional::isOccluded(const raytracer::math::Vector3D& point,
                              const raytracer::scene::Scene& scene) const {
   const raytracer::math::Ray shadowRay(point, -direction);
   raytracer::math::HitRecord rec;
-  return scene.hit(shadowRay, shadowRayTMin,
+  return scene.hit(shadowRay, raytracer::math::constants::epsilon,
                    std::numeric_limits<double>::infinity(), rec);
 }
 
