@@ -57,8 +57,6 @@ TEST_F(AmbientFixture, IsOccludedAlwaysReturnsFalse) {
   EXPECT_FALSE(light->isOccluded(point, scene));
 }
 
-// === Directional ===================================================
-
 TEST_F(DirectionalLightFixture, ExposesCreateAndDestroyEntryPoints) {
   ASSERT_NE(light, nullptr);
   ASSERT_NE(createFn, nullptr);
@@ -88,9 +86,6 @@ TEST_F(DirectionalLightFixture, IsOccludedReturnsFalseOnEmptyScene) {
 }
 
 TEST_F(DirectionalLightFixture, IsOccludedReturnsTrueWhenSphereBlocksTheLight) {
-  // Default directional light points at (0, -1, 0) → shadow ray from
-  // the origin goes upward (0, +1, 0). A sphere placed above the
-  // origin must intersect that shadow ray.
   raytracer::scene::Scene scene;
   scene.add(std::make_shared<SphereFixture>(
       raytracer::math::Vector3D(0.0, 5.0, 0.0), 1.0));
