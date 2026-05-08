@@ -11,7 +11,6 @@
 #include <memory>
 #include <utility>
 #include "components/Primitives/IObject.hpp"
-#include "core/registry/registry.hpp"
 #include "utils/math/AABB.hpp"
 #include "utils/math/Constants.hpp"
 #include "utils/math/HitRecord.hpp"
@@ -64,14 +63,10 @@ void Plane::applyTransformation(const ITransformation& transform) {
 
 }  // namespace raytracer::components::primitives
 
-extern "C" void createPrimitive(
-    raytracer::core::registry::Registry<IObject>& registry) {
-  registry.registerType(
-      "plane", [](const libconfig::Setting&) -> std::shared_ptr<IObject> {
-        return std::make_shared<raytracer::components::primitives::Plane>(
-            raytracer::math::Vector3D(0.0, 0.0, 0.0),
-            raytracer::math::Vector3D(0.0, 1.0, 0.0), nullptr);
-      });
+extern "C" gsl::owner<IObject*> createPrimitive(
+    const raytracer::math::Vector3D& point,
+    const raytracer::math::Vector3D& normal) {
+  return new raytracer::components::primitives::Plane(point, normal, nullptr);
 }
 
 extern "C" void destroyPrimitive(gsl::owner<IObject*> obj) { delete obj; }
