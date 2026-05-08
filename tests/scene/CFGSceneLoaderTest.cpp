@@ -6,10 +6,15 @@
 */
 
 #include <gtest/gtest.h>
+#include "core/registry/registry.hpp"
 #include "scene/CFGSceneLoader.hpp"
 #include "scene/SceneBuilder.hpp"
 #include "utils/math/RenderSettings.hpp"
 
+using raytracer::core::registry::CameraRegistry;
+using raytracer::core::registry::LightRegistry;
+using raytracer::core::registry::MaterialRegistry;
+using raytracer::core::registry::ObjectRegistry;
 using raytracer::scene::CFGSceneLoader;
 using raytracer::scene::SceneBuilder;
 
@@ -23,11 +28,19 @@ static const std::string EmptyListsCfg = SCENE_FIXTURES_DIR "/empty_lists.cfg";
 static const std::string NoCameraCfg = SCENE_FIXTURES_DIR "/no_camera.cfg";
 static const std::string MalformedCfg = SCENE_FIXTURES_DIR "/malformed.cfg";
 
+class CFGSceneLoaderTest : public ::testing::Test {
+ protected:
+  ObjectRegistry objectRegistry;
+  LightRegistry lightRegistry;
+  CameraRegistry cameraRegistry;
+  MaterialRegistry materialRegistry;
+  CFGSceneLoader loader;
+};
+
 // Given: a fresh CFGSceneLoader.
 // When:  supports() is called with various file extensions.
 // Then:  it returns true only for "cfg" and false for any other extension.
-TEST(CFGSceneLoaderTest, SupportsOnlyCfg) {
-  CFGSceneLoader loader;
+TEST_F(CFGSceneLoaderTest, SupportsOnlyCfg) {
   EXPECT_TRUE(loader.supports("cfg"));
   EXPECT_FALSE(loader.supports("json"));
   EXPECT_FALSE(loader.supports("xml"));
@@ -37,9 +50,9 @@ TEST(CFGSceneLoaderTest, SupportsOnlyCfg) {
 // Given: the canonical example.cfg scene file on disk.
 // When:  load() is called with a fresh builder and settings.
 // Then:  it returns true, indicating the file was parsed without error.
-TEST(CFGSceneLoaderTest, LoadExampleSucceeds) {
-  CFGSceneLoader loader;
-  SceneBuilder builder;
+TEST_F(CFGSceneLoaderTest, LoadExampleSucceeds) {
+  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
+                       materialRegistry);
   raytracer::math::RenderSettings settings;
 
   EXPECT_TRUE(loader.load(ExampleCfg, builder, settings));
@@ -48,10 +61,10 @@ TEST(CFGSceneLoaderTest, LoadExampleSucceeds) {
 // Given: example.cfg declares 2 spheres, 1 plane, 1 ambient light,
 //        1 directional light and 1 camera.
 // When:  load() is called.
-// Then:  the builder has registered exactly that many entities of each type.
-TEST(CFGSceneLoaderTest, LoadExampleContainsExpectedObjects) {
-  CFGSceneLoader loader;
-  SceneBuilder builder;
+// Then:  the builder has recorded exactly that many calls of each type.
+TEST_F(CFGSceneLoaderTest, LoadExampleContainsExpectedObjects) {
+  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
+                       materialRegistry);
   raytracer::math::RenderSettings settings;
 
   loader.load(ExampleCfg, builder, settings);
@@ -67,9 +80,9 @@ TEST(CFGSceneLoaderTest, LoadExampleContainsExpectedObjects) {
 //        imageHeight=1080, samplesPerPixel=4, maxDepth=10.
 // When:  load() is called.
 // Then:  the RenderSettings struct reflects every value defined in the file.
-TEST(CFGSceneLoaderTest, LoadExamplePopulatesSettings) {
-  CFGSceneLoader loader;
-  SceneBuilder builder;
+TEST_F(CFGSceneLoaderTest, LoadExamplePopulatesSettings) {
+  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
+                       materialRegistry);
   raytracer::math::RenderSettings settings;
 
   loader.load(ExampleCfg, builder, settings);
@@ -84,9 +97,9 @@ TEST(CFGSceneLoaderTest, LoadExamplePopulatesSettings) {
 // When:  load() is called with that path.
 // Then:  it catches the libconfig::FileIOException and returns false
 //        (no exception escapes to the caller).
-TEST(CFGSceneLoaderTest, LoadMissingFileReturnsFalse) {
-  CFGSceneLoader loader;
-  SceneBuilder builder;
+TEST_F(CFGSceneLoaderTest, LoadMissingFileReturnsFalse) {
+  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
+                       materialRegistry);
   raytracer::math::RenderSettings settings;
 
   EXPECT_FALSE(loader.load("/nonexistent/path/scene.cfg", builder, settings));
@@ -95,9 +108,9 @@ TEST(CFGSceneLoaderTest, LoadMissingFileReturnsFalse) {
 // Given: a .cfg file containing invalid libconfig syntax.
 // When:  load() is called with that file.
 // Then:  it catches the libconfig::ParseException and returns false.
-TEST(CFGSceneLoaderTest, LoadMalformedFileReturnsFalse) {
-  CFGSceneLoader loader;
-  SceneBuilder builder;
+TEST_F(CFGSceneLoaderTest, LoadMalformedFileReturnsFalse) {
+  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
+                       materialRegistry);
   raytracer::math::RenderSettings settings;
 
   EXPECT_FALSE(loader.load(MalformedCfg, builder, settings));
@@ -106,12 +119,10 @@ TEST(CFGSceneLoaderTest, LoadMalformedFileReturnsFalse) {
 // Given: a .cfg file that has no `settings` block, and a freshly
 //        default-constructed RenderSettings.
 // When:  load() is called.
-// Then:  every field of RenderSettings stays at its compile-time default
-//        (the loader does not reset or overwrite values when the block is
-//        absent).
-TEST(CFGSceneLoaderTest, LoadWithoutSettingsBlockKeepsDefaults) {
-  CFGSceneLoader loader;
-  SceneBuilder builder;
+// Then:  every field of RenderSettings stays at its compile-time default.
+TEST_F(CFGSceneLoaderTest, LoadWithoutSettingsBlockKeepsDefaults) {
+  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
+                       materialRegistry);
   raytracer::math::RenderSettings settings;
   const raytracer::math::RenderSettings defaults;
 
@@ -127,12 +138,10 @@ TEST(CFGSceneLoaderTest, LoadWithoutSettingsBlockKeepsDefaults) {
 
 // Given: a .cfg file whose `settings` block defines only samplesPerPixel.
 // When:  load() is called with a fresh RenderSettings.
-// Then:  samplesPerPixel is updated to the file's value, while every other
-//        field stays at its compile-time default — proving each key is
-//        independently optional inside the block.
-TEST(CFGSceneLoaderTest, LoadWithPartialSettingsKeepsOtherDefaults) {
-  CFGSceneLoader loader;
-  SceneBuilder builder;
+// Then:  samplesPerPixel is updated, while every other field stays at default.
+TEST_F(CFGSceneLoaderTest, LoadWithPartialSettingsKeepsOtherDefaults) {
+  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
+                       materialRegistry);
   raytracer::math::RenderSettings settings;
   const raytracer::math::RenderSettings defaults;
 
@@ -147,11 +156,10 @@ TEST(CFGSceneLoaderTest, LoadWithPartialSettingsKeepsOtherDefaults) {
 
 // Given: a .cfg file with no `primitives` block at all.
 // When:  load() is called.
-// Then:  it returns true (no error) and the builder has zero primitives —
-//        the early-return guard inside parsePrimitives is exercised.
-TEST(CFGSceneLoaderTest, LoadWithoutPrimitivesSucceedsWithNoObjects) {
-  CFGSceneLoader loader;
-  SceneBuilder builder;
+// Then:  it returns true and the builder has zero primitive calls.
+TEST_F(CFGSceneLoaderTest, LoadWithoutPrimitivesSucceedsWithNoObjects) {
+  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
+                       materialRegistry);
   raytracer::math::RenderSettings settings;
 
   EXPECT_TRUE(loader.load(NoPrimitivesCfg, builder, settings));
@@ -159,15 +167,12 @@ TEST(CFGSceneLoaderTest, LoadWithoutPrimitivesSucceedsWithNoObjects) {
   EXPECT_EQ(builder.count("plane"), 0u);
 }
 
-// Given: a .cfg file where every primitive and light list is declared but
-//        empty (e.g. `spheres = ();`), plus a non-empty `camera` block.
+// Given: a .cfg file where every list is declared but empty, plus a camera.
 // When:  load() is called.
-// Then:  it returns true, no primitive or light is registered, and the
-//        camera is still parsed normally — proving that zero-iteration
-//        loops over libconfig::Setting do not crash.
-TEST(CFGSceneLoaderTest, LoadWithEmptyListsSucceedsWithNoObjects) {
-  CFGSceneLoader loader;
-  SceneBuilder builder;
+// Then:  it returns true, no primitive or light is registered, camera is parsed.
+TEST_F(CFGSceneLoaderTest, LoadWithEmptyListsSucceedsWithNoObjects) {
+  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
+                       materialRegistry);
   raytracer::math::RenderSettings settings;
 
   EXPECT_TRUE(loader.load(EmptyListsCfg, builder, settings));
@@ -180,12 +185,10 @@ TEST(CFGSceneLoaderTest, LoadWithEmptyListsSucceedsWithNoObjects) {
 
 // Given: a .cfg file with primitives but no `camera` block.
 // When:  load() is called.
-// Then:  it returns true, no camera is registered, and the rest of the
-//        scene is parsed normally — proving the early-return guard inside
-//        parseCamera is exercised.
-TEST(CFGSceneLoaderTest, LoadWithoutCameraSucceedsWithNoCamera) {
-  CFGSceneLoader loader;
-  SceneBuilder builder;
+// Then:  it returns true, no camera is registered, primitives are parsed.
+TEST_F(CFGSceneLoaderTest, LoadWithoutCameraSucceedsWithNoCamera) {
+  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
+                       materialRegistry);
   raytracer::math::RenderSettings settings;
 
   EXPECT_TRUE(loader.load(NoCameraCfg, builder, settings));

@@ -85,6 +85,7 @@ add_executable(raytracer_tests
   utils/math/RenderSettingsTest.cpp
   utils/math/OpticsTest.cpp
   scene/CFGSceneLoaderTest.cpp
+  scene/SceneBuilderTest.cpp
   scene/SceneTest.cpp
 	scene/background/SolidBackgroundTest.cpp
   core/ExceptionsTest.cpp
@@ -100,6 +101,7 @@ add_executable(raytracer_tests
   fixtures/SphereFixture.cpp
   fixtures/OrthoCameraFixture.cpp
   scene/fixtures/NullLightFixture.cpp
+  scene/fixtures/SceneBuilderFixture.cpp
 )
 
 target_include_directories(raytracer_tests
