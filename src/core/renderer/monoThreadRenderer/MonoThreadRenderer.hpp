@@ -38,8 +38,7 @@ class MonoThreadRenderer : public IRenderer {
 
  private:
   static raytracer::math::Color castRay(const raytracer::math::Ray& ray,
-                                        const components::Collection& scene,
-                                        int depth);
+                                        const Scene& scene, int depth);
   static raytracer::math::Color computeLighting(
       const raytracer::math::Ray& inRay, const raytracer::math::HitRecord& rec);
 

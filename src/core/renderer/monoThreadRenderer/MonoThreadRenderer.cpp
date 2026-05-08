@@ -57,7 +57,7 @@ math::Color MonoThreadRenderer::castRay(const math::Ray& ray,
   // NOLINTNEXTLINE(misc-const-correctness)
   math::HitRecord rec;
   // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
-  if (scene.hits(ray, 0.001, std::numeric_limits<double>::infinity(), rec)) {
+  if (scene.hit(ray, 0.001, std::numeric_limits<double>::infinity(), rec)) {
     return computeLighting(ray, rec);
   }
   return {0, 0, 0};
