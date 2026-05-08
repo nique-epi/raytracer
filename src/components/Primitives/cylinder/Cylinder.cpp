@@ -12,7 +12,7 @@
 #include <memory>
 #include <utility>
 #include "components/Primitives/IObject.hpp"
-#include "core/registry/registry.hpp"
+#include "components/Transformations/ITransformation.hpp"
 #include "utils/math/AABB.hpp"
 #include "utils/math/Constants.hpp"
 #include "utils/math/HitRecord.hpp"
@@ -23,11 +23,6 @@ namespace gsl {
 template <typename T>
 using owner = T;
 }  // namespace gsl
-
-namespace {
-constexpr double defaultRadius = 1.0;
-constexpr double defaultHeight = 1.0;
-}  // namespace
 
 namespace raytracer::components::primitives {
 
@@ -141,15 +136,12 @@ void Cylinder::applyTransformation(const ITransformation& /*transform*/) {}
 
 }  // namespace raytracer::components::primitives
 
-extern "C" void createPrimitive(
-    raytracer::core::registry::Registry<IObject>& registry) {
-  registry.registerType(
-      "cylinder", [](const libconfig::Setting&) -> std::shared_ptr<IObject> {
-        return std::make_shared<raytracer::components::primitives::Cylinder>(
-            raytracer::math::Vector3D(0.0, 0.0, 0.0),
-            raytracer::math::Vector3D(0.0, 1.0, 0.0), defaultRadius,
-            defaultHeight, nullptr);
-      });
+extern "C" gsl::owner<IObject*> createPrimitive(
+    const raytracer::math::Vector3D& center,
+    const raytracer::math::Vector3D& axis,
+    double radius, double height) {
+  return new raytracer::components::primitives::Cylinder(
+      center, axis, radius, height, nullptr);
 }
 
 extern "C" void destroyPrimitive(gsl::owner<IObject*> obj) { delete obj; }
