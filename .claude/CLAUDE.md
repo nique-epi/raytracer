@@ -202,3 +202,15 @@ feat: add Vector3 utilities
 Implements addition, scaling and dot product. Used by the camera
 ray-generation step.
 ```
+
+### R4 — Indexation mémoire à chaque découverte de fichier ou de système
+
+**Règle :** dès qu'un fichier, une interface, un pattern CMake ou un système est **lu ou découvert** au cours d'une session, son contenu essentiel (API, signatures, conventions, emplacement) doit être **indexé ou mis à jour dans les fichiers mémoire** avant la fin de la session.
+
+**Pourquoi :** éviter de re-lire et re-explorer les mêmes fichiers à chaque nouvelle conversation, ce qui consomme des crédits inutilement. Chaque re-découverte est un coût payé deux fois.
+
+**À appliquer :** systématiquement après avoir lu un `.hpp`, `.cpp`, `CMakeLists.txt`, fixture de test, interface ou après avoir compris un pattern non encore documenté en mémoire.
+
+**Exemple interdit :** lire `ITransformation.hpp` pour utiliser `apply()` / `applyToNormal()` sans en laisser de trace en mémoire.
+
+**Exemple correct :** après avoir lu `ITransformation.hpp`, mettre à jour `project_component_structure.md` avec la signature de ses méthodes, puis mettre à jour `MEMORY.md`.

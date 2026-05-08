@@ -125,6 +125,25 @@ set_target_properties(Cone
 
 raytracer_enable_target_warnings(Cone)
 
+add_library(Plane SHARED
+	../src/components/Primitives/plane/Plane.cpp
+)
+
+target_link_libraries(Plane
+	PRIVATE
+		raytracer_math
+		raytracer_plugin
+)
+
+set_target_properties(Plane
+	PROPERTIES
+		PREFIX ""
+		SUFFIX ".so"
+		LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/plugins"
+)
+
+raytracer_enable_target_warnings(Plane)
+
 add_library(raytracer_ambient_light SHARED
 	../src/components/light/ambient/AmbientLight.cpp
 )
