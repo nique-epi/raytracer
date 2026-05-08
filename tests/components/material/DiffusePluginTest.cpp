@@ -31,9 +31,10 @@ HitRecord makeHitRecord() {
 }  // namespace
 
 TEST_F(DiffusePluginFixture, ExposesCreateAndDestroyEntryPoints) {
-  IMaterial* another = createFn();
+  const raytracer::math::Color albedo(1.0, 1.0, 1.0);
+  IMaterial* another = createFn_(albedo);
   ASSERT_NE(another, nullptr);
-  destroyFn(another);
+  destroyFn_(another);
 }
 
 TEST_F(DiffusePluginFixture, ScatterAttenuationEqualsAlbedo) {
