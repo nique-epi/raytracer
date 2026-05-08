@@ -15,3 +15,12 @@ raytracer_add_test(
 	INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
 	EXPORT_DYNAMIC
 )
+
+raytracer_add_test(
+	NAME plane_plugin_test
+	SOURCES PlanePluginTest.cpp
+	PLUGINS Plane
+	LIBS raytracer_core raytracer_plugin raytracer_math config++
+	INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
+	EXPORT_DYNAMIC
+)
