@@ -170,6 +170,7 @@ add_library(raytracer_directional_light SHARED
 target_link_libraries(raytracer_directional_light
 	PRIVATE
 		raytracer_light
+		raytracer_scene
 )
 
 set_target_properties(raytracer_directional_light
