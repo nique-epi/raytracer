@@ -6,7 +6,7 @@
 */
 
 #include <gtest/gtest.h>
-#include <stdexcept>
+#include "core/Exceptions.hpp"
 #include "core/registry/registry.hpp"
 #include "fixtures/SceneBuilderFixture.hpp"
 #include "scene/SceneBuilder.hpp"
@@ -98,7 +98,7 @@ TEST_F(SceneBuilderFixture, BuildThrowsWhenNoCamera) {
   SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
                        materialRegistry);
   builder.addLight("ambient", *stubSetting);
-  EXPECT_THROW(builder.build(), std::runtime_error);
+  EXPECT_THROW(builder.build(), raytracer::core::RaytracerException);
 }
 
 // Given: a builder with no lights added.
@@ -108,7 +108,7 @@ TEST_F(SceneBuilderFixture, BuildThrowsWhenNoLights) {
   SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
                        materialRegistry);
   builder.addCamera(*stubSetting);
-  EXPECT_THROW(builder.build(), std::runtime_error);
+  EXPECT_THROW(builder.build(), raytracer::core::RaytracerException);
 }
 
 // Given: a completely empty builder.
@@ -117,7 +117,7 @@ TEST_F(SceneBuilderFixture, BuildThrowsWhenNoLights) {
 TEST_F(SceneBuilderFixture, BuildThrowsWhenEmpty) {
   SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
                        materialRegistry);
-  EXPECT_THROW(builder.build(), std::runtime_error);
+  EXPECT_THROW(builder.build(), raytracer::core::RaytracerException);
 }
 
 // Given: a builder where an unregistered object type is requested.

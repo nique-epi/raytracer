@@ -7,7 +7,6 @@
 
 #include "SceneBuilder.hpp"
 #include <iostream>
-#include <stdexcept>
 #include "core/Exceptions.hpp"
 #include "scene/Scene.hpp"
 
@@ -69,11 +68,11 @@ void SceneBuilder::addCamera(const libconfig::Setting& cfg) {
 
 std::shared_ptr<Scene> SceneBuilder::build() {
   if (!_scene->getCamera()) {
-    throw std::runtime_error(
+    throw raytracer::core::RaytracerException(
         "SceneBuilder::build: scene has no camera defined");
   }
   if (_scene->getLights().empty()) {
-    throw std::runtime_error(
+    throw raytracer::core::RaytracerException(
         "SceneBuilder::build: scene has no light sources defined");
   }
   return _scene;
