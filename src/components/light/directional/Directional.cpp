@@ -16,6 +16,17 @@ template <typename T>
 using owner = T;
 }  // namespace gsl
 
+namespace {
+
+// Small positive tMin for shadow-ray queries: defends against
+// self-intersection / shadow acne when the ray origin sits on (or
+// very close to) the emitting surface, even after the caller has
+// offset @p point by `normal * epsilon`. Mirrors the 0.001 used in
+// MonoThreadRenderer for primary rays — keep these in sync.
+constexpr double kShadowRayTMin = 0.001;
+
+}  // namespace
+
 namespace raytracer::components::light::directional {
 
 Directional::Directional() = default;
@@ -44,7 +55,7 @@ bool Directional::isOccluded(const raytracer::math::Vector3D& point,
                              const raytracer::scene::Scene& scene) const {
   const raytracer::math::Ray shadowRay(point, -direction);
   raytracer::math::HitRecord rec;
-  return scene.hit(shadowRay, 0.0,
+  return scene.hit(shadowRay, kShadowRayTMin,
                    std::numeric_limits<double>::infinity(), rec);
 }
 
