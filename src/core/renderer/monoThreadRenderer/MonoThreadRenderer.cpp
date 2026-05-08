@@ -15,7 +15,7 @@
 namespace raytracer::core {
 
 components::Image MonoThreadRenderer::render(
-    const Scene& scene, const ICamera& camera,
+    const raytracer::scene::Scene& scene, const ICamera& camera,
     const math::RenderSettings& settings) {
   const int width = settings.imageWidth;
   const int height = settings.imageHeight;
@@ -50,14 +50,15 @@ void MonoThreadRenderer::setProgressCallback(std::function<void(double)> fn) {
 }
 
 math::Color MonoThreadRenderer::castRay(const math::Ray& ray,
-                                        const Scene& scene, int depth) {
+                                        const raytracer::scene::Scene& scene,
+                                        int depth) {
   if (depth <= 0) {
     return {0, 0, 0};
   }
   // NOLINTNEXTLINE(misc-const-correctness)
   math::HitRecord rec;
   // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
-  if (scene.hits(ray, 0.001, std::numeric_limits<double>::infinity(), rec)) {
+  if (scene.hit(ray, 0.001, std::numeric_limits<double>::infinity(), rec)) {
     return computeLighting(ray, rec);
   }
   return {0, 0, 0};

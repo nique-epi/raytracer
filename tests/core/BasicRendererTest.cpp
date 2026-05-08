@@ -19,7 +19,7 @@ static_assert(std::is_base_of_v<raytracer::core::IRenderer,
                                 raytracer::core::MonoThreadRenderer>);
 
 TEST(MonoThreadRendererTest, RendersOneSphereAndHashStable) {
-  raytracer::components::Collection scene;
+  raytracer::scene::Scene scene;
 
   auto sphere =
       std::make_shared<SphereFixture>(raytracer::math::Vector3D(0, 0, -2), 1.0);
