@@ -18,16 +18,16 @@ SceneBuilder::SceneBuilder(
     raytracer::core::registry::CameraRegistry& cameras,
     raytracer::core::registry::MaterialRegistry& materials)
     : _scene(std::make_shared<Scene>()),
-      _objectRegistry(&objects),
-      _lightRegistry(&lights),
-      _cameraRegistry(&cameras),
-      _materialRegistry(&materials) {}
+      _objectRegistry(objects),
+      _lightRegistry(lights),
+      _cameraRegistry(cameras),
+      _materialRegistry(materials) {}
 
 void SceneBuilder::addObject(const std::string& type,
                              const libconfig::Setting& cfg) {
   _typeCounts[type]++;
   try {
-    auto obj = _objectRegistry->create(type, cfg);
+    auto obj = _objectRegistry.get().create(type, cfg);
     if (obj) {
       _scene->add(obj);
     }
@@ -41,7 +41,7 @@ void SceneBuilder::addLight(const std::string& type,
                             const libconfig::Setting& cfg) {
   _typeCounts[type]++;
   try {
-    auto light = _lightRegistry->create(type, cfg);
+    auto light = _lightRegistry.get().create(type, cfg);
     if (light) {
       _scene->addLight(light);
     }
@@ -56,7 +56,7 @@ void SceneBuilder::addCamera(const libconfig::Setting& cfg) {
   std::string type = "perspective";
   cfg.lookupValue("type", type);
   try {
-    auto camera = _cameraRegistry->create(type, cfg);
+    auto camera = _cameraRegistry.get().create(type, cfg);
     if (camera) {
       _scene->setCamera(camera);
     }

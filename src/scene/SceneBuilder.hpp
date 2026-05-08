@@ -6,6 +6,7 @@
 */
 
 #pragma once
+#include <functional>
 #include <libconfig.h++>
 #include <map>
 #include <memory>
@@ -33,10 +34,14 @@ class SceneBuilder {
 
  private:
   std::shared_ptr<Scene> _scene;
-  raytracer::core::registry::ObjectRegistry* _objectRegistry;
-  raytracer::core::registry::LightRegistry* _lightRegistry;
-  raytracer::core::registry::CameraRegistry* _cameraRegistry;
-  [[maybe_unused]] raytracer::core::registry::MaterialRegistry*
+  std::reference_wrapper<raytracer::core::registry::ObjectRegistry>
+      _objectRegistry;
+  std::reference_wrapper<raytracer::core::registry::LightRegistry>
+      _lightRegistry;
+  std::reference_wrapper<raytracer::core::registry::CameraRegistry>
+      _cameraRegistry;
+  [[maybe_unused]] std::reference_wrapper<
+      raytracer::core::registry::MaterialRegistry>
       _materialRegistry;
   std::map<std::string, std::size_t> _typeCounts;
 };
