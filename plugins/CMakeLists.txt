@@ -35,6 +35,25 @@ set_target_properties(DiffuseMaterial
 
 raytracer_enable_target_warnings(DiffuseMaterial)
 
+add_library(GlossyMaterial SHARED
+	../src/components/material/glossy/Glossy.cpp
+	../src/components/material/abstract/AMaterial.cpp
+)
+
+target_link_libraries(GlossyMaterial
+	PRIVATE
+		raytracer_material
+)
+
+set_target_properties(GlossyMaterial
+	PROPERTIES
+		PREFIX ""
+		SUFFIX ".so"
+		LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/plugins"
+)
+
+raytracer_enable_target_warnings(GlossyMaterial)
+
 add_library(raytracer_rotation_transformation SHARED
     ../src/components/Transformations/Rotation/Rotation.cpp
 )

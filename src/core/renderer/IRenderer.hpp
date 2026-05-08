@@ -11,11 +11,12 @@
 #include "components/Primitives/Collection/Collection.hpp"
 #include "components/camera/ICamera.hpp"
 #include "components/image/Image.hpp"
+#include "scene/Scene.hpp"
 #include "utils/math/RenderSettings.hpp"
 
 namespace raytracer::core {
 
-using Scene = components::Collection;
+using Scene = raytracer::scene::Scene;
 
 class IRenderer {
  public:

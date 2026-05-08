@@ -10,6 +10,8 @@
 #include "components/material/abstract/AMaterial.hpp"
 #include "utils/math/Color.hpp"
 
+namespace raytracer::components::material {
+
 /**
  * @brief Lambertian diffuse material.
  *
@@ -35,3 +37,5 @@ class DiffuseMaterial : public AMaterial {
  private:
   raytracer::math::Color albedo;
 };
+
+}  // namespace raytracer::components::material

@@ -7,6 +7,7 @@
 
 #include "Vector3D.hpp"
 #include <cmath>
+#include <random>
 #include "constants/Errors.hpp"
 #include "core/Exceptions.hpp"
 
@@ -32,7 +33,8 @@ double Vector3D::length() const { return std::sqrt(lengthSquared()); }
 Vector3D Vector3D::normalize() const {
   const double len = length();
   if (len == 0.0) {
-    throw raytracer::core::RaytracerException(raytracer::constants::errors::MATH_VECTOR_ZERO_NORMALIZE);
+    throw raytracer::core::RaytracerException(
+        raytracer::constants::errors::MATH_VECTOR_ZERO_NORMALIZE);
   }
   return {x / len, y / len, z / len};
 }
@@ -88,5 +90,17 @@ Vector3D& Vector3D::operator/=(double scalar) {
 }
 
 Vector3D operator*(double scalar, const Vector3D& v) { return v * scalar; }
+
+Vector3D Vector3D::randomInUnitSphere() {
+  thread_local std::mt19937 gen(std::random_device{}());
+  thread_local std::uniform_real_distribution<double> dist(-1.0, 1.0);
+
+  while (true) {
+    Vector3D p(dist(gen), dist(gen), dist(gen));
+    if (p.lengthSquared() < 1.0) {
+      return p;
+    }
+  }
+}
 
 }  // namespace raytracer::math

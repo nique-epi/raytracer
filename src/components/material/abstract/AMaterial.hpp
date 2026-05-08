@@ -42,7 +42,7 @@ class AMaterial : public IMaterial {
    *
    * @returns Color(0, 0, 0).
    */
-  raytracer::math::Color emitted() const override;
+  [[nodiscard]] raytracer::math::Color emitted() const override;
 };
 
 #endif  // MATERIAL_ABSTRACT_AMATERIAL_HPP_

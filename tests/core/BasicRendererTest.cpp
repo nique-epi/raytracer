@@ -10,16 +10,16 @@
 #include <type_traits>
 #include "../fixtures/OrthoCameraFixture.hpp"
 #include "../fixtures/SphereFixture.hpp"
-#include "components/Primitives/Collection/Collection.hpp"
 #include "core/renderer/IRenderer.hpp"
 #include "core/renderer/monoThreadRenderer/MonoThreadRenderer.hpp"
+#include "scene/Scene.hpp"
 #include "utils/math/RenderSettings.hpp"
 
 static_assert(std::is_base_of_v<raytracer::core::IRenderer,
                                 raytracer::core::MonoThreadRenderer>);
 
 TEST(MonoThreadRendererTest, RendersOneSphereAndHashStable) {
-  raytracer::components::Collection scene;
+  raytracer::scene::Scene scene;
 
   auto sphere =
       std::make_shared<SphereFixture>(raytracer::math::Vector3D(0, 0, -2), 1.0);
