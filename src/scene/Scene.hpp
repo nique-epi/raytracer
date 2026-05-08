@@ -15,12 +15,13 @@
 #include "components/light/ILight.hpp"
 #include "utils/math/HitRecord.hpp"
 #include "utils/math/Ray.hpp"
+#include "background/IBackground.hpp"
 
 namespace raytracer::scene {
 
 class Scene {
  public:
-  Scene() = default;
+  Scene();
   ~Scene() = default;
 
   Scene(const Scene&) = delete;
@@ -37,11 +38,16 @@ class Scene {
 
   [[nodiscard]] std::shared_ptr<ICamera> getCamera() const;
   [[nodiscard]] const std::vector<std::shared_ptr<ILight>>& getLights() const;
+    [[nodiscard]] std::shared_ptr<raytracer::scene::background::IBackground>
+      getBackground() const;
+    void setBackground(
+      std::shared_ptr<raytracer::scene::background::IBackground> background);
 
  private:
   raytracer::components::Collection _rootCollection;
   std::vector<std::shared_ptr<ILight>> _lights;
   std::shared_ptr<ICamera> _camera;
+  std::shared_ptr<raytracer::scene::background::IBackground> _background;
 };
 
 }  // namespace raytracer::scene

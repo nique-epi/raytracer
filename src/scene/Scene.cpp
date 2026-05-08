@@ -7,6 +7,7 @@
 
 #include "Scene.hpp"
 #include <utility>
+#include "background/Solid/SolidBackground.hpp"
 
 namespace raytracer::scene {
 
@@ -32,5 +33,17 @@ std::shared_ptr<ICamera> Scene::getCamera() const { return _camera; }
 const std::vector<std::shared_ptr<ILight>>& Scene::getLights() const {
   return _lights;
 }
+
+std::shared_ptr<raytracer::scene::background::IBackground> Scene::getBackground() const {
+  return _background;
+}
+
+void Scene::setBackground(std::shared_ptr<raytracer::scene::background::IBackground> background) {
+  _background = std::move(background);
+}
+
+Scene::Scene()
+  : _background(std::make_shared<raytracer::scene::background::SolidBackground>(
+      raytracer::math::Color{0, 0, 0})) {}
 
 }  // namespace raytracer::scene

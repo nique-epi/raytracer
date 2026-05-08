@@ -36,6 +36,8 @@ bool nearZero(const raytracer::math::Vector3D& v) {
 
 }  // namespace
 
+namespace raytracer::components::material {
+
 DiffuseMaterial::DiffuseMaterial(const raytracer::math::Color& albedo)
     : albedo(albedo) {}
 
@@ -52,13 +54,16 @@ bool DiffuseMaterial::scatter(const raytracer::math::Ray& /*in*/,
   return true;
 }
 
+}  // namespace raytracer::components::material
+
 namespace gsl {
 template <typename T>
 using owner = T;
 }  // namespace gsl
 
-extern "C" gsl::owner<IMaterial*> createMaterial() {
-  return new DiffuseMaterial(raytracer::math::Color(1.0, 1.0, 1.0));
+extern "C" gsl::owner<IMaterial*> createMaterial(
+    const raytracer::math::Color& albedo) {
+  return new raytracer::components::material::DiffuseMaterial(albedo);
 }
 
 extern "C" void destroyMaterial(gsl::owner<IMaterial*> mat) { delete mat; }

@@ -3,6 +3,7 @@ add_library(raytracer_scene STATIC
   SceneLoaderFactory.cpp
   SceneBuilder.cpp
   Scene.cpp
+  background/Solid/SolidBackground.cpp
 )
 
 target_include_directories(raytracer_scene
