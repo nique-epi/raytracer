@@ -23,7 +23,7 @@ namespace {
 // very close to) the emitting surface, even after the caller has
 // offset @p point by `normal * epsilon`. Mirrors the 0.001 used in
 // MonoThreadRenderer for primary rays — keep these in sync.
-constexpr double kShadowRayTMin = 0.001;
+constexpr double shadowRayTMin = 0.001;
 
 }  // namespace
 
@@ -55,7 +55,7 @@ bool Directional::isOccluded(const raytracer::math::Vector3D& point,
                              const raytracer::scene::Scene& scene) const {
   const raytracer::math::Ray shadowRay(point, -direction);
   raytracer::math::HitRecord rec;
-  return scene.hit(shadowRay, kShadowRayTMin,
+  return scene.hit(shadowRay, shadowRayTMin,
                    std::numeric_limits<double>::infinity(), rec);
 }
 

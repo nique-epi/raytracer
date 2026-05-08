@@ -15,7 +15,7 @@
 
 namespace {
 
-constexpr double kEpsilon = 1e-9;
+constexpr double epsilon = 1e-9;
 
 }  // namespace
 
@@ -31,9 +31,9 @@ TEST_F(AmbientFixture, IlluminateReturnsColorTimesIntensity) {
 
   const auto color = light->illuminate(point, scene);
 
-  EXPECT_NEAR(color.r, 1.0, kEpsilon);
-  EXPECT_NEAR(color.g, 1.0, kEpsilon);
-  EXPECT_NEAR(color.b, 1.0, kEpsilon);
+  EXPECT_NEAR(color.r, 1.0, epsilon);
+  EXPECT_NEAR(color.g, 1.0, epsilon);
+  EXPECT_NEAR(color.b, 1.0, epsilon);
 }
 
 TEST_F(AmbientFixture, GetDirectionReturnsZeroVectorSentinel) {
@@ -70,10 +70,10 @@ TEST_F(DirectionalLightFixture, GetDirectionReturnsNormalizedDefault) {
 
   const auto dir = light->getDirection(point);
 
-  EXPECT_NEAR(dir.length(), 1.0, kEpsilon);
-  EXPECT_NEAR(dir.x, 0.0, kEpsilon);
-  EXPECT_NEAR(dir.y, -1.0, kEpsilon);
-  EXPECT_NEAR(dir.z, 0.0, kEpsilon);
+  EXPECT_NEAR(dir.length(), 1.0, epsilon);
+  EXPECT_NEAR(dir.x, 0.0, epsilon);
+  EXPECT_NEAR(dir.y, -1.0, epsilon);
+  EXPECT_NEAR(dir.z, 0.0, epsilon);
 }
 
 TEST_F(DirectionalLightFixture, GetIntensityReturnsDefault) {
@@ -106,9 +106,9 @@ TEST_F(DirectionalLightFixture,
 
   const auto color = light->illuminate(point, scene);
 
-  EXPECT_NEAR(color.r, 1.0, kEpsilon);
-  EXPECT_NEAR(color.g, 1.0, kEpsilon);
-  EXPECT_NEAR(color.b, 1.0, kEpsilon);
+  EXPECT_NEAR(color.r, 1.0, epsilon);
+  EXPECT_NEAR(color.g, 1.0, epsilon);
+  EXPECT_NEAR(color.b, 1.0, epsilon);
 }
 
 TEST_F(DirectionalLightFixture, IlluminateReturnsBlackWhenOccluded) {
