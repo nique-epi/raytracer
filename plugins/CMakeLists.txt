@@ -35,6 +35,25 @@ set_target_properties(DiffuseMaterial
 
 raytracer_enable_target_warnings(DiffuseMaterial)
 
+add_library(GlossyMaterial SHARED
+	../src/components/material/glossy/Glossy.cpp
+	../src/components/material/abstract/AMaterial.cpp
+)
+
+target_link_libraries(GlossyMaterial
+	PRIVATE
+		raytracer_material
+)
+
+set_target_properties(GlossyMaterial
+	PROPERTIES
+		PREFIX ""
+		SUFFIX ".so"
+		LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/plugins"
+)
+
+raytracer_enable_target_warnings(GlossyMaterial)
+
 add_library(raytracer_rotation_transformation SHARED
     ../src/components/Transformations/Rotation/Rotation.cpp
 )
@@ -106,6 +125,25 @@ set_target_properties(Cone
 
 raytracer_enable_target_warnings(Cone)
 
+add_library(Plane SHARED
+	../src/components/Primitives/plane/Plane.cpp
+)
+
+target_link_libraries(Plane
+	PRIVATE
+		raytracer_math
+		raytracer_plugin
+)
+
+set_target_properties(Plane
+	PROPERTIES
+		PREFIX ""
+		SUFFIX ".so"
+		LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/plugins"
+)
+
+raytracer_enable_target_warnings(Plane)
+
 add_library(raytracer_ambient_light SHARED
 	../src/components/light/ambient/AmbientLight.cpp
 )
@@ -132,6 +170,7 @@ add_library(raytracer_directional_light SHARED
 target_link_libraries(raytracer_directional_light
 	PRIVATE
 		raytracer_light
+		raytracer_scene
 )
 
 set_target_properties(raytracer_directional_light

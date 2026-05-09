@@ -63,7 +63,7 @@ class IMaterial {
    *
    * @returns Emitted color. Non-emissive materials return black.
    */
-  virtual raytracer::math::Color emitted() const = 0;
+  [[nodiscard]] virtual raytracer::math::Color emitted() const = 0;
 };
 
 #endif  // MATERIAL_IMATERIAL_HPP_

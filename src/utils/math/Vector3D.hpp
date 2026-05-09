@@ -31,6 +31,8 @@ class Vector3D {
   [[nodiscard]] double length() const;
   [[nodiscard]] Vector3D normalize() const;
 
+  static Vector3D randomInUnitSphere();
+
   [[nodiscard]] Vector3D operator+(const Vector3D& other) const;
   [[nodiscard]] Vector3D operator-(const Vector3D& other) const;
   [[nodiscard]] Vector3D operator-() const;
