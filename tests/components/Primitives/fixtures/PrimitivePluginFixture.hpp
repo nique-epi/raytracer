@@ -33,6 +33,7 @@ class PrimitivePluginFixture : public ::testing::Test {
     if (!std::filesystem::exists(candidate)) {
       throw std::runtime_error("Could not find " + pluginName_ + ".so");
     }
+    pluginPath_ = candidate;
     plugin_.emplace(candidate);
     destroyFn_ = plugin_->resolve<DestroyFn>("destroyPrimitive");
   }
@@ -52,14 +53,18 @@ class PrimitivePluginFixture : public ::testing::Test {
   /**
    * @brief Create a primitive via the registry entry point (Sphere, Cone…).
    *
-   * Lazily resolves @c void createPrimitive(Registry<IObject>&) and registers
-   * all types exposed by the plugin before delegating to the registry.
+   * Uses Registry::loadPlugin() which handles the correct dlopen flags.
+   * Lazy-initialised on first call — never invoked for plugins that expose
+   * a direct entry point (Cylinder…).
    *
    * @param [in] typeName  Key used in @c registry.registerType (e.g. "sphere").
    */
   std::shared_ptr<IObject> makePrimitive(const std::string& typeName) {
     if (!registryLoaded_) {
-      loadRegistry();
+      registry_.loadPlugin(pluginPath_.string());
+      cfg_.getRoot().add(pluginName_, libconfig::Setting::TypeGroup);
+      stubSetting_ = &cfg_.getRoot()[pluginName_];
+      registryLoaded_ = true;
     }
     return registry_.create(typeName, *stubSetting_);
   }
@@ -68,8 +73,9 @@ class PrimitivePluginFixture : public ::testing::Test {
    * @brief Create a primitive via a direct entry point with explicit args
    *        (Cylinder, Plane…).
    *
-   * Resolves @c createPrimitive as @p CreateFn and forwards @p args to it.
-   * The returned object is tracked and destroyed automatically in TearDown().
+   * Resolves @c createPrimitive as @p CreateFn via the already-open
+   * PluginHandle and forwards @p args to it. The returned object is tracked
+   * for automatic cleanup in TearDown().
    *
    * @tparam CreateFn  Exact function pointer type of @c createPrimitive.
    * @tparam Args      Construction argument types.
@@ -86,17 +92,8 @@ class PrimitivePluginFixture : public ::testing::Test {
   }
 
  private:
-  void loadRegistry() {
-    using RegistryFn =
-        void (*)(raytracer::core::registry::Registry<IObject>&);
-    auto registryFn = plugin_->resolve<RegistryFn>("createPrimitive");
-    registryFn(registry_);
-    cfg_.getRoot().add(pluginName_, libconfig::Setting::TypeGroup);
-    stubSetting_ = &cfg_.getRoot()[pluginName_];
-    registryLoaded_ = true;
-  }
-
   std::string pluginName_;
+  std::filesystem::path pluginPath_;
   std::optional<raytracer::tests::helpers::PluginHandle> plugin_;
   DestroyFn destroyFn_ = nullptr;
   std::vector<IObject*> directObjects_;
