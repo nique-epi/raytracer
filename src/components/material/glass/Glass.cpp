@@ -40,10 +40,11 @@ bool Glass::scatter(const raytracer::math::Ray& in,
     return true;
   }
 
-  double r0 = (1.0 - niOverNt) / (1.0 + niOverNt);
-  r0 *= r0;
+  double reflactctionProbability = (1.0 - niOverNt) / (1.0 + niOverNt);
+  reflactctionProbability *= reflactctionProbability;
   double reflectance =
-      r0 + ((1.0 - r0) * std::pow(1.0 - cosTheta, reflectanceExponent));
+      reflactctionProbability + ((1.0 - reflactctionProbability) *
+                                 std::pow(1.0 - cosTheta, reflectanceExponent));
 
   if (randomDouble() < reflectance) {
     scattered = raytracer::math::Ray(
