@@ -11,7 +11,7 @@
 #include <map>
 #include <memory>
 #include <string>
-#include "core/registry/registry.hpp"
+#include "registry/registry.hpp"
 
 namespace raytracer::scene {
 

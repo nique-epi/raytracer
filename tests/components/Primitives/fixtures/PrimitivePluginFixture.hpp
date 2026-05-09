@@ -17,7 +17,7 @@
 #include <utility>
 #include <vector>
 #include "components/Primitives/IObject.hpp"
-#include "core/registry/registry.hpp"
+#include "registry/registry.hpp"
 #include "helpers/lib/PluginHandle.hpp"
 
 class PrimitivePluginFixture : public ::testing::Test {

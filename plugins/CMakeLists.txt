@@ -5,6 +5,7 @@ add_library(raytracer_perspective_camera SHARED
 target_link_libraries(raytracer_perspective_camera
 	PRIVATE
 		raytracer_camera
+		raytracer_registry
 )
 
 set_target_properties(raytracer_perspective_camera
@@ -24,6 +25,7 @@ add_library(DiffuseMaterial SHARED
 target_link_libraries(DiffuseMaterial
 	PRIVATE
 		raytracer_material
+		raytracer_registry
 )
 
 set_target_properties(DiffuseMaterial
@@ -43,6 +45,7 @@ add_library(GlossyMaterial SHARED
 target_link_libraries(GlossyMaterial
 	PRIVATE
 		raytracer_material
+		raytracer_registry
 )
 
 set_target_properties(GlossyMaterial
@@ -62,6 +65,7 @@ add_library(GlassMaterial SHARED
 target_link_libraries(GlassMaterial
 	PRIVATE
 		raytracer_material
+		raytracer_registry
 )
 
 set_target_properties(GlassMaterial
@@ -114,6 +118,7 @@ target_link_libraries(Sphere
 	PRIVATE
 		raytracer_math
 		raytracer_plugin
+		raytracer_registry
 )
 
 set_target_properties(Sphere
@@ -133,6 +138,7 @@ target_link_libraries(Cone
 	PRIVATE
 		raytracer_math
 		raytracer_plugin
+		raytracer_registry
 )
 
 set_target_properties(Cone
@@ -152,6 +158,7 @@ target_link_libraries(Plane
 	PRIVATE
 		raytracer_math
 		raytracer_plugin
+		raytracer_registry
 )
 
 set_target_properties(Plane
@@ -171,6 +178,7 @@ target_link_libraries(Cylinder
 	PRIVATE
 		raytracer_math
 		raytracer_plugin
+		raytracer_registry
 )
 
 set_target_properties(Cylinder
@@ -189,6 +197,7 @@ add_library(raytracer_ambient_light SHARED
 target_link_libraries(raytracer_ambient_light
 	PRIVATE
 		raytracer_light
+		raytracer_registry
 )
 
 set_target_properties(raytracer_ambient_light
@@ -208,6 +217,7 @@ add_library(raytracer_directional_light SHARED
 target_link_libraries(raytracer_directional_light
 	PRIVATE
 		raytracer_light
+		raytracer_registry
 		raytracer_scene
 )
 

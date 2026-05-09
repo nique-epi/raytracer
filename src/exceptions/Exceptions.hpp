@@ -5,8 +5,8 @@
 ** Exceptions
 */
 
-#ifndef CORE_EXCEPTIONS_HPP_
-#define CORE_EXCEPTIONS_HPP_
+#ifndef EXCEPTIONS_EXCEPTIONS_HPP_
+#define EXCEPTIONS_EXCEPTIONS_HPP_
 
 #include <exception>
 #include <string>
@@ -24,4 +24,4 @@ class RaytracerException : public std::exception {
 
 }  // namespace raytracer::core
 
-#endif  // CORE_EXCEPTIONS_HPP_
+#endif  // EXCEPTIONS_EXCEPTIONS_HPP_

@@ -9,9 +9,9 @@
 #include <iostream>
 #include <string_view>
 #include <variant>
-#include "core/Application.hpp"
-#include "core/ArgsParser.hpp"
-#include "core/Exceptions.hpp"
+#include "application/Application.hpp"
+#include "application/ArgsParser.hpp"
+#include "exceptions/Exceptions.hpp"
 
 namespace {
 constexpr std::string_view usage =

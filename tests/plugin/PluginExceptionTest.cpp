@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include <string>
 #include "constants/Errors.hpp"
-#include "core/Exceptions.hpp"
+#include "exceptions/Exceptions.hpp"
 #include "plugin/PluginException.hpp"
 
 using raytracer::plugin::PluginException;

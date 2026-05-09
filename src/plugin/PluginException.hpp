@@ -9,7 +9,7 @@
 #define PLUGIN_PLUGINEXCEPTION_HPP_
 
 #include <string>
-#include "core/Exceptions.hpp"
+#include "exceptions/Exceptions.hpp"
 
 namespace raytracer::plugin {
 
