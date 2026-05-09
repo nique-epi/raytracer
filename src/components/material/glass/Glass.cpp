@@ -7,8 +7,6 @@
 #include "utils/math/Vector3D.hpp"
 
 namespace {
-constexpr double reflectanceExponent = 5.0;
-
 double discriminant(double niOverNt, double cosTheta) {
   return 1.0 - ((niOverNt * niOverNt) * (1.0 - (cosTheta * cosTheta)));
 }
@@ -40,11 +38,7 @@ bool Glass::scatter(const raytracer::math::Ray& in,
     return true;
   }
 
-  double reflactctionProbability = (1.0 - niOverNt) / (1.0 + niOverNt);
-  reflactctionProbability *= reflactctionProbability;
-  double reflectance =
-      reflactctionProbability + ((1.0 - reflactctionProbability) *
-                                 std::pow(1.0 - cosTheta, reflectanceExponent));
+  double reflectance = raytracer::math::Optics::schlick(cosTheta, niOverNt);
 
   if (randomDouble() < reflectance) {
     scattered = raytracer::math::Ray(
