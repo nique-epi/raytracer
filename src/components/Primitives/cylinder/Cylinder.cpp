@@ -45,13 +45,15 @@ bool Cylinder::computeQuadraticCoeffs(const math::Ray& ray,
                                       double& perpDirOriginDot,
                                       double& perpOriginSqMinusRadiusSq) const {
   const math::Vector3D originToCenter = ray.getOrigin() - center_;
-  const double dAxisProj = ray.getDirection().dot(axis_);
-  const double originAxisProj = originToCenter.dot(axis_);
-  const math::Vector3D dPerp = ray.getDirection() - axis_ * dAxisProj;
-  const math::Vector3D originPerp = originToCenter - axis_ * originAxisProj;
+  const double rayDirAxisProjection = ray.getDirection().dot(axis_);
+  const double originAxisProjection = originToCenter.dot(axis_);
+  const math::Vector3D rayDirPerpComponent =
+      ray.getDirection() - axis_ * rayDirAxisProjection;
+  const math::Vector3D originPerp =
+      originToCenter - axis_ * originAxisProjection;
 
-  perpDirLengthSq = dPerp.dot(dPerp);
-  perpDirOriginDot = dPerp.dot(originPerp);
+  perpDirLengthSq = rayDirPerpComponent.dot(rayDirPerpComponent);
+  perpDirOriginDot = rayDirPerpComponent.dot(originPerp);
   perpOriginSqMinusRadiusSq = originPerp.dot(originPerp) - (radius_ * radius_);
 
   return perpDirLengthSq >= epsilon;
@@ -72,26 +74,27 @@ double Cylinder::findClosestValidRoot(const math::Ray& ray, double tMin,
   const double farRoot =  // NOLINT(cppcoreguidelines-init-variables)
       (-perpDirOriginDot + std::sqrt(discriminant)) / perpDirLengthSq;
 
-  auto isWithinBounds = [&](double t) -> bool {
-    if (t < tMin || t > tMax) {
+  auto isWithinBounds = [&](double rayParam) -> bool {
+    if (rayParam < tMin || rayParam > tMax) {
       return false;
     }
     if (height_ <= 0.0) {
       return true;
     }
-    const double axialCoord = (ray.at(t) - center_).dot(axis_);
-    const double halfH = height_ / 2.0;
-    return axialCoord >= -halfH && axialCoord <= halfH;
+    const double axialCoord = (ray.at(rayParam) - center_).dot(axis_);
+    const double halfHeight = height_ / 2.0;
+    return axialCoord >= -halfHeight && axialCoord <= halfHeight;
   };
 
-  double closestT = -1.0;
+  double closestRayParam = -1.0;
   if (isWithinBounds(nearRoot)) {
-    closestT = nearRoot;
+    closestRayParam = nearRoot;
   }
-  if (isWithinBounds(farRoot) && (closestT < 0.0 || farRoot < closestT)) {
-    closestT = farRoot;
+  if (isWithinBounds(farRoot) &&
+      (closestRayParam < 0.0 || farRoot < closestRayParam)) {
+    closestRayParam = farRoot;
   }
-  return closestT;
+  return closestRayParam;
 }
 
 bool Cylinder::hits(const math::Ray& ray, double tMin, double tMax,
@@ -105,20 +108,21 @@ bool Cylinder::hits(const math::Ray& ray, double tMin, double tMax,
     return false;
   }
 
-  const double closestT =
+  const double closestRayParam =
       findClosestValidRoot(ray, tMin, tMax, perpDirLengthSq, perpDirOriginDot,
                            perpOriginSqMinusRadiusSq);
-  if (closestT < 0.0) {
+  if (closestRayParam < 0.0) {
     return false;
   }
 
-  rec.t = closestT;
-  rec.point = ray.at(closestT);
+  rec.t = closestRayParam;
+  rec.point = ray.at(closestRayParam);
 
-  const math::Vector3D toPoint = rec.point - center_;
-  const double axialProj = toPoint.dot(axis_);
-  const math::Vector3D radial = toPoint - axis_ * axialProj;
-  const math::Vector3D outNormal = radial / radius_;
+  const math::Vector3D centerToHitPoint = rec.point - center_;
+  const double axialProjection = centerToHitPoint.dot(axis_);
+  const math::Vector3D radialComponent =
+      centerToHitPoint - axis_ * axialProjection;
+  const math::Vector3D outNormal = radialComponent / radius_;
 
   rec.setFaceNormal(ray, outNormal);
   rec.material = material_;
@@ -131,14 +135,14 @@ math::AABB Cylinder::getBoundingBox() const {
             {positiveInfinity, positiveInfinity, positiveInfinity}};
   }
 
-  const double halfH = height_ / 2.0;
+  const double halfHeight = height_ / 2.0;
   const math::Vector3D extent(
       (radius_ * std::sqrt(std::max(0.0, 1.0 - (axis_.x * axis_.x)))) +
-          (std::abs(axis_.x) * halfH),
+          (std::abs(axis_.x) * halfHeight),
       (radius_ * std::sqrt(std::max(0.0, 1.0 - (axis_.y * axis_.y)))) +
-          (std::abs(axis_.y) * halfH),
+          (std::abs(axis_.y) * halfHeight),
       (radius_ * std::sqrt(std::max(0.0, 1.0 - (axis_.z * axis_.z)))) +
-          (std::abs(axis_.z) * halfH));
+          (std::abs(axis_.z) * halfHeight));
 
   return {center_ - extent, center_ + extent};
 }
