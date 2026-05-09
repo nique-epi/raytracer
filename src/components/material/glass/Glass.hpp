@@ -8,17 +8,13 @@
 #pragma once
 
 #include "components/material/abstract/AMaterial.hpp"
-#include "utils/math/Color.hpp"
 
 namespace raytracer::components::material {
 
 class Glass : public AMaterial {
  public:
-  Glass();
-  Glass(double refractionIndex, const math::Color& albedo, double transparency)
-      : refractionIndex_(refractionIndex),
-        albedo_(albedo),
-        transparency_(transparency) {}
+  Glass() = delete;
+  explicit Glass(double refractionIndex) : refractionIndex_(refractionIndex) {}
   ~Glass() override = default;
 
   Glass(const Glass&) = delete;
@@ -33,7 +29,5 @@ class Glass : public AMaterial {
 
  private:
   double refractionIndex_;
-  raytracer::math::Color albedo_;
-  double transparency_;
 };
 }  // namespace raytracer::components::material

@@ -1,20 +1,25 @@
-/*
-** EPITECH PROJECT, 2026
-** raytracer
-** File description:
-** Glass
-*/
-
 #include "Glass.hpp"
+#include <cmath>
+#include <random>
 #include "utils/math/HitRecord.hpp"
 #include "utils/math/Optics.hpp"
 #include "utils/math/Ray.hpp"
 #include "utils/math/Vector3D.hpp"
 
 namespace {
-float discriminant(float niOverNt, float cosTheta) {
-  return 1 - ((niOverNt * niOverNt) * (1 - (cosTheta * cosTheta)));
+constexpr double reflectanceExponent = 5.0;
+
+double discriminant(double niOverNt, double cosTheta) {
+  return 1.0 - ((niOverNt * niOverNt) * (1.0 - (cosTheta * cosTheta)));
 }
+
+double randomDouble() {
+  thread_local std::mt19937 generator(std::random_device{}());
+  thread_local std::uniform_real_distribution<double> distribution(0.0, 1.0);
+
+  return distribution(generator);
+}
+
 }  // namespace
 
 namespace raytracer::components::material {
@@ -24,11 +29,42 @@ bool Glass::scatter(const raytracer::math::Ray& in,
                     raytracer::math::Color& attenuation,
                     raytracer::math::Ray& scattered) const {
   attenuation = raytracer::math::Color(1.0, 1.0, 1.0);
-  double niOverNt = rec.frontFace ? (1.0 / refractionIndex_) : refractionIndex_;
-  raytracer::math::Vector3D unitDirection = in.getDirection().normalize();
-  float cosTheta = -unitDirection.dot(rec.normal);
-  raytracer::math::Vector3D refracted =
-      raytracer::math::Optics::refract(unitDirection, rec.normal, niOverNt);
 
+  double niOverNt = rec.frontFace ? (1.0 / refractionIndex_) : refractionIndex_;
+  raytracer::math::Vector3D unitDir = in.getDirection().normalize();
+  double cosTheta = -unitDir.dot(rec.normal);
+
+  if (discriminant(niOverNt, cosTheta) < 0) {
+    scattered = raytracer::math::Ray(
+        rec.point, raytracer::math::Optics::reflect(unitDir, rec.normal));
+    return true;
+  }
+
+  double r0 = (1.0 - niOverNt) / (1.0 + niOverNt);
+  r0 *= r0;
+  double reflectance =
+      r0 + ((1.0 - r0) * std::pow(1.0 - cosTheta, reflectanceExponent));
+
+  if (randomDouble() < reflectance) {
+    scattered = raytracer::math::Ray(
+        rec.point, raytracer::math::Optics::reflect(unitDir, rec.normal));
+  } else {
+    scattered = raytracer::math::Ray(
+        rec.point,
+        raytracer::math::Optics::refract(unitDir, rec.normal, niOverNt));
+  }
+  return true;
 }
+
 }  // namespace raytracer::components::material
+
+namespace gsl {
+template <typename T>
+using owner = T;
+}  // namespace gsl
+
+extern "C" gsl::owner<IMaterial*> createMaterial(double refractionIndex) {
+  return new raytracer::components::material::Glass(refractionIndex);
+}
+
+extern "C" void destroyMaterial(gsl::owner<IMaterial*> mat) { delete mat; }
