@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include <exception>
 #include <string>
-#include "core/Exceptions.hpp"
+#include "exceptions/Exceptions.hpp"
 
 using raytracer::core::RaytracerException;
 

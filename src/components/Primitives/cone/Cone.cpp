@@ -12,7 +12,7 @@
 #include <numbers>
 #include <utility>
 #include "components/Primitives/IObject.hpp"
-#include "core/registry/registry.hpp"
+#include "registry/registry.hpp"
 #include "utils/math/AABB.hpp"
 #include "utils/math/Constants.hpp"
 #include "utils/math/HitRecord.hpp"

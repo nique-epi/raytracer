@@ -7,7 +7,7 @@
 
 #pragma once
 #include <string>
-#include "core/registry/registry.hpp"
+#include "registry/registry.hpp"
 #include "scene/SceneLoaderFactory.hpp"
 
 namespace raytracer::core {

@@ -6,8 +6,8 @@
 */
 
 #include <gtest/gtest.h>
-#include "core/Exceptions.hpp"
-#include "core/registry/registry.hpp"
+#include "exceptions/Exceptions.hpp"
+#include "registry/registry.hpp"
 #include "fixtures/SceneBuilderFixture.hpp"
 #include "scene/SceneBuilder.hpp"
 

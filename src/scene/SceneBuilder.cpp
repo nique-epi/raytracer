@@ -6,7 +6,7 @@
 */
 
 #include "SceneBuilder.hpp"
-#include "core/Exceptions.hpp"
+#include "exceptions/Exceptions.hpp"
 #include "scene/Scene.hpp"
 
 namespace raytracer::scene {

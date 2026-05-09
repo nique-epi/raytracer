@@ -9,7 +9,7 @@
 #define COMPONENTS_IMAGE_IMAGEEXCEPTION_HPP_
 
 #include <string>
-#include "core/Exceptions.hpp"
+#include "exceptions/Exceptions.hpp"
 
 namespace raytracer::components {
 

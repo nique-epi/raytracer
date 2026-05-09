@@ -10,8 +10,8 @@
 #include <type_traits>
 #include "../fixtures/OrthoCameraFixture.hpp"
 #include "../fixtures/SphereFixture.hpp"
-#include "core/renderer/IRenderer.hpp"
-#include "core/renderer/monoThreadRenderer/MonoThreadRenderer.hpp"
+#include "renderer/IRenderer.hpp"
+#include "renderer/monoThreadRenderer/MonoThreadRenderer.hpp"
 #include "scene/Scene.hpp"
 #include "utils/math/RenderSettings.hpp"
 

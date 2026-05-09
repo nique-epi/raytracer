@@ -9,8 +9,8 @@
 #include <cstdio>
 #include <fstream>
 #include <string>
-#include "core/Application.hpp"
-#include "core/Exceptions.hpp"
+#include "application/Application.hpp"
+#include "exceptions/Exceptions.hpp"
 
 static const std::string ValidCfg = SCENES_DIR "/example.cfg";
 static const std::string InvalidDimensionsCfg = SCENE_FIXTURES_DIR "/invalid_dimensions.cfg";

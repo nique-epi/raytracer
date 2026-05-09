@@ -7,7 +7,7 @@
 
 #include "Application.hpp"
 #include <memory>
-#include "Exceptions.hpp"
+#include "exceptions/Exceptions.hpp"
 #include "components/image/Image.hpp"
 #include "output/ppm/ppm.hpp"
 #include "scene/CFGSceneLoader.hpp"

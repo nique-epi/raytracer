@@ -10,7 +10,7 @@
 #include <gtest/gtest.h>
 #include <libconfig.h++>
 #include "components/Primitives/IObject.hpp"
-#include "core/registry/registry.hpp"
+#include "registry/registry.hpp"
 #include "scene/Scene.hpp"
 
 class DummyObject final : public IObject {
