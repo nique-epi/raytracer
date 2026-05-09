@@ -17,6 +17,7 @@ namespace raytracer::components::primitives {
 
 class Sphere : public IObject {
  public:
+  Sphere();
   Sphere(const math::Vector3D& center, double radius,
          std::shared_ptr<IMaterial> material);
 
@@ -26,6 +27,10 @@ class Sphere : public IObject {
   [[nodiscard]] math::AABB getBoundingBox() const override;
 
   void applyTransformation(const ITransformation& transform) override;
+
+  void setCenter(const math::Vector3D& center);
+  void setRadius(double radius);
+  void setMaterial(std::shared_ptr<IMaterial> material);
 
  private:
   math::Vector3D center_;

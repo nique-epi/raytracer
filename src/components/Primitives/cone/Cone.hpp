@@ -17,6 +17,7 @@ namespace raytracer::components::primitives {
 
 class Cone : public IObject {
  public:
+  Cone();
   Cone(const math::Vector3D& apex, const math::Vector3D& axis, double angle,
        double height, std::shared_ptr<IMaterial> material);
 
@@ -26,6 +27,12 @@ class Cone : public IObject {
   [[nodiscard]] math::AABB getBoundingBox() const override;
 
   void applyTransformation(const ITransformation& transform) override;
+
+  void setApex(const math::Vector3D& apex);
+  void setAxis(const math::Vector3D& axis);
+  void setHalfAngle(double angle);
+  void setHeight(double height);
+  void setMaterial(std::shared_ptr<IMaterial> material);
 
  private:
   math::Vector3D apex_;

@@ -41,6 +41,9 @@ class Ambient : public ILight {
                                 const raytracer::scene::Scene& scene)
       const override;
 
+  void setColor(const raytracer::math::Color& color);
+  void setIntensity(double intensity);
+
  private:
   raytracer::math::Color color = raytracer::math::Color(1.0, 1.0, 1.0);
   double intensity = 1.0;

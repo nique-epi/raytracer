@@ -21,6 +21,7 @@ namespace raytracer::components::material {
  */
 class DiffuseMaterial : public AMaterial {
  public:
+  DiffuseMaterial();
   explicit DiffuseMaterial(const raytracer::math::Color& albedo);
 
   DiffuseMaterial(const DiffuseMaterial&) = delete;
@@ -33,6 +34,8 @@ class DiffuseMaterial : public AMaterial {
                const raytracer::math::HitRecord& rec,
                raytracer::math::Color& attenuation,
                raytracer::math::Ray& scattered) const override;
+
+  void setAlbedo(const raytracer::math::Color& albedo);
 
  private:
   raytracer::math::Color albedo;

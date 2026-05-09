@@ -13,8 +13,8 @@ namespace raytracer::components::material {
 
 class Glass : public AMaterial {
  public:
-  Glass() = delete;
-  explicit Glass(double refractionIndex) : refractionIndex_(refractionIndex) {}
+  Glass();
+  explicit Glass(double refractionIndex);
   ~Glass() override = default;
 
   Glass(const Glass&) = delete;
@@ -26,6 +26,8 @@ class Glass : public AMaterial {
                const raytracer::math::HitRecord& rec,
                raytracer::math::Color& attenuation,
                raytracer::math::Ray& scattered) const override;
+
+  void setRefractionIndex(double refractionIndex);
 
  private:
   double refractionIndex_;

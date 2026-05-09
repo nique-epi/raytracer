@@ -18,18 +18,22 @@
 #include "utils/math/Ray.hpp"
 #include "utils/math/Vector3D.hpp"
 
-namespace gsl {
-template <typename T>
-using owner = T;
-}  // namespace gsl
-
 namespace {
+// Negative height signals an infinite (uncapped) cylinder.
+constexpr double infiniteHeight = -1.0;
 constexpr double positiveInfinity = std::numeric_limits<double>::infinity();
 }  // namespace
 
 namespace raytracer::components::primitives {
 
 using raytracer::math::constants::epsilon;
+
+Cylinder::Cylinder()
+    : center_(0.0, 0.0, 0.0),
+      axis_(0.0, 1.0, 0.0),
+      radius_(1.0),
+      height_(infiniteHeight),
+      material_(nullptr) {}
 
 Cylinder::Cylinder(const math::Vector3D& center, const math::Vector3D& axis,
                    double radius, double height,
@@ -39,6 +43,15 @@ Cylinder::Cylinder(const math::Vector3D& center, const math::Vector3D& axis,
       radius_(radius),
       height_(height),
       material_(std::move(material)) {}
+
+void Cylinder::setCenter(const math::Vector3D& center) { center_ = center; }
+void Cylinder::setAxis(const math::Vector3D& axis) { axis_ = axis.normalize(); }
+void Cylinder::setRadius(double radius) { radius_ = radius; }
+void Cylinder::setHeight(double height) { height_ = height; }
+
+void Cylinder::setMaterial(std::shared_ptr<IMaterial> material) {
+  material_ = std::move(material);
+}
 
 bool Cylinder::computeQuadraticCoeffs(const math::Ray& ray,
                                       double& perpDirLengthSq,
@@ -151,11 +164,3 @@ void Cylinder::applyTransformation(const ITransformation& /*transform*/) {}
 
 }  // namespace raytracer::components::primitives
 
-extern "C" gsl::owner<IObject*> createPrimitive(
-    const raytracer::math::Vector3D& center,
-    const raytracer::math::Vector3D& axis, double radius, double height) {
-  return new raytracer::components::primitives::Cylinder(center, axis, radius,
-                                                         height, nullptr);
-}
-
-extern "C" void destroyPrimitive(gsl::owner<IObject*> obj) { delete obj; }

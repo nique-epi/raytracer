@@ -2,8 +2,10 @@ add_library(raytracer_scene STATIC
   CFGSceneLoader.cpp
   SceneLoaderFactory.cpp
   SceneBuilder.cpp
+  SceneConfigurator.cpp
   Scene.cpp
   background/Solid/SolidBackground.cpp
+  ../components/light/directional/Directional.cpp
 )
 
 target_include_directories(raytracer_scene

@@ -10,11 +10,6 @@
 #include <numbers>
 #include <random>
 
-namespace gsl {
-template <typename T>
-using owner = T;
-}  // namespace gsl
-
 namespace raytracer::components::camera::perspective {
 
 Perspective::Perspective() { updateCamera(); }
@@ -80,10 +75,20 @@ raytracer::math::Vector3D Perspective::randomInUnitDisk() const {
   }
 }
 
-}  // namespace raytracer::components::camera::perspective
-
-extern "C" gsl::owner<ICamera*> createCamera() {
-  return new raytracer::components::camera::perspective::Perspective();
+void Perspective::setPosition(const raytracer::math::Vector3D& newPosition) {
+  position = newPosition;
+  updateCamera();
 }
 
-extern "C" void DestroyCamera(gsl::owner<ICamera*> camera) { delete camera; }
+void Perspective::setDirection(const raytracer::math::Vector3D& direction) {
+  target = position + direction;
+  updateCamera();
+}
+
+void Perspective::setFieldOfView(double fovDegrees) {
+  fov = fovDegrees;
+  updateCamera();
+}
+
+}  // namespace raytracer::components::camera::perspective
+

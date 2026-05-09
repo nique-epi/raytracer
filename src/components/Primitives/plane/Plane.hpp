@@ -20,6 +20,7 @@ namespace raytracer::components::primitives {
  */
 class Plane : public IObject {
  public:
+  Plane();
   Plane(const math::Vector3D& point, const math::Vector3D& normal,
         std::shared_ptr<IMaterial> material);
 
@@ -29,6 +30,10 @@ class Plane : public IObject {
   [[nodiscard]] math::AABB getBoundingBox() const override;
 
   void applyTransformation(const ITransformation& transform) override;
+
+  void setPoint(const math::Vector3D& point);
+  void setNormal(const math::Vector3D& normal);
+  void setMaterial(std::shared_ptr<IMaterial> material);
 
  private:
   math::Vector3D point_;

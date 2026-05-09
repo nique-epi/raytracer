@@ -12,11 +12,6 @@
 #include "utils/math/HitRecord.hpp"
 #include "utils/math/Ray.hpp"
 
-namespace gsl {
-template <typename T>
-using owner = T;
-}  // namespace gsl
-
 namespace raytracer::components::light::directional {
 
 Directional::Directional() = default;
@@ -49,10 +44,17 @@ bool Directional::isOccluded(const raytracer::math::Vector3D& point,
                    std::numeric_limits<double>::infinity(), rec);
 }
 
-}  // namespace raytracer::components::light::directional
-
-extern "C" gsl::owner<ILight*> createLight() {
-  return new raytracer::components::light::directional::Directional();
+void Directional::setDirection(const raytracer::math::Vector3D& newDirection) {
+  direction = newDirection.normalize();
 }
 
-extern "C" void DestroyLight(gsl::owner<ILight*> light) { delete light; }
+void Directional::setColor(const raytracer::math::Color& newColor) {
+  color = newColor;
+}
+
+void Directional::setIntensity(double newIntensity) {
+  intensity = newIntensity;
+}
+
+}  // namespace raytracer::components::light::directional
+

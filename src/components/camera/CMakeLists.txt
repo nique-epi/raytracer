@@ -10,3 +10,8 @@ target_link_libraries(raytracer_camera
 	INTERFACE
 		raytracer_math
 )
+
+target_sources(raytracer_components
+	PRIVATE
+		perspective/PerspectiveCamera.cpp
+)

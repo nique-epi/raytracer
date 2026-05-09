@@ -11,27 +11,30 @@
 #include <memory>
 #include <numbers>
 #include <utility>
-#include "components/Primitives/IObject.hpp"
-#include "core/registry/registry.hpp"
 #include "utils/math/AABB.hpp"
 #include "utils/math/Constants.hpp"
 #include "utils/math/HitRecord.hpp"
 #include "utils/math/Ray.hpp"
 #include "utils/math/Vector3D.hpp"
 
-namespace gsl {
-template <typename T>
-using owner = T;
-}  // namespace gsl
-
 namespace {
-constexpr double defaultAngle = std::numbers::pi / 4.0;
-constexpr double defaultHeight = 1.0;
+// Half-angle of the cone in radians (45° default).
+constexpr double defaultHalfAngle = std::numbers::pi / 4.0;
+constexpr double defaultConeHeight = 1.0;
 }  // namespace
 
 namespace raytracer::components::primitives {
 
 using raytracer::math::constants::epsilon;
+
+Cone::Cone()
+    : apex_(0.0, 0.0, 0.0),
+      axis_(0.0, 1.0, 0.0),
+      angle_(defaultHalfAngle),
+      height_(defaultConeHeight),
+      cosAngle_(std::cos(defaultHalfAngle)),
+      sinAngle_(std::sin(defaultHalfAngle)),
+      material_(nullptr) {}
 
 Cone::Cone(const math::Vector3D& apex, const math::Vector3D& axis, double angle,
            double height, std::shared_ptr<IMaterial> material)
@@ -42,6 +45,21 @@ Cone::Cone(const math::Vector3D& apex, const math::Vector3D& axis, double angle,
       cosAngle_(std::cos(angle)),
       sinAngle_(std::sin(angle)),
       material_(std::move(material)) {}
+
+void Cone::setApex(const math::Vector3D& apex) { apex_ = apex; }
+void Cone::setAxis(const math::Vector3D& axis) { axis_ = axis.normalize(); }
+
+void Cone::setHalfAngle(double angle) {
+  angle_ = angle;
+  cosAngle_ = std::cos(angle);
+  sinAngle_ = std::sin(angle);
+}
+
+void Cone::setHeight(double height) { height_ = height; }
+
+void Cone::setMaterial(std::shared_ptr<IMaterial> material) {
+  material_ = std::move(material);
+}
 
 bool Cone::computeQuadraticCoeffs(const math::Ray& ray, double& quadA,
                                    double& quadHalfB, double& quadC) const {
@@ -151,15 +169,3 @@ void Cone::applyTransformation(const ITransformation& /*transform*/) {}
 
 }  // namespace raytracer::components::primitives
 
-extern "C" void createPrimitive(
-    raytracer::core::registry::Registry<IObject>& registry) {
-  registry.registerType(
-      "cone", [](const libconfig::Setting&) -> std::shared_ptr<IObject> {
-        return std::make_shared<raytracer::components::primitives::Cone>(
-            raytracer::math::Vector3D(0.0, 0.0, 0.0),
-            raytracer::math::Vector3D(0.0, 1.0, 0.0),
-            defaultAngle, defaultHeight, nullptr);
-      });
-}
-
-extern "C" void destroyPrimitive(gsl::owner<IObject*> obj) { delete obj; }

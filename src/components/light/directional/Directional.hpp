@@ -42,6 +42,10 @@ class Directional : public ILight {
       const raytracer::math::Vector3D& point,
       const raytracer::scene::Scene& scene) const override;
 
+  void setDirection(const raytracer::math::Vector3D& direction);
+  void setColor(const raytracer::math::Color& color);
+  void setIntensity(double intensity);
+
  private:
   raytracer::math::Vector3D direction =
       raytracer::math::Vector3D(0.0, -1.0, 0.0);

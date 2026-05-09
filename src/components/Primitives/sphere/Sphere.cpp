@@ -11,18 +11,11 @@
 #include <memory>
 #include <numbers>
 #include <utility>
-#include "components/Primitives/IObject.hpp"
-#include "core/registry/registry.hpp"
 #include "utils/math/AABB.hpp"
 #include "utils/math/HitRecord.hpp"
 #include "utils/math/Constants.hpp"
 #include "utils/math/Ray.hpp"
 #include "utils/math/Vector3D.hpp"
-
-namespace gsl {
-template <typename T>
-using owner = T;
-}  // namespace gsl
 
 namespace raytracer::components::primitives {
 
@@ -32,11 +25,24 @@ constexpr double twoPi = 2.0 * std::numbers::pi;
 
 using raytracer::math::constants::epsilon;
 
+Sphere::Sphere()
+    : center_(0.0, 0.0, 0.0), radius_(1.0), material_(nullptr) {}
+
 Sphere::Sphere(const math::Vector3D& center, double radius,
                std::shared_ptr<IMaterial> material)
     : center_(center),
       radius_(std::max(epsilon, radius)),
       material_(std::move(material)) {}
+
+void Sphere::setCenter(const math::Vector3D& center) { center_ = center; }
+
+void Sphere::setRadius(double radius) {
+  radius_ = std::max(epsilon, radius);
+}
+
+void Sphere::setMaterial(std::shared_ptr<IMaterial> material) {
+  material_ = std::move(material);
+}
 
 bool Sphere::hits(const math::Ray& ray, double tMin, double tMax,
                   math::HitRecord& rec) const {
@@ -83,13 +89,3 @@ void Sphere::computeUV(const math::Vector3D& unitSphere, double& u, double& v) {
 
 }  // namespace raytracer::components::primitives
 
-extern "C" void createPrimitive(
-    raytracer::core::registry::Registry<IObject>& registry) {
-  registry.registerType(
-      "sphere", [](const libconfig::Setting&) -> std::shared_ptr<IObject> {
-        return std::make_shared<raytracer::components::primitives::Sphere>(
-            raytracer::math::Vector3D(0.0, 0.0, 0.0), 1.0, nullptr);
-      });
-}
-
-extern "C" void destroyPrimitive(gsl::owner<IObject*> obj) { delete obj; }

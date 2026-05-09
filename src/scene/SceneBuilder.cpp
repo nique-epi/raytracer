@@ -6,6 +6,7 @@
 */
 
 #include "SceneBuilder.hpp"
+#include "SceneConfigurator.hpp"
 #include "core/Exceptions.hpp"
 #include "scene/Scene.hpp"
 
@@ -27,9 +28,11 @@ void SceneBuilder::addObject(const std::string& type,
   typeCounts_[type]++;
   try {
     auto obj = objectRegistry_.get().create(type, cfg);
-    if (obj) {
-      scene_->add(obj);
+    if (!obj) {
+      return;
     }
+    configureObject(type, obj, cfg);
+    scene_->add(obj);
   } catch (const raytracer::core::RaytracerException& e) {
     throw raytracer::core::RaytracerException(e.what());
   }
@@ -40,9 +43,11 @@ void SceneBuilder::addLight(const std::string& type,
   typeCounts_[type]++;
   try {
     auto light = lightRegistry_.get().create(type, cfg);
-    if (light) {
-      scene_->addLight(light);
+    if (!light) {
+      return;
     }
+    configureLight(type, light, cfg);
+    scene_->addLight(light);
   } catch (const raytracer::core::RaytracerException& e) {
     throw raytracer::core::RaytracerException(e.what());
   }
@@ -54,9 +59,13 @@ void SceneBuilder::addCamera(const libconfig::Setting& cfg) {
   cfg.lookupValue("type", type);
   try {
     auto camera = cameraRegistry_.get().create(type, cfg);
-    if (camera) {
-      scene_->setCamera(camera);
+    if (!camera) {
+      return;
     }
+    if (type == "perspective") {
+      configurePerspectiveCamera(camera, cfg);
+    }
+    scene_->setCamera(camera);
   } catch (const raytracer::core::RaytracerException& e) {
     throw raytracer::core::RaytracerException(e.what());
   }

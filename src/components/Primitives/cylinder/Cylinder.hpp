@@ -17,6 +17,7 @@ namespace raytracer::components::primitives {
 
 class Cylinder : public IObject {
  public:
+  Cylinder();
   Cylinder(const math::Vector3D& center, const math::Vector3D& axis,
            double radius, double height, std::shared_ptr<IMaterial> material);
 
@@ -26,6 +27,12 @@ class Cylinder : public IObject {
   [[nodiscard]] math::AABB getBoundingBox() const override;
 
   void applyTransformation(const ITransformation& transform) override;
+
+  void setCenter(const math::Vector3D& center);
+  void setAxis(const math::Vector3D& axis);
+  void setRadius(double radius);
+  void setHeight(double height);
+  void setMaterial(std::shared_ptr<IMaterial> material);
 
  private:
   math::Vector3D center_;

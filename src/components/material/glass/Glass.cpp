@@ -7,6 +7,10 @@
 #include "utils/math/Vector3D.hpp"
 
 namespace {
+
+// Typical refractive index of optical glass.
+constexpr double defaultRefractionIndex = 1.5;
+
 double discriminant(double niOverNt, double cosTheta) {
   return 1.0 - ((niOverNt * niOverNt) * (1.0 - (cosTheta * cosTheta)));
 }
@@ -21,6 +25,14 @@ double randomDouble() {
 }  // namespace
 
 namespace raytracer::components::material {
+
+Glass::Glass() : refractionIndex_(defaultRefractionIndex) {}
+
+Glass::Glass(double refractionIndex) : refractionIndex_(refractionIndex) {}
+
+void Glass::setRefractionIndex(double refractionIndex) {
+  refractionIndex_ = refractionIndex;
+}
 
 bool Glass::scatter(const raytracer::math::Ray& in,
                     const raytracer::math::HitRecord& rec,
@@ -53,13 +65,3 @@ bool Glass::scatter(const raytracer::math::Ray& in,
 
 }  // namespace raytracer::components::material
 
-namespace gsl {
-template <typename T>
-using owner = T;
-}  // namespace gsl
-
-extern "C" gsl::owner<IMaterial*> createMaterial(double refractionIndex) {
-  return new raytracer::components::material::Glass(refractionIndex);
-}
-
-extern "C" void destroyMaterial(gsl::owner<IMaterial*> mat) { delete mat; }

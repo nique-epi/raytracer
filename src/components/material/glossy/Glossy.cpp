@@ -13,6 +13,17 @@
 
 namespace raytracer::components::material {
 
+Glossy::Glossy(double fuzzValue, const math::Color& albedoColor)
+    : fuzz(std::clamp(fuzzValue, 0.0, 1.0)), albedo(albedoColor) {}
+
+void Glossy::setFuzz(double fuzzValue) {
+  fuzz = std::clamp(fuzzValue, 0.0, 1.0);
+}
+
+void Glossy::setAlbedo(const math::Color& albedoColor) {
+  albedo = albedoColor;
+}
+
 bool Glossy::scatter(const raytracer::math::Ray& in,
                      const raytracer::math::HitRecord& rec,
                      raytracer::math::Color& attenuation,
@@ -30,14 +41,3 @@ bool Glossy::scatter(const raytracer::math::Ray& in,
 }
 }  // namespace raytracer::components::material
 
-namespace gsl {
-template <typename T>
-using owner = T;
-}  // namespace gsl
-
-extern "C" gsl::owner<IMaterial*> createMaterial(
-    double fuzz, const raytracer::math::Color& albedo) {
-  return new raytracer::components::material::Glossy(fuzz, albedo);
-}
-
-extern "C" void destroyMaterial(gsl::owner<IMaterial*> mat) { delete mat; }

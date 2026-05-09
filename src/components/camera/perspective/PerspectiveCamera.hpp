@@ -76,6 +76,9 @@ class Perspective : public ICamera {
    * @param [in] height Output image height in pixels.
    */
   void setResolution(int width, int height) override;
+  void setPosition(const raytracer::math::Vector3D& position);
+  void setDirection(const raytracer::math::Vector3D& direction);
+  void setFieldOfView(double fovDegrees);
 
  private:
   void updateCamera();

@@ -7,11 +7,6 @@
 
 #include "AmbientLight.hpp"
 
-namespace gsl {
-template <typename T>
-using owner = T;
-}  // namespace gsl
-
 namespace raytracer::components::light::ambient {
 
 Ambient::Ambient() = default;
@@ -37,10 +32,11 @@ bool Ambient::isOccluded(const raytracer::math::Vector3D& /*point*/,
   return false;
 }
 
-}  // namespace raytracer::components::light::ambient
-
-extern "C" gsl::owner<ILight*> createLight() {
-  return new raytracer::components::light::ambient::Ambient();
+void Ambient::setColor(const raytracer::math::Color& newColor) {
+  color = newColor;
 }
 
-extern "C" void DestroyLight(gsl::owner<ILight*> light) { delete light; }
+void Ambient::setIntensity(double newIntensity) { intensity = newIntensity; }
+
+}  // namespace raytracer::components::light::ambient
+
