@@ -144,6 +144,25 @@ set_target_properties(Plane
 
 raytracer_enable_target_warnings(Plane)
 
+add_library(Cylinder SHARED
+	../src/components/Primitives/cylinder/Cylinder.cpp
+)
+
+target_link_libraries(Cylinder
+	PRIVATE
+		raytracer_math
+		raytracer_plugin
+)
+
+set_target_properties(Cylinder
+	PROPERTIES
+		PREFIX ""
+		SUFFIX ".so"
+		LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/plugins"
+)
+
+raytracer_enable_target_warnings(Cylinder)
+
 add_library(raytracer_ambient_light SHARED
 	../src/components/light/ambient/AmbientLight.cpp
 )
