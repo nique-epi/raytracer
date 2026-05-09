@@ -13,3 +13,11 @@ raytracer_add_test(
 	LIBS raytracer_core raytracer_math
 	INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
 )
+
+raytracer_add_test(
+	NAME glass_plugin_test
+	SOURCES GlassPluginTest.cpp
+	PLUGINS GlassMaterial
+	LIBS raytracer_core raytracer_math
+	INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
+)
