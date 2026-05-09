@@ -26,8 +26,16 @@ void SceneBuilderFixture::SetUp() {
       "sphere", [](const libconfig::Setting&) -> std::shared_ptr<IObject> {
         return std::make_shared<DummyObject>();
       });
+  objectRegistry.registerType(
+      "plane", [](const libconfig::Setting&) -> std::shared_ptr<IObject> {
+        return std::make_shared<DummyObject>();
+      });
   lightRegistry.registerType(
       "ambient", [](const libconfig::Setting&) -> std::shared_ptr<ILight> {
+        return std::make_shared<NullLightFixture>();
+      });
+  lightRegistry.registerType(
+      "directional", [](const libconfig::Setting&) -> std::shared_ptr<ILight> {
         return std::make_shared<NullLightFixture>();
       });
   cameraRegistry.registerType(

@@ -6,7 +6,6 @@
 */
 
 #include "SceneBuilder.hpp"
-#include <iostream>
 #include "core/Exceptions.hpp"
 #include "scene/Scene.hpp"
 
@@ -32,8 +31,7 @@ void SceneBuilder::addObject(const std::string& type,
       _scene->add(obj);
     }
   } catch (const raytracer::core::RaytracerException& e) {
-    std::cerr << "[SceneBuilder] skipping object \"" << type
-              << "\": " << e.what() << "\n";
+    throw raytracer::core::RaytracerException(e.what());
   }
 }
 
@@ -46,8 +44,7 @@ void SceneBuilder::addLight(const std::string& type,
       _scene->addLight(light);
     }
   } catch (const raytracer::core::RaytracerException& e) {
-    std::cerr << "[SceneBuilder] skipping light \"" << type
-              << "\": " << e.what() << "\n";
+    throw raytracer::core::RaytracerException(e.what());
   }
 }
 
@@ -61,8 +58,7 @@ void SceneBuilder::addCamera(const libconfig::Setting& cfg) {
       _scene->setCamera(camera);
     }
   } catch (const raytracer::core::RaytracerException& e) {
-    std::cerr << "[SceneBuilder] skipping camera \"" << type
-              << "\": " << e.what() << "\n";
+    throw raytracer::core::RaytracerException(e.what());
   }
 }
 

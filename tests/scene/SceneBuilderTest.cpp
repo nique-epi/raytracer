@@ -122,32 +122,35 @@ TEST_F(SceneBuilderFixture, BuildThrowsWhenEmpty) {
 
 // Given: a builder where an unregistered object type is requested.
 // When:  addObject is called with that unknown type.
-// Then:  no exception propagates and the attempt is counted.
-TEST_F(SceneBuilderFixture, AddObjectWithUnknownTypeSkipsGracefully) {
+// Then:  RaytracerException is thrown and the attempt is counted.
+TEST_F(SceneBuilderFixture, AddObjectWithUnknownTypeThrows) {
   SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
                        materialRegistry);
-  EXPECT_NO_THROW(builder.addObject("unknown_primitive", *stubSetting));
+  EXPECT_THROW(builder.addObject("unknown_primitive", *stubSetting),
+               raytracer::core::RaytracerException);
   EXPECT_EQ(builder.count("unknown_primitive"), 1u);
 }
 
 // Given: a builder where an unregistered light type is requested.
 // When:  addLight is called with that unknown type.
-// Then:  no exception propagates and the attempt is counted.
-TEST_F(SceneBuilderFixture, AddLightWithUnknownTypeSkipsGracefully) {
+// Then:  RaytracerException is thrown and the attempt is counted.
+TEST_F(SceneBuilderFixture, AddLightWithUnknownTypeThrows) {
   SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
                        materialRegistry);
-  EXPECT_NO_THROW(builder.addLight("unknown_light", *stubSetting));
+  EXPECT_THROW(builder.addLight("unknown_light", *stubSetting),
+               raytracer::core::RaytracerException);
   EXPECT_EQ(builder.count("unknown_light"), 1u);
 }
 
 // Given: a builder where the camera registry has no "perspective" type.
 // When:  addCamera is called.
-// Then:  no exception propagates and count("camera") equals 1.
-TEST_F(SceneBuilderFixture, AddCameraWithEmptyRegistrySkipsGracefully) {
+// Then:  RaytracerException is thrown and count("camera") equals 1.
+TEST_F(SceneBuilderFixture, AddCameraWithEmptyRegistryThrows) {
   CameraRegistry emptyCamReg;
   SceneBuilder builder(objectRegistry, lightRegistry, emptyCamReg,
                        materialRegistry);
-  EXPECT_NO_THROW(builder.addCamera(*stubSetting));
+  EXPECT_THROW(builder.addCamera(*stubSetting),
+               raytracer::core::RaytracerException);
   EXPECT_EQ(builder.count("camera"), 1u);
 }
 

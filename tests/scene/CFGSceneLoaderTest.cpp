@@ -6,15 +6,11 @@
 */
 
 #include <gtest/gtest.h>
-#include "core/registry/registry.hpp"
+#include "fixtures/SceneBuilderFixture.hpp"
 #include "scene/CFGSceneLoader.hpp"
 #include "scene/SceneBuilder.hpp"
 #include "utils/math/RenderSettings.hpp"
 
-using raytracer::core::registry::CameraRegistry;
-using raytracer::core::registry::LightRegistry;
-using raytracer::core::registry::MaterialRegistry;
-using raytracer::core::registry::ObjectRegistry;
 using raytracer::scene::CFGSceneLoader;
 using raytracer::scene::SceneBuilder;
 
@@ -28,12 +24,8 @@ static const std::string EmptyListsCfg = SCENE_FIXTURES_DIR "/empty_lists.cfg";
 static const std::string NoCameraCfg = SCENE_FIXTURES_DIR "/no_camera.cfg";
 static const std::string MalformedCfg = SCENE_FIXTURES_DIR "/malformed.cfg";
 
-class CFGSceneLoaderTest : public ::testing::Test {
+class CFGSceneLoaderTest : public SceneBuilderFixture {
  protected:
-  ObjectRegistry objectRegistry;
-  LightRegistry lightRegistry;
-  CameraRegistry cameraRegistry;
-  MaterialRegistry materialRegistry;
   CFGSceneLoader loader;
 };
 
