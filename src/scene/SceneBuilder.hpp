@@ -33,17 +33,17 @@ class SceneBuilder {
   [[nodiscard]] std::size_t count(const std::string& type) const;
 
  private:
-  std::shared_ptr<Scene> _scene;
+  std::shared_ptr<Scene> scene_;
   std::reference_wrapper<raytracer::core::registry::ObjectRegistry>
-      _objectRegistry;
+      objectRegistry_;
   std::reference_wrapper<raytracer::core::registry::LightRegistry>
-      _lightRegistry;
+      lightRegistry_;
   std::reference_wrapper<raytracer::core::registry::CameraRegistry>
-      _cameraRegistry;
+      cameraRegistry_;
   [[maybe_unused]] std::reference_wrapper<
       raytracer::core::registry::MaterialRegistry>
-      _materialRegistry;
-  std::map<std::string, std::size_t> _typeCounts;
+      materialRegistry_;
+  std::map<std::string, std::size_t> typeCounts_;
 };
 
 }  // namespace raytracer::scene

@@ -16,19 +16,19 @@ SceneBuilder::SceneBuilder(
     raytracer::core::registry::LightRegistry& lights,
     raytracer::core::registry::CameraRegistry& cameras,
     raytracer::core::registry::MaterialRegistry& materials)
-    : _scene(std::make_shared<Scene>()),
-      _objectRegistry(objects),
-      _lightRegistry(lights),
-      _cameraRegistry(cameras),
-      _materialRegistry(materials) {}
+    : scene_(std::make_shared<Scene>()),
+      objectRegistry_(objects),
+      lightRegistry_(lights),
+      cameraRegistry_(cameras),
+      materialRegistry_(materials) {}
 
 void SceneBuilder::addObject(const std::string& type,
                              const libconfig::Setting& cfg) {
-  _typeCounts[type]++;
+  typeCounts_[type]++;
   try {
-    auto obj = _objectRegistry.get().create(type, cfg);
+    auto obj = objectRegistry_.get().create(type, cfg);
     if (obj) {
-      _scene->add(obj);
+      scene_->add(obj);
     }
   } catch (const raytracer::core::RaytracerException& e) {
     throw raytracer::core::RaytracerException(e.what());
@@ -37,11 +37,11 @@ void SceneBuilder::addObject(const std::string& type,
 
 void SceneBuilder::addLight(const std::string& type,
                             const libconfig::Setting& cfg) {
-  _typeCounts[type]++;
+  typeCounts_[type]++;
   try {
-    auto light = _lightRegistry.get().create(type, cfg);
+    auto light = lightRegistry_.get().create(type, cfg);
     if (light) {
-      _scene->addLight(light);
+      scene_->addLight(light);
     }
   } catch (const raytracer::core::RaytracerException& e) {
     throw raytracer::core::RaytracerException(e.what());
@@ -49,13 +49,13 @@ void SceneBuilder::addLight(const std::string& type,
 }
 
 void SceneBuilder::addCamera(const libconfig::Setting& cfg) {
-  _typeCounts["camera"]++;
+  typeCounts_["camera"]++;
   std::string type = "perspective";
   cfg.lookupValue("type", type);
   try {
-    auto camera = _cameraRegistry.get().create(type, cfg);
+    auto camera = cameraRegistry_.get().create(type, cfg);
     if (camera) {
-      _scene->setCamera(camera);
+      scene_->setCamera(camera);
     }
   } catch (const raytracer::core::RaytracerException& e) {
     throw raytracer::core::RaytracerException(e.what());
@@ -63,20 +63,20 @@ void SceneBuilder::addCamera(const libconfig::Setting& cfg) {
 }
 
 std::shared_ptr<Scene> SceneBuilder::build() {
-  if (!_scene->getCamera()) {
+  if (!scene_->getCamera()) {
     throw raytracer::core::RaytracerException(
         "SceneBuilder::build: scene has no camera defined");
   }
-  if (_scene->getLights().empty()) {
+  if (scene_->getLights().empty()) {
     throw raytracer::core::RaytracerException(
         "SceneBuilder::build: scene has no light sources defined");
   }
-  return _scene;
+  return scene_;
 }
 
 std::size_t SceneBuilder::count(const std::string& type) const {
-  const auto it = _typeCounts.find(type);
-  return it != _typeCounts.end() ? it->second : 0;
+  const auto it = typeCounts_.find(type);
+  return it != typeCounts_.end() ? it->second : 0;
 }
 
 }  // namespace raytracer::scene
