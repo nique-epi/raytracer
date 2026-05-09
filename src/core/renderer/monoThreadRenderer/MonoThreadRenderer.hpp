@@ -13,6 +13,7 @@
 #pragma once
 
 #include <functional>
+#include <utility>
 #include "../IRenderer.hpp"
 #include "utils/math/Ray.hpp"
 
@@ -23,7 +24,8 @@ namespace raytracer::core {
  */
 class MonoThreadRenderer : public IRenderer {
  public:
-  MonoThreadRenderer() = default;
+  explicit MonoThreadRenderer(std::shared_ptr<IIntegrator> integrator)
+      : _integrator(std::move(integrator)) {}
   ~MonoThreadRenderer() override = default;
 
   MonoThreadRenderer(const MonoThreadRenderer&) = delete;
@@ -43,6 +45,7 @@ class MonoThreadRenderer : public IRenderer {
       const raytracer::math::Ray& inRay, const raytracer::math::HitRecord& rec);
 
   std::function<void(double)> _progressCallback;
+  std::shared_ptr<IIntegrator> _integrator;
 };
 
 }  // namespace raytracer::core
