@@ -1,4 +1,5 @@
 add_subdirectory(exceptions)
+add_subdirectory(config)
 add_subdirectory(utils/math)
 add_subdirectory(plugin)
 add_subdirectory(components)
@@ -18,6 +19,7 @@ target_include_directories(raytracer_src
 target_link_libraries(raytracer_src
   INTERFACE
     raytracer_exceptions
+    raytracer_config
     raytracer_math
     raytracer_plugin
     raytracer_components

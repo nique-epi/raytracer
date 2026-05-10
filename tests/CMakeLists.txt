@@ -92,6 +92,7 @@ add_executable(raytracer_tests
   registry/RegistryTest.cpp
   renderer/BasicRendererTest.cpp
   plugin/PluginExceptionTest.cpp
+  config/ConfigExceptionTest.cpp
   components/image/ImageTest.cpp
   components/image/ImageExceptionTest.cpp
   components/Primitives/CollectionTest.cpp
