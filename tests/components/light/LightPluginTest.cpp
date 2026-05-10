@@ -6,17 +6,16 @@
 */
 
 #include <gtest/gtest.h>
+#include <memory>
 #include "components/light/ILight.hpp"
 #include "fixtures/AmbientFixture.hpp"
 #include "fixtures/DirectionalFixture.hpp"
-
-namespace raytracer::scene {
-class Scene {};
-}  // namespace raytracer::scene
+#include "fixtures/SphereFixture.hpp"
+#include "scene/Scene.hpp"
 
 namespace {
 
-constexpr double kEpsilon = 1e-9;
+constexpr double epsilon = 1e-9;
 
 }  // namespace
 
@@ -32,9 +31,9 @@ TEST_F(AmbientFixture, IlluminateReturnsColorTimesIntensity) {
 
   const auto color = light->illuminate(point, scene);
 
-  EXPECT_NEAR(color.r, 1.0, kEpsilon);
-  EXPECT_NEAR(color.g, 1.0, kEpsilon);
-  EXPECT_NEAR(color.b, 1.0, kEpsilon);
+  EXPECT_NEAR(color.r, 1.0, epsilon);
+  EXPECT_NEAR(color.g, 1.0, epsilon);
+  EXPECT_NEAR(color.b, 1.0, epsilon);
 }
 
 TEST_F(AmbientFixture, GetDirectionReturnsZeroVectorSentinel) {
@@ -69,24 +68,30 @@ TEST_F(DirectionalLightFixture, GetDirectionReturnsNormalizedDefault) {
 
   const auto dir = light->getDirection(point);
 
-  EXPECT_NEAR(dir.length(), 1.0, kEpsilon);
-  EXPECT_NEAR(dir.x, 0.0, kEpsilon);
-  EXPECT_NEAR(dir.y, -1.0, kEpsilon);
-  EXPECT_NEAR(dir.z, 0.0, kEpsilon);
+  EXPECT_NEAR(dir.length(), 1.0, epsilon);
+  EXPECT_NEAR(dir.x, 0.0, epsilon);
+  EXPECT_NEAR(dir.y, -1.0, epsilon);
+  EXPECT_NEAR(dir.z, 0.0, epsilon);
 }
 
 TEST_F(DirectionalLightFixture, GetIntensityReturnsDefault) {
   EXPECT_DOUBLE_EQ(light->getIntensity(), 1.0);
 }
 
-TEST_F(DirectionalLightFixture, IsOccludedReturnsFalseStub) {
-  // Until #14 lands and Scene exposes a hits() API, isOccluded is
-  // stubbed to false. This test pins the current behaviour and will
-  // need updating once a real Scene query is available.
+TEST_F(DirectionalLightFixture, IsOccludedReturnsFalseOnEmptyScene) {
   raytracer::scene::Scene scene;
   const raytracer::math::Vector3D point(0.0, 0.0, 0.0);
 
   EXPECT_FALSE(light->isOccluded(point, scene));
+}
+
+TEST_F(DirectionalLightFixture, IsOccludedReturnsTrueWhenSphereBlocksTheLight) {
+  raytracer::scene::Scene scene;
+  scene.add(std::make_shared<SphereFixture>(
+      raytracer::math::Vector3D(0.0, 5.0, 0.0), 1.0));
+  const raytracer::math::Vector3D point(0.0, 0.0, 0.0);
+
+  EXPECT_TRUE(light->isOccluded(point, scene));
 }
 
 TEST_F(DirectionalLightFixture,
@@ -96,7 +101,20 @@ TEST_F(DirectionalLightFixture,
 
   const auto color = light->illuminate(point, scene);
 
-  EXPECT_NEAR(color.r, 1.0, kEpsilon);
-  EXPECT_NEAR(color.g, 1.0, kEpsilon);
-  EXPECT_NEAR(color.b, 1.0, kEpsilon);
+  EXPECT_NEAR(color.r, 1.0, epsilon);
+  EXPECT_NEAR(color.g, 1.0, epsilon);
+  EXPECT_NEAR(color.b, 1.0, epsilon);
+}
+
+TEST_F(DirectionalLightFixture, IlluminateReturnsBlackWhenOccluded) {
+  raytracer::scene::Scene scene;
+  scene.add(std::make_shared<SphereFixture>(
+      raytracer::math::Vector3D(0.0, 5.0, 0.0), 1.0));
+  const raytracer::math::Vector3D point(0.0, 0.0, 0.0);
+
+  const auto color = light->illuminate(point, scene);
+
+  EXPECT_DOUBLE_EQ(color.r, 0.0);
+  EXPECT_DOUBLE_EQ(color.g, 0.0);
+  EXPECT_DOUBLE_EQ(color.b, 0.0);
 }

@@ -7,7 +7,7 @@
 
 #include "registry.hpp"
 #include <dlfcn.h>
-#include "core/Exceptions.hpp"
+#include "exceptions/Exceptions.hpp"
 #include "plugin/PluginLoader.hpp"
 
 namespace raytracer::core::registry {

@@ -5,6 +5,7 @@ add_library(raytracer_perspective_camera SHARED
 target_link_libraries(raytracer_perspective_camera
 	PRIVATE
 		raytracer_camera
+		raytracer_registry
 )
 
 set_target_properties(raytracer_perspective_camera
@@ -24,6 +25,7 @@ add_library(DiffuseMaterial SHARED
 target_link_libraries(DiffuseMaterial
 	PRIVATE
 		raytracer_material
+		raytracer_registry
 )
 
 set_target_properties(DiffuseMaterial
@@ -43,6 +45,7 @@ add_library(GlossyMaterial SHARED
 target_link_libraries(GlossyMaterial
 	PRIVATE
 		raytracer_material
+		raytracer_registry
 )
 
 set_target_properties(GlossyMaterial
@@ -53,6 +56,26 @@ set_target_properties(GlossyMaterial
 )
 
 raytracer_enable_target_warnings(GlossyMaterial)
+
+add_library(GlassMaterial SHARED
+	../src/components/material/glass/Glass.cpp
+	../src/components/material/abstract/AMaterial.cpp
+)
+
+target_link_libraries(GlassMaterial
+	PRIVATE
+		raytracer_material
+		raytracer_registry
+)
+
+set_target_properties(GlassMaterial
+	PROPERTIES
+		PREFIX ""
+		SUFFIX ".so"
+		LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/plugins"
+)
+
+raytracer_enable_target_warnings(GlassMaterial)
 
 add_library(raytracer_rotation_transformation SHARED
     ../src/components/Transformations/Rotation/Rotation.cpp
@@ -95,6 +118,7 @@ target_link_libraries(Sphere
 	PRIVATE
 		raytracer_math
 		raytracer_plugin
+		raytracer_registry
 )
 
 set_target_properties(Sphere
@@ -114,6 +138,7 @@ target_link_libraries(Cone
 	PRIVATE
 		raytracer_math
 		raytracer_plugin
+		raytracer_registry
 )
 
 set_target_properties(Cone
@@ -125,6 +150,46 @@ set_target_properties(Cone
 
 raytracer_enable_target_warnings(Cone)
 
+add_library(Plane SHARED
+	../src/components/Primitives/plane/Plane.cpp
+)
+
+target_link_libraries(Plane
+	PRIVATE
+		raytracer_math
+		raytracer_plugin
+		raytracer_registry
+)
+
+set_target_properties(Plane
+	PROPERTIES
+		PREFIX ""
+		SUFFIX ".so"
+		LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/plugins"
+)
+
+raytracer_enable_target_warnings(Plane)
+
+add_library(Cylinder SHARED
+	../src/components/Primitives/cylinder/Cylinder.cpp
+)
+
+target_link_libraries(Cylinder
+	PRIVATE
+		raytracer_math
+		raytracer_plugin
+		raytracer_registry
+)
+
+set_target_properties(Cylinder
+	PROPERTIES
+		PREFIX ""
+		SUFFIX ".so"
+		LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/plugins"
+)
+
+raytracer_enable_target_warnings(Cylinder)
+
 add_library(raytracer_ambient_light SHARED
 	../src/components/light/ambient/AmbientLight.cpp
 )
@@ -132,6 +197,7 @@ add_library(raytracer_ambient_light SHARED
 target_link_libraries(raytracer_ambient_light
 	PRIVATE
 		raytracer_light
+		raytracer_registry
 )
 
 set_target_properties(raytracer_ambient_light
@@ -151,6 +217,8 @@ add_library(raytracer_directional_light SHARED
 target_link_libraries(raytracer_directional_light
 	PRIVATE
 		raytracer_light
+		raytracer_registry
+		raytracer_scene
 )
 
 set_target_properties(raytracer_directional_light

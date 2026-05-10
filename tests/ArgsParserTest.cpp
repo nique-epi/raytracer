@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 #include <variant>
-#include "core/ArgsParser.hpp"
+#include "application/ArgsParser.hpp"
 
 using raytracer::core::AppConfig;
 using raytracer::core::ArgsParser;

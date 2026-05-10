@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 #include <cmath>
-#include "core/Exceptions.hpp"
+#include "exceptions/Exceptions.hpp"
 #include "utils/math/Vector3D.hpp"
 
 using raytracer::math::Vector3D;

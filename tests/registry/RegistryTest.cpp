@@ -7,8 +7,8 @@
 
 #include <gtest/gtest.h>
 #include <memory>
-#include "core/registry/registry.hpp"
-#include "fixture/registry/RegistryFixture.hpp"
+#include "registry/registry.hpp"
+#include "fixture/RegistryFixture.hpp"
 
 using namespace raytracer::core::registry;
 

@@ -9,7 +9,7 @@
 #include <cmath>
 #include <random>
 #include "constants/Errors.hpp"
-#include "core/Exceptions.hpp"
+#include "exceptions/Exceptions.hpp"
 
 namespace raytracer::math {
 

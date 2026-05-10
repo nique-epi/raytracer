@@ -9,7 +9,7 @@
 #include <string>
 #include "components/image/ImageException.hpp"
 #include "constants/Errors.hpp"
-#include "core/Exceptions.hpp"
+#include "exceptions/Exceptions.hpp"
 
 using raytracer::components::ImageException;
 using raytracer::components::ImageIOException;
