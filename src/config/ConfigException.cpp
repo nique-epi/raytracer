@@ -20,6 +20,6 @@ ConfigException::ConfigException(const std::string& field,
                                  const std::string& reason)
     : raytracer::core::RaytracerException(
           std::string(raytracer::constants::errors::CONFIG_TYPE_INVALID) +
-          " for field '" + field + "': " + reason) {}
+          " '" + field + "': " + reason) {}
 
 }  // namespace raytracer::config
