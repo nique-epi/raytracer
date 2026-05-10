@@ -22,23 +22,23 @@ raytracer::math::AABB DummyObject::getBoundingBox() const {
 void DummyObject::applyTransformation(const ITransformation&) {}
 
 void SceneBuilderFixture::SetUp() {
-  objectRegistry.registerType(
+  factory.registerPrimitive(
       "sphere", [](const libconfig::Setting&) -> std::shared_ptr<IObject> {
         return std::make_shared<DummyObject>();
       });
-  objectRegistry.registerType(
+  factory.registerPrimitive(
       "plane", [](const libconfig::Setting&) -> std::shared_ptr<IObject> {
         return std::make_shared<DummyObject>();
       });
-  lightRegistry.registerType(
+  factory.registerLight(
       "ambient", [](const libconfig::Setting&) -> std::shared_ptr<ILight> {
         return std::make_shared<NullLightFixture>();
       });
-  lightRegistry.registerType(
+  factory.registerLight(
       "directional", [](const libconfig::Setting&) -> std::shared_ptr<ILight> {
         return std::make_shared<NullLightFixture>();
       });
-  cameraRegistry.registerType(
+  factory.registerCamera(
       "perspective",
       [](const libconfig::Setting&) -> std::shared_ptr<ICamera> {
         return std::make_shared<OrthoCameraFixture>();

@@ -11,7 +11,7 @@
 #include <map>
 #include <memory>
 #include <string>
-#include "registry/registry.hpp"
+#include "factory/IComponentFactory.hpp"
 
 namespace raytracer::scene {
 
@@ -22,54 +22,48 @@ class Scene;
  *
  * Scene loaders call @ref addObject, @ref addLight and @ref addCamera for
  * each entity they parse. The builder resolves each type name through the
- * matching Registry and accumulates the resulting components into an
- * internal Scene instance. Call @ref build() to retrieve the finished scene
- * once all entries have been registered.
+ * injected @ref IComponentFactory and accumulates the resulting components
+ * into an internal Scene instance. Call @ref build() to retrieve the
+ * finished scene once all entries have been registered.
  */
 class SceneBuilder {
  public:
   /**
-   * @brief Construct a builder backed by the four component registries.
+   * @brief Construct a builder backed by a component factory.
    *
-   * @param [in] objects   Registry used to instantiate primitive objects.
-   * @param [in] lights    Registry used to instantiate light sources.
-   * @param [in] cameras   Registry used to instantiate cameras.
-   * @param [in] materials Registry used to instantiate materials.
+   * @param [in] factory Factory used to instantiate every component type.
    */
-  SceneBuilder(raytracer::core::registry::ObjectRegistry& objects,
-               raytracer::core::registry::LightRegistry& lights,
-               raytracer::core::registry::CameraRegistry& cameras,
-               raytracer::core::registry::MaterialRegistry& materials);
+  explicit SceneBuilder(raytracer::core::factory::IComponentFactory& factory);
 
   /**
-   * @brief Resolve @p type in the object registry and add it to the scene.
+   * @brief Resolve @p type via the factory and add the primitive to the scene.
    *
-   * @param [in] type Registry key identifying the primitive type.
+   * @param [in] type Type discriminant identifying the primitive.
    * @param [in] cfg  Configuration block passed to the factory.
    *
-   * @throws raytracer::core::RaytracerException If @p type is not registered.
+   * @throws raytracer::core::RaytracerException If @p type is not supported.
    */
   void addObject(const std::string& type, const libconfig::Setting& cfg);
 
   /**
-   * @brief Resolve @p type in the light registry and add it to the scene.
+   * @brief Resolve @p type via the factory and add the light to the scene.
    *
-   * @param [in] type Registry key identifying the light type.
+   * @param [in] type Type discriminant identifying the light.
    * @param [in] cfg  Configuration block passed to the factory.
    *
-   * @throws raytracer::core::RaytracerException If @p type is not registered.
+   * @throws raytracer::core::RaytracerException If @p type is not supported.
    */
   void addLight(const std::string& type, const libconfig::Setting& cfg);
 
   /**
-   * @brief Resolve the camera type in the camera registry and set it on the scene.
+   * @brief Resolve the camera type via the factory and set it on the scene.
    *
    * The type is read from @p cfg under the key @c "type"; it defaults to
    * @c "perspective" when the key is absent.
    *
    * @param [in] cfg Configuration block passed to the factory.
    *
-   * @throws raytracer::core::RaytracerException If the resolved type is not registered.
+   * @throws raytracer::core::RaytracerException If the resolved type is not supported.
    */
   void addCamera(const libconfig::Setting& cfg);
 
@@ -96,15 +90,7 @@ class SceneBuilder {
 
  private:
   std::shared_ptr<Scene> scene_;
-  std::reference_wrapper<raytracer::core::registry::ObjectRegistry>
-      objectRegistry_;
-  std::reference_wrapper<raytracer::core::registry::LightRegistry>
-      lightRegistry_;
-  std::reference_wrapper<raytracer::core::registry::CameraRegistry>
-      cameraRegistry_;
-  [[maybe_unused]] std::reference_wrapper<
-      raytracer::core::registry::MaterialRegistry>
-      materialRegistry_;
+  std::reference_wrapper<raytracer::core::factory::IComponentFactory> factory_;
   std::map<std::string, std::size_t> typeCounts_;
 };
 

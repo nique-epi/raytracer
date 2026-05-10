@@ -26,8 +26,7 @@ int Application::run(const std::string& scenePath) {
     throw RaytracerException("No loader available for: " + scenePath);
   }
 
-  scene::SceneBuilder builder(_objectRegistry, _lightRegistry,
-                              _cameraRegistry, _materialRegistry);
+  scene::SceneBuilder builder(_componentFactory);
   math::RenderSettings settings;
 
   if (!loader->load(scenePath, builder, settings)) {

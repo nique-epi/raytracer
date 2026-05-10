@@ -7,19 +7,17 @@
 
 #include <gtest/gtest.h>
 #include "exceptions/Exceptions.hpp"
-#include "registry/registry.hpp"
+#include "../fixtures/ComponentFactoryFixture.hpp"
 #include "fixtures/SceneBuilderFixture.hpp"
 #include "scene/SceneBuilder.hpp"
 
-using raytracer::core::registry::CameraRegistry;
 using raytracer::scene::SceneBuilder;
 
 // Given: a builder with mock registries.
 // When:  addObject is called with a registered type.
 // Then:  count("sphere") equals 1 and no exception is thrown.
 TEST_F(SceneBuilderFixture, AddObjectIncreasesCount) {
-  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
-                       materialRegistry);
+  SceneBuilder builder(factory);
   EXPECT_NO_THROW(builder.addObject("sphere", *stubSetting));
   EXPECT_EQ(builder.count("sphere"), 1u);
 }
@@ -28,8 +26,7 @@ TEST_F(SceneBuilderFixture, AddObjectIncreasesCount) {
 // When:  addObject is called twice with the same type.
 // Then:  count("sphere") equals 2.
 TEST_F(SceneBuilderFixture, AddObjectCountsMultipleCalls) {
-  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
-                       materialRegistry);
+  SceneBuilder builder(factory);
   builder.addObject("sphere", *stubSetting);
   builder.addObject("sphere", *stubSetting);
   EXPECT_EQ(builder.count("sphere"), 2u);
@@ -39,8 +36,7 @@ TEST_F(SceneBuilderFixture, AddObjectCountsMultipleCalls) {
 // When:  addLight is called with a registered type.
 // Then:  count("ambient") equals 1.
 TEST_F(SceneBuilderFixture, AddLightIncreasesCount) {
-  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
-                       materialRegistry);
+  SceneBuilder builder(factory);
   EXPECT_NO_THROW(builder.addLight("ambient", *stubSetting));
   EXPECT_EQ(builder.count("ambient"), 1u);
 }
@@ -49,8 +45,7 @@ TEST_F(SceneBuilderFixture, AddLightIncreasesCount) {
 // When:  addCamera is called.
 // Then:  count("camera") equals 1.
 TEST_F(SceneBuilderFixture, AddCameraIncreasesCount) {
-  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
-                       materialRegistry);
+  SceneBuilder builder(factory);
   EXPECT_NO_THROW(builder.addCamera(*stubSetting));
   EXPECT_EQ(builder.count("camera"), 1u);
 }
@@ -59,8 +54,7 @@ TEST_F(SceneBuilderFixture, AddCameraIncreasesCount) {
 // When:  build() is called.
 // Then:  it returns a non-null shared_ptr<Scene>.
 TEST_F(SceneBuilderFixture, BuildReturnsScene) {
-  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
-                       materialRegistry);
+  SceneBuilder builder(factory);
   builder.addCamera(*stubSetting);
   builder.addLight("ambient", *stubSetting);
   auto scene = builder.build();
@@ -71,8 +65,7 @@ TEST_F(SceneBuilderFixture, BuildReturnsScene) {
 // When:  build() is called.
 // Then:  the returned scene has a camera set.
 TEST_F(SceneBuilderFixture, BuildSceneHasCamera) {
-  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
-                       materialRegistry);
+  SceneBuilder builder(factory);
   builder.addCamera(*stubSetting);
   builder.addLight("ambient", *stubSetting);
   auto scene = builder.build();
@@ -83,8 +76,7 @@ TEST_F(SceneBuilderFixture, BuildSceneHasCamera) {
 // When:  build() is called.
 // Then:  the returned scene has at least one light.
 TEST_F(SceneBuilderFixture, BuildSceneHasLight) {
-  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
-                       materialRegistry);
+  SceneBuilder builder(factory);
   builder.addCamera(*stubSetting);
   builder.addLight("ambient", *stubSetting);
   auto scene = builder.build();
@@ -95,8 +87,7 @@ TEST_F(SceneBuilderFixture, BuildSceneHasLight) {
 // When:  build() is called.
 // Then:  it throws std::runtime_error.
 TEST_F(SceneBuilderFixture, BuildThrowsWhenNoCamera) {
-  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
-                       materialRegistry);
+  SceneBuilder builder(factory);
   builder.addLight("ambient", *stubSetting);
   EXPECT_THROW(builder.build(), raytracer::core::RaytracerException);
 }
@@ -105,8 +96,7 @@ TEST_F(SceneBuilderFixture, BuildThrowsWhenNoCamera) {
 // When:  build() is called.
 // Then:  it throws std::runtime_error.
 TEST_F(SceneBuilderFixture, BuildThrowsWhenNoLights) {
-  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
-                       materialRegistry);
+  SceneBuilder builder(factory);
   builder.addCamera(*stubSetting);
   EXPECT_THROW(builder.build(), raytracer::core::RaytracerException);
 }
@@ -115,8 +105,7 @@ TEST_F(SceneBuilderFixture, BuildThrowsWhenNoLights) {
 // When:  build() is called.
 // Then:  it throws std::runtime_error.
 TEST_F(SceneBuilderFixture, BuildThrowsWhenEmpty) {
-  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
-                       materialRegistry);
+  SceneBuilder builder(factory);
   EXPECT_THROW(builder.build(), raytracer::core::RaytracerException);
 }
 
@@ -124,8 +113,7 @@ TEST_F(SceneBuilderFixture, BuildThrowsWhenEmpty) {
 // When:  addObject is called with that unknown type.
 // Then:  RaytracerException is thrown and the attempt is counted.
 TEST_F(SceneBuilderFixture, AddObjectWithUnknownTypeThrows) {
-  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
-                       materialRegistry);
+  SceneBuilder builder(factory);
   EXPECT_THROW(builder.addObject("unknown_primitive", *stubSetting),
                raytracer::core::RaytracerException);
   EXPECT_EQ(builder.count("unknown_primitive"), 1u);
@@ -135,20 +123,18 @@ TEST_F(SceneBuilderFixture, AddObjectWithUnknownTypeThrows) {
 // When:  addLight is called with that unknown type.
 // Then:  RaytracerException is thrown and the attempt is counted.
 TEST_F(SceneBuilderFixture, AddLightWithUnknownTypeThrows) {
-  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
-                       materialRegistry);
+  SceneBuilder builder(factory);
   EXPECT_THROW(builder.addLight("unknown_light", *stubSetting),
                raytracer::core::RaytracerException);
   EXPECT_EQ(builder.count("unknown_light"), 1u);
 }
 
-// Given: a builder where the camera registry has no "perspective" type.
+// Given: a builder backed by a factory that has no "perspective" camera.
 // When:  addCamera is called.
 // Then:  RaytracerException is thrown and count("camera") equals 1.
 TEST_F(SceneBuilderFixture, AddCameraWithEmptyRegistryThrows) {
-  CameraRegistry emptyCamReg;
-  SceneBuilder builder(objectRegistry, lightRegistry, emptyCamReg,
-                       materialRegistry);
+  ComponentFactoryFixture emptyFactory;
+  SceneBuilder builder(emptyFactory);
   EXPECT_THROW(builder.addCamera(*stubSetting),
                raytracer::core::RaytracerException);
   EXPECT_EQ(builder.count("camera"), 1u);
@@ -158,8 +144,7 @@ TEST_F(SceneBuilderFixture, AddCameraWithEmptyRegistryThrows) {
 // When:  count() is called for any type.
 // Then:  it returns 0.
 TEST_F(SceneBuilderFixture, CountReturnsZeroForUnseenType) {
-  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
-                       materialRegistry);
+  SceneBuilder builder(factory);
   EXPECT_EQ(builder.count("sphere"), 0u);
   EXPECT_EQ(builder.count("camera"), 0u);
   EXPECT_EQ(builder.count("anything"), 0u);
