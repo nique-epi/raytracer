@@ -8,7 +8,6 @@
 #include "PrimitiveFactory.hpp"
 #include <libconfig.h++>
 #include <memory>
-#include <numbers>
 #include <string>
 #include <utility>
 #include "components/Primitives/cone/Cone.hpp"
@@ -70,8 +69,7 @@ std::shared_ptr<IObject> createSphereFromCfg(const libconfig::Setting& cfg) {
 std::shared_ptr<IObject> createConeFromCfg(const libconfig::Setting& cfg) {
   Vector3D apex{0.0, 0.0, 0.0};
   Vector3D axis{0.0, 1.0, 0.0};
-  // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
-  double angle = std::numbers::pi / 4.0;
+  double angle = defaultConeAngle;
   double height = 1.0;
   overrideVec3IfPresent(cfg, "apex", apex);
   overrideVec3IfPresent(cfg, "axis", axis);
