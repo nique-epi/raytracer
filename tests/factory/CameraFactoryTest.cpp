@@ -7,6 +7,7 @@
 
 #include <gtest/gtest.h>
 #include <libconfig.h++>
+#include <cmath>
 #include <memory>
 #include "exceptions/Exceptions.hpp"
 #include "factory/CameraFactory.hpp"
@@ -72,6 +73,7 @@ TEST(CameraFactoryTest, CreatePerspectiveFromEmptyCfgFallsBackToDefaults) {
 // Then:  it throws RaytracerException.
 TEST(CameraFactoryTest, CreateUnknownTypeThrows) {
   CfgFromString cfg("entry = { };");
-  EXPECT_THROW(CameraFactory::create("orthographic", cfg.at("entry")),
-               raytracer::core::RaytracerException);
+  EXPECT_THROW(
+      static_cast<void>(CameraFactory::create("orthographic", cfg.at("entry"))),
+      raytracer::core::RaytracerException);
 }

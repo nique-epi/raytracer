@@ -88,6 +88,7 @@ TEST(MaterialFactoryTest, CreateGlassFromEmptyCfgFallsBackToDefaults) {
 // Then:  it throws RaytracerException.
 TEST(MaterialFactoryTest, CreateUnknownTypeThrows) {
   CfgFromString cfg("entry = { };");
-  EXPECT_THROW(MaterialFactory::create("plastic", cfg.at("entry")),
-               raytracer::core::RaytracerException);
+  EXPECT_THROW(
+      static_cast<void>(MaterialFactory::create("plastic", cfg.at("entry"))),
+      raytracer::core::RaytracerException);
 }

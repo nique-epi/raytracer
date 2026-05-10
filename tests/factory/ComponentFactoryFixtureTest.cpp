@@ -43,8 +43,9 @@ class ComponentFactoryFixtureTest : public ::testing::Test {
 // When:  createPrimitive is called for an unknown type.
 // Then:  it throws RaytracerException.
 TEST_F(ComponentFactoryFixtureTest, UnknownPrimitiveThrows) {
-  EXPECT_THROW(factory.createPrimitive("sphere", *stubSetting),
-               raytracer::core::RaytracerException);
+  EXPECT_THROW(
+      static_cast<void>(factory.createPrimitive("sphere", *stubSetting)),
+      raytracer::core::RaytracerException);
 }
 
 // Given: a fixture with a registered primitive creator.
@@ -76,14 +77,18 @@ TEST_F(ComponentFactoryFixtureTest, PolymorphicDispatchThroughInterface) {
 //        are called for unknown types.
 // Then:  each one throws RaytracerException with a category-specific message.
 TEST_F(ComponentFactoryFixtureTest, AllInterfacesThrowOnUnknownType) {
-  EXPECT_THROW(factory.createLight("ambient", *stubSetting),
-               raytracer::core::RaytracerException);
-  EXPECT_THROW(factory.createMaterial("lambertian", *stubSetting),
-               raytracer::core::RaytracerException);
-  EXPECT_THROW(factory.createCamera("perspective", *stubSetting),
-               raytracer::core::RaytracerException);
-  EXPECT_THROW(factory.createTransformation("translation", *stubSetting),
-               raytracer::core::RaytracerException);
+  EXPECT_THROW(
+      static_cast<void>(factory.createLight("ambient", *stubSetting)),
+      raytracer::core::RaytracerException);
+  EXPECT_THROW(
+      static_cast<void>(factory.createMaterial("lambertian", *stubSetting)),
+      raytracer::core::RaytracerException);
+  EXPECT_THROW(
+      static_cast<void>(factory.createCamera("perspective", *stubSetting)),
+      raytracer::core::RaytracerException);
+  EXPECT_THROW(
+      static_cast<void>(factory.createTransformation("translation", *stubSetting)),
+      raytracer::core::RaytracerException);
 }
 
 }  // namespace

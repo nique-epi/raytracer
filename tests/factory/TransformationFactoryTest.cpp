@@ -75,6 +75,7 @@ TEST(TransformationFactoryTest, CreateRotationFromCfgReturnsNonNull) {
 // Then:  it throws RaytracerException.
 TEST(TransformationFactoryTest, CreateUnknownTypeThrows) {
   CfgFromString cfg("entry = { };");
-  EXPECT_THROW(TransformationFactory::create("scale", cfg.at("entry")),
-               raytracer::core::RaytracerException);
+  EXPECT_THROW(
+      static_cast<void>(TransformationFactory::create("scale", cfg.at("entry"))),
+      raytracer::core::RaytracerException);
 }

@@ -65,14 +65,17 @@ TEST(ComponentFactoryTest, AllInterfacesDispatchThroughBase) {
 TEST(ComponentFactoryTest, UnknownTypeOnEachInterfaceThrows) {
   ComponentFactory factory;
   CfgFromString cfg("entry = { };");
-  EXPECT_THROW(factory.createPrimitive("nope", cfg.at("entry")),
+  EXPECT_THROW(
+      static_cast<void>(factory.createPrimitive("nope", cfg.at("entry"))),
+      raytracer::core::RaytracerException);
+  EXPECT_THROW(static_cast<void>(factory.createLight("nope", cfg.at("entry"))),
                raytracer::core::RaytracerException);
-  EXPECT_THROW(factory.createLight("nope", cfg.at("entry")),
+  EXPECT_THROW(
+      static_cast<void>(factory.createMaterial("nope", cfg.at("entry"))),
+      raytracer::core::RaytracerException);
+  EXPECT_THROW(static_cast<void>(factory.createCamera("nope", cfg.at("entry"))),
                raytracer::core::RaytracerException);
-  EXPECT_THROW(factory.createMaterial("nope", cfg.at("entry")),
-               raytracer::core::RaytracerException);
-  EXPECT_THROW(factory.createCamera("nope", cfg.at("entry")),
-               raytracer::core::RaytracerException);
-  EXPECT_THROW(factory.createTransformation("nope", cfg.at("entry")),
-               raytracer::core::RaytracerException);
+  EXPECT_THROW(
+      static_cast<void>(factory.createTransformation("nope", cfg.at("entry"))),
+      raytracer::core::RaytracerException);
 }

@@ -96,6 +96,7 @@ TEST(LightFactoryTest, CreateDirectionalNormalisesDirection) {
 // Then:  it throws RaytracerException.
 TEST(LightFactoryTest, CreateUnknownTypeThrows) {
   CfgFromString cfg("entry = { };");
-  EXPECT_THROW(LightFactory::create("spotlight", cfg.at("entry")),
-               raytracer::core::RaytracerException);
+  EXPECT_THROW(
+      static_cast<void>(LightFactory::create("spotlight", cfg.at("entry"))),
+      raytracer::core::RaytracerException);
 }

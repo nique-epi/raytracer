@@ -153,6 +153,7 @@ TEST(PrimitiveFactoryTest, CreatePlaneWithAxisPositionShorthand) {
 // Then:  it throws RaytracerException.
 TEST(PrimitiveFactoryTest, CreateUnknownTypeThrows) {
   CfgFromString cfg("entry = { };");
-  EXPECT_THROW(PrimitiveFactory::create("torus", cfg.at("entry")),
-               raytracer::core::RaytracerException);
+  EXPECT_THROW(
+      static_cast<void>(PrimitiveFactory::create("torus", cfg.at("entry"))),
+      raytracer::core::RaytracerException);
 }
