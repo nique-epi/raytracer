@@ -5,6 +5,7 @@ target_sources(raytracer_factory
     PrimitiveFactory.cpp
     LightFactory.cpp
     MaterialFactory.cpp
+    CameraFactory.cpp
 )
 
 target_include_directories(raytracer_factory
