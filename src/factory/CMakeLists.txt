@@ -6,6 +6,7 @@ target_sources(raytracer_factory
     LightFactory.cpp
     MaterialFactory.cpp
     CameraFactory.cpp
+    TransformationFactory.cpp
 )
 
 target_include_directories(raytracer_factory
@@ -17,6 +18,8 @@ target_link_libraries(raytracer_factory
   PUBLIC
     raytracer_exceptions
     raytracer_components
+    raytracer_translation
+    raytracer_rotation
     config++
 )
 

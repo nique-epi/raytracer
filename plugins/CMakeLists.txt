@@ -83,6 +83,7 @@ raytracer_enable_target_warnings(GlassMaterial)
 
 add_library(raytracer_rotation_transformation SHARED
     ../src/components/Transformations/Rotation/Rotation.cpp
+    ../src/components/Transformations/Rotation/RotationPlugin.cpp
 )
 
 target_link_libraries(raytracer_rotation_transformation
@@ -100,6 +101,7 @@ raytracer_enable_target_warnings(raytracer_rotation_transformation)
 
 add_library(raytracer_translation_transformation SHARED
     ../src/components/Transformations/Translation/Translation.cpp
+    ../src/components/Transformations/Translation/TranslationPlugin.cpp
 )
 
 target_link_libraries(raytracer_translation_transformation

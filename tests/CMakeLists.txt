@@ -103,6 +103,7 @@ add_executable(raytracer_tests
   factory/LightFactoryTest.cpp
   factory/MaterialFactoryTest.cpp
   factory/CameraFactoryTest.cpp
+  factory/TransformationFactoryTest.cpp
   fixtures/SphereFixture.cpp
   fixtures/OrthoCameraFixture.cpp
   fixtures/ComponentFactoryFixture.cpp
