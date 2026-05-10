@@ -98,8 +98,10 @@ add_executable(raytracer_tests
   output/ppm/PPMTest.cpp
   ApplicationTest.cpp
   ArgsParserTest.cpp
+  factory/ComponentFactoryFixtureTest.cpp
   fixtures/SphereFixture.cpp
   fixtures/OrthoCameraFixture.cpp
+  fixtures/ComponentFactoryFixture.cpp
   scene/fixtures/NullLightFixture.cpp
   scene/fixtures/SceneBuilderFixture.cpp
 )

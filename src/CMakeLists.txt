@@ -3,6 +3,7 @@ add_subdirectory(utils/math)
 add_subdirectory(plugin)
 add_subdirectory(components)
 add_subdirectory(registry)
+add_subdirectory(factory)
 add_subdirectory(scene)
 add_subdirectory(renderer)
 add_subdirectory(application)
@@ -22,6 +23,7 @@ target_link_libraries(raytracer_src
     raytracer_plugin
     raytracer_components
     raytracer_registry
+    raytracer_factory
     raytracer_scene
     raytracer_renderer
     config++
