@@ -3,6 +3,7 @@ add_library(raytracer_factory STATIC)
 target_sources(raytracer_factory
   PRIVATE
     PrimitiveFactory.cpp
+    LightFactory.cpp
 )
 
 target_include_directories(raytracer_factory

@@ -196,6 +196,7 @@ raytracer_enable_target_warnings(Cylinder)
 
 add_library(raytracer_ambient_light SHARED
 	../src/components/light/ambient/AmbientLight.cpp
+	../src/components/light/ambient/AmbientLightPlugin.cpp
 )
 
 target_link_libraries(raytracer_ambient_light
@@ -216,6 +217,7 @@ raytracer_enable_target_warnings(raytracer_ambient_light)
 
 add_library(raytracer_directional_light SHARED
 	../src/components/light/directional/Directional.cpp
+	../src/components/light/directional/DirectionalPlugin.cpp
 )
 
 target_link_libraries(raytracer_directional_light
