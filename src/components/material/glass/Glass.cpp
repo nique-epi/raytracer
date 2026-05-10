@@ -52,14 +52,3 @@ bool Glass::scatter(const raytracer::math::Ray& in,
 }
 
 }  // namespace raytracer::components::material
-
-namespace gsl {
-template <typename T>
-using owner = T;
-}  // namespace gsl
-
-extern "C" gsl::owner<IMaterial*> createMaterial(double refractionIndex) {
-  return new raytracer::components::material::Glass(refractionIndex);
-}
-
-extern "C" void destroyMaterial(gsl::owner<IMaterial*> mat) { delete mat; }

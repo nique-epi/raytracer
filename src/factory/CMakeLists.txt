@@ -4,6 +4,7 @@ target_sources(raytracer_factory
   PRIVATE
     PrimitiveFactory.cpp
     LightFactory.cpp
+    MaterialFactory.cpp
 )
 
 target_include_directories(raytracer_factory

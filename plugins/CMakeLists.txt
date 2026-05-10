@@ -19,6 +19,7 @@ raytracer_enable_target_warnings(raytracer_perspective_camera)
 
 add_library(DiffuseMaterial SHARED
 	../src/components/material/diffuse/DiffuseMaterial.cpp
+	../src/components/material/diffuse/DiffuseMaterialPlugin.cpp
 	../src/components/material/abstract/AMaterial.cpp
 )
 
@@ -39,6 +40,7 @@ raytracer_enable_target_warnings(DiffuseMaterial)
 
 add_library(GlossyMaterial SHARED
 	../src/components/material/glossy/Glossy.cpp
+	../src/components/material/glossy/GlossyPlugin.cpp
 	../src/components/material/abstract/AMaterial.cpp
 )
 
@@ -59,6 +61,7 @@ raytracer_enable_target_warnings(GlossyMaterial)
 
 add_library(GlassMaterial SHARED
 	../src/components/material/glass/Glass.cpp
+	../src/components/material/glass/GlassPlugin.cpp
 	../src/components/material/abstract/AMaterial.cpp
 )
 
