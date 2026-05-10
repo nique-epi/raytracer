@@ -112,6 +112,7 @@ set_target_properties(raytracer_translation_transformation PROPERTIES
 raytracer_enable_target_warnings(raytracer_translation_transformation)
 add_library(Sphere SHARED
 	../src/components/Primitives/sphere/Sphere.cpp
+	../src/components/Primitives/sphere/SpherePlugin.cpp
 )
 
 target_link_libraries(Sphere
@@ -132,6 +133,7 @@ raytracer_enable_target_warnings(Sphere)
 
 add_library(Cone SHARED
 	../src/components/Primitives/cone/Cone.cpp
+	../src/components/Primitives/cone/ConePlugin.cpp
 )
 
 target_link_libraries(Cone
@@ -152,6 +154,7 @@ raytracer_enable_target_warnings(Cone)
 
 add_library(Plane SHARED
 	../src/components/Primitives/plane/Plane.cpp
+	../src/components/Primitives/plane/PlanePlugin.cpp
 )
 
 target_link_libraries(Plane
@@ -172,6 +175,7 @@ raytracer_enable_target_warnings(Plane)
 
 add_library(Cylinder SHARED
 	../src/components/Primitives/cylinder/Cylinder.cpp
+	../src/components/Primitives/cylinder/CylinderPlugin.cpp
 )
 
 target_link_libraries(Cylinder

@@ -9,25 +9,13 @@
 #include <algorithm>
 #include <cmath>
 #include <memory>
-#include <numbers>
 #include <utility>
 #include "components/Primitives/IObject.hpp"
-#include "registry/registry.hpp"
 #include "utils/math/AABB.hpp"
 #include "utils/math/Constants.hpp"
 #include "utils/math/HitRecord.hpp"
 #include "utils/math/Ray.hpp"
 #include "utils/math/Vector3D.hpp"
-
-namespace gsl {
-template <typename T>
-using owner = T;
-}  // namespace gsl
-
-namespace {
-constexpr double defaultAngle = std::numbers::pi / 4.0;
-constexpr double defaultHeight = 1.0;
-}  // namespace
 
 namespace raytracer::components::primitives {
 
@@ -150,16 +138,3 @@ math::AABB Cone::getBoundingBox() const {
 void Cone::applyTransformation(const ITransformation& /*transform*/) {}
 
 }  // namespace raytracer::components::primitives
-
-extern "C" void createPrimitive(
-    raytracer::core::registry::Registry<IObject>& registry) {
-  registry.registerType(
-      "cone", [](const libconfig::Setting&) -> std::shared_ptr<IObject> {
-        return std::make_shared<raytracer::components::primitives::Cone>(
-            raytracer::math::Vector3D(0.0, 0.0, 0.0),
-            raytracer::math::Vector3D(0.0, 1.0, 0.0),
-            defaultAngle, defaultHeight, nullptr);
-      });
-}
-
-extern "C" void destroyPrimitive(gsl::owner<IObject*> obj) { delete obj; }

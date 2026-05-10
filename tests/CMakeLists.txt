@@ -99,6 +99,7 @@ add_executable(raytracer_tests
   ApplicationTest.cpp
   ArgsParserTest.cpp
   factory/ComponentFactoryFixtureTest.cpp
+  factory/PrimitiveFactoryTest.cpp
   fixtures/SphereFixture.cpp
   fixtures/OrthoCameraFixture.cpp
   fixtures/ComponentFactoryFixture.cpp

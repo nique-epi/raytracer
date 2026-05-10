@@ -1,13 +1,20 @@
-add_library(raytracer_factory INTERFACE)
+add_library(raytracer_factory STATIC)
+
+target_sources(raytracer_factory
+  PRIVATE
+    PrimitiveFactory.cpp
+)
 
 target_include_directories(raytracer_factory
-  INTERFACE
+  PUBLIC
     ${CMAKE_SOURCE_DIR}/src
 )
 
 target_link_libraries(raytracer_factory
-  INTERFACE
+  PUBLIC
     raytracer_exceptions
     raytracer_components
     config++
 )
+
+raytracer_enable_target_warnings(raytracer_factory)
