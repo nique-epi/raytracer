@@ -7,6 +7,7 @@ target_sources(raytracer_factory
     MaterialFactory.cpp
     CameraFactory.cpp
     TransformationFactory.cpp
+    ComponentFactory.cpp
 )
 
 target_include_directories(raytracer_factory
