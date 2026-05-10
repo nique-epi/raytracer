@@ -44,7 +44,9 @@ bool CFGSceneLoader::load(const std::string& path, SceneBuilder& builder,
   } catch (const libconfig::FileIOException&) {
     throw SceneFileNotFoundException(path);
   } catch (const libconfig::ParseException& pex) {
-    throw SceneParseException(path, pex.getLine(), pex.getError());
+    const std::string file =
+        (pex.getFile() && pex.getFile()[0] != '\0') ? pex.getFile() : path;
+    throw SceneParseException(file, pex.getLine(), pex.getError());
   }
 
   const libconfig::Setting& root = cfg.getRoot();
