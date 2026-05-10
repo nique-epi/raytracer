@@ -23,30 +23,45 @@ auto lookupOrThrow(const Map& map, const std::string& type,
   return it->second;
 }
 
+template <typename Creator>
+void rejectEmptyCreator(const std::string& type, const Creator& creator,
+                        const char* category) {
+  if (!creator) {
+    throw raytracer::core::RaytracerException(
+        std::string("ComponentFactoryFixture: empty ") + category +
+        " creator for type '" + type + "'");
+  }
+}
+
 }  // namespace
 
 void ComponentFactoryFixture::registerPrimitive(const std::string& type,
                                                 PrimitiveCreator creator) {
+  rejectEmptyCreator(type, creator, "primitive");
   primitiveCreators_[type] = std::move(creator);
 }
 
 void ComponentFactoryFixture::registerLight(const std::string& type,
                                             LightCreator creator) {
+  rejectEmptyCreator(type, creator, "light");
   lightCreators_[type] = std::move(creator);
 }
 
 void ComponentFactoryFixture::registerMaterial(const std::string& type,
                                                MaterialCreator creator) {
+  rejectEmptyCreator(type, creator, "material");
   materialCreators_[type] = std::move(creator);
 }
 
 void ComponentFactoryFixture::registerCamera(const std::string& type,
                                              CameraCreator creator) {
+  rejectEmptyCreator(type, creator, "camera");
   cameraCreators_[type] = std::move(creator);
 }
 
 void ComponentFactoryFixture::registerTransformation(
     const std::string& type, TransformationCreator creator) {
+  rejectEmptyCreator(type, creator, "transformation");
   transformationCreators_[type] = std::move(creator);
 }
 

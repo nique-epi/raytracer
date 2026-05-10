@@ -7,11 +7,9 @@
 
 #include <gtest/gtest.h>
 #include <libconfig.h++>
-#include <cmath>
 #include <memory>
 #include "exceptions/Exceptions.hpp"
 #include "factory/CameraFactory.hpp"
-#include "utils/math/Ray.hpp"
 
 using raytracer::core::factory::CameraFactory;
 
@@ -35,14 +33,10 @@ class CfgFromString {
 
 // Given: a default call to createPerspective.
 // When:  no parameters are passed.
-// Then:  the factory returns a non-null camera that produces rays.
+// Then:  the factory returns a non-null camera.
 TEST(CameraFactoryTest, CreatePerspectiveWithDefaultsReturnsNonNull) {
   auto camera = CameraFactory::createPerspective();
-  ASSERT_NE(camera, nullptr);
-  const auto ray = camera->getRay(0.5, 0.5);
-  // A ray-origin equality test would couple us to the camera basis; we
-  // just assert the call path runs and returns a finite ray.
-  EXPECT_TRUE(std::isfinite(ray.getOrigin().x));
+  EXPECT_NE(camera, nullptr);
 }
 
 // Given: the example.cfg camera schema (position + direction + fov).

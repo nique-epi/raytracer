@@ -72,6 +72,15 @@ TEST_F(ComponentFactoryFixtureTest, PolymorphicDispatchThroughInterface) {
   EXPECT_NE(base.createPrimitive("sphere", *stubSetting), nullptr);
 }
 
+// Given: a registration call with an empty std::function creator.
+// When:  registerPrimitive is invoked.
+// Then:  it throws RaytracerException eagerly so empty creators never reach
+//        a later create* call (which would surface std::bad_function_call).
+TEST_F(ComponentFactoryFixtureTest, RegisterPrimitiveRejectsEmptyCreator) {
+  EXPECT_THROW(factory.registerPrimitive("sphere", {}),
+               raytracer::core::RaytracerException);
+}
+
 // Given: a fixture with no registrations.
 // When:  createLight, createMaterial, createCamera, createTransformation
 //        are called for unknown types.
