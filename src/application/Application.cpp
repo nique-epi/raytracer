@@ -30,9 +30,7 @@ int Application::run(const std::string& scenePath) {
                               _cameraRegistry, _materialRegistry);
   math::RenderSettings settings;
 
-  if (!loader->load(scenePath, builder, settings)) {
-    throw RaytracerException("Failed to load scene: " + scenePath);
-  }
+  loader->load(scenePath, builder, settings);
 
   if (!settings.validate()) {
     throw RaytracerException("Invalid render settings loaded from: " +

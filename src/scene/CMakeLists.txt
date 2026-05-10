@@ -2,6 +2,7 @@ add_library(raytracer_scene STATIC
   CFGSceneLoader.cpp
   SceneLoaderFactory.cpp
   SceneBuilder.cpp
+  SceneException.cpp
   Scene.cpp
   background/Solid/SolidBackground.cpp
 )

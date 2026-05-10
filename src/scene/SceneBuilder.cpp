@@ -6,7 +6,8 @@
 */
 
 #include "SceneBuilder.hpp"
-#include "exceptions/Exceptions.hpp"
+#include "SceneException.hpp"
+#include "constants/Errors.hpp"
 #include "scene/Scene.hpp"
 
 namespace raytracer::scene {
@@ -31,7 +32,7 @@ void SceneBuilder::addObject(const std::string& type,
       scene_->add(obj);
     }
   } catch (const raytracer::core::RaytracerException& e) {
-    throw raytracer::core::RaytracerException(e.what());
+    throw SceneBuildException(e.what());
   }
 }
 
@@ -44,7 +45,7 @@ void SceneBuilder::addLight(const std::string& type,
       scene_->addLight(light);
     }
   } catch (const raytracer::core::RaytracerException& e) {
-    throw raytracer::core::RaytracerException(e.what());
+    throw SceneBuildException(e.what());
   }
 }
 
@@ -58,18 +59,20 @@ void SceneBuilder::addCamera(const libconfig::Setting& cfg) {
       scene_->setCamera(camera);
     }
   } catch (const raytracer::core::RaytracerException& e) {
-    throw raytracer::core::RaytracerException(e.what());
+    throw SceneBuildException(e.what());
   }
 }
 
 std::shared_ptr<Scene> SceneBuilder::build() {
   if (!scene_->getCamera()) {
-    throw raytracer::core::RaytracerException(
-        "SceneBuilder::build: scene has no camera defined");
+    throw SceneBuildException(
+        std::string(raytracer::constants::errors::SCENE_BUILD_ERROR) +
+        ": scene has no camera defined");
   }
   if (scene_->getLights().empty()) {
-    throw raytracer::core::RaytracerException(
-        "SceneBuilder::build: scene has no light sources defined");
+    throw SceneBuildException(
+        std::string(raytracer::constants::errors::SCENE_BUILD_ERROR) +
+        ": scene has no light sources defined");
   }
   return scene_;
 }

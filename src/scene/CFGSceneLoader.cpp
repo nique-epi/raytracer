@@ -6,9 +6,9 @@
 */
 
 #include "CFGSceneLoader.hpp"
-#include <iostream>
 #include <libconfig.h++>
 #include "SceneBuilder.hpp"
+#include "SceneException.hpp"
 
 namespace {
 
@@ -42,12 +42,9 @@ bool CFGSceneLoader::load(const std::string& path, SceneBuilder& builder,
   try {
     cfg.readFile(path.c_str());
   } catch (const libconfig::FileIOException&) {
-    std::cerr << "I/O error while reading file: " << path << "\n";
-    return false;
+    throw SceneFileNotFoundException(path);
   } catch (const libconfig::ParseException& pex) {
-    std::cerr << "Parse error at " << pex.getFile() << ":" << pex.getLine()
-              << " - " << pex.getError() << "\n";
-    return false;
+    throw SceneParseException(path, pex.getLine(), pex.getError());
   }
 
   const libconfig::Setting& root = cfg.getRoot();
