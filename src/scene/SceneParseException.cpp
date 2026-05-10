@@ -2,19 +2,14 @@
 ** EPITECH PROJECT, 2026
 ** raytracer
 ** File description:
-** SceneException
+** SceneParseException
 */
 
-#include "SceneException.hpp"
+#include "SceneParseException.hpp"
 #include <string>
 #include "constants/Errors.hpp"
 
 namespace raytracer::scene {
-
-SceneFileNotFoundException::SceneFileNotFoundException(const std::string& path)
-    : SceneLoaderException(
-          std::string(raytracer::constants::errors::SCENE_FILE_NOT_FOUND) +
-          ": '" + path + "'") {}
 
 SceneParseException::SceneParseException(const std::string& path,
                                          const std::string& reason)

@@ -8,7 +8,8 @@
 #include "CFGSceneLoader.hpp"
 #include <libconfig.h++>
 #include "SceneBuilder.hpp"
-#include "SceneException.hpp"
+#include "SceneFileNotFoundException.hpp"
+#include "SceneParseException.hpp"
 
 namespace {
 
@@ -45,7 +46,7 @@ bool CFGSceneLoader::load(const std::string& path, SceneBuilder& builder,
     throw SceneFileNotFoundException(path);
   } catch (const libconfig::ParseException& pex) {
     const std::string file =
-        (pex.getFile() && pex.getFile()[0] != '\0') ? pex.getFile() : path;
+        ((pex.getFile() != nullptr) && pex.getFile()[0] != '\0') ? pex.getFile() : path;
     throw SceneParseException(file, pex.getLine(), pex.getError());
   }
 

@@ -9,7 +9,10 @@
 #include <string>
 #include "constants/Errors.hpp"
 #include "exceptions/Exceptions.hpp"
-#include "scene/SceneException.hpp"
+#include "scene/SceneBuildException.hpp"
+#include "scene/SceneFileNotFoundException.hpp"
+#include "scene/SceneLoaderException.hpp"
+#include "scene/SceneParseException.hpp"
 
 using raytracer::scene::SceneBuildException;
 using raytracer::scene::SceneFileNotFoundException;

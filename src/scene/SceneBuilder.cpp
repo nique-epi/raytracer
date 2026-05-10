@@ -6,7 +6,7 @@
 */
 
 #include "SceneBuilder.hpp"
-#include "SceneException.hpp"
+#include "SceneBuildException.hpp"
 #include "constants/Errors.hpp"
 #include "scene/Scene.hpp"
 

@@ -9,7 +9,8 @@
 #include "fixtures/SceneBuilderFixture.hpp"
 #include "scene/CFGSceneLoader.hpp"
 #include "scene/SceneBuilder.hpp"
-#include "scene/SceneException.hpp"
+#include "scene/SceneFileNotFoundException.hpp"
+#include "scene/SceneParseException.hpp"
 #include "utils/math/RenderSettings.hpp"
 
 using raytracer::scene::CFGSceneLoader;
