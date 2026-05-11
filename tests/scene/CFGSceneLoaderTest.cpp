@@ -43,7 +43,7 @@ TEST_F(CFGSceneLoaderTest, SupportsOnlyCfg) {
 // When:  load() is called with a fresh builder and settings.
 // Then:  it returns true, indicating the file was parsed without error.
 TEST_F(CFGSceneLoaderTest, LoadExampleSucceeds) {
-  SceneBuilder builder(factory);
+  SceneBuilder builder(factory_);
   raytracer::math::RenderSettings settings;
 
   EXPECT_TRUE(loader.load(ExampleCfg, builder, settings));
@@ -54,7 +54,7 @@ TEST_F(CFGSceneLoaderTest, LoadExampleSucceeds) {
 // When:  load() is called.
 // Then:  the builder has recorded exactly that many calls of each type.
 TEST_F(CFGSceneLoaderTest, LoadExampleContainsExpectedObjects) {
-  SceneBuilder builder(factory);
+  SceneBuilder builder(factory_);
   raytracer::math::RenderSettings settings;
 
   loader.load(ExampleCfg, builder, settings);
@@ -71,7 +71,7 @@ TEST_F(CFGSceneLoaderTest, LoadExampleContainsExpectedObjects) {
 // When:  load() is called.
 // Then:  the RenderSettings struct reflects every value defined in the file.
 TEST_F(CFGSceneLoaderTest, LoadExamplePopulatesSettings) {
-  SceneBuilder builder(factory);
+  SceneBuilder builder(factory_);
   raytracer::math::RenderSettings settings;
 
   loader.load(ExampleCfg, builder, settings);
@@ -87,7 +87,7 @@ TEST_F(CFGSceneLoaderTest, LoadExamplePopulatesSettings) {
 // Then:  it catches the libconfig::FileIOException and returns false
 //        (no exception escapes to the caller).
 TEST_F(CFGSceneLoaderTest, LoadMissingFileReturnsFalse) {
-  SceneBuilder builder(factory);
+  SceneBuilder builder(factory_);
   raytracer::math::RenderSettings settings;
 
   EXPECT_FALSE(loader.load("/nonexistent/path/scene.cfg", builder, settings));
@@ -97,7 +97,7 @@ TEST_F(CFGSceneLoaderTest, LoadMissingFileReturnsFalse) {
 // When:  load() is called with that file.
 // Then:  it catches the libconfig::ParseException and returns false.
 TEST_F(CFGSceneLoaderTest, LoadMalformedFileReturnsFalse) {
-  SceneBuilder builder(factory);
+  SceneBuilder builder(factory_);
   raytracer::math::RenderSettings settings;
 
   EXPECT_FALSE(loader.load(MalformedCfg, builder, settings));
@@ -108,7 +108,7 @@ TEST_F(CFGSceneLoaderTest, LoadMalformedFileReturnsFalse) {
 // When:  load() is called.
 // Then:  every field of RenderSettings stays at its compile-time default.
 TEST_F(CFGSceneLoaderTest, LoadWithoutSettingsBlockKeepsDefaults) {
-  SceneBuilder builder(factory);
+  SceneBuilder builder(factory_);
   raytracer::math::RenderSettings settings;
   const raytracer::math::RenderSettings defaults;
 
@@ -126,7 +126,7 @@ TEST_F(CFGSceneLoaderTest, LoadWithoutSettingsBlockKeepsDefaults) {
 // When:  load() is called with a fresh RenderSettings.
 // Then:  samplesPerPixel is updated, while every other field stays at default.
 TEST_F(CFGSceneLoaderTest, LoadWithPartialSettingsKeepsOtherDefaults) {
-  SceneBuilder builder(factory);
+  SceneBuilder builder(factory_);
   raytracer::math::RenderSettings settings;
   const raytracer::math::RenderSettings defaults;
 
@@ -143,7 +143,7 @@ TEST_F(CFGSceneLoaderTest, LoadWithPartialSettingsKeepsOtherDefaults) {
 // When:  load() is called.
 // Then:  it returns true and the builder has zero primitive calls.
 TEST_F(CFGSceneLoaderTest, LoadWithoutPrimitivesSucceedsWithNoObjects) {
-  SceneBuilder builder(factory);
+  SceneBuilder builder(factory_);
   raytracer::math::RenderSettings settings;
 
   EXPECT_TRUE(loader.load(NoPrimitivesCfg, builder, settings));
@@ -155,7 +155,7 @@ TEST_F(CFGSceneLoaderTest, LoadWithoutPrimitivesSucceedsWithNoObjects) {
 // When:  load() is called.
 // Then:  it returns true, no primitive or light is registered, camera is parsed.
 TEST_F(CFGSceneLoaderTest, LoadWithEmptyListsSucceedsWithNoObjects) {
-  SceneBuilder builder(factory);
+  SceneBuilder builder(factory_);
   raytracer::math::RenderSettings settings;
 
   EXPECT_TRUE(loader.load(EmptyListsCfg, builder, settings));
@@ -170,7 +170,7 @@ TEST_F(CFGSceneLoaderTest, LoadWithEmptyListsSucceedsWithNoObjects) {
 // When:  load() is called.
 // Then:  it returns true, no camera is registered, primitives are parsed.
 TEST_F(CFGSceneLoaderTest, LoadWithoutCameraSucceedsWithNoCamera) {
-  SceneBuilder builder(factory);
+  SceneBuilder builder(factory_);
   raytracer::math::RenderSettings settings;
 
   EXPECT_TRUE(loader.load(NoCameraCfg, builder, settings));

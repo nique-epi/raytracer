@@ -25,8 +25,8 @@ class SceneBuilderFixture : public ::testing::Test {
  protected:
   void SetUp() override;
 
-  ComponentFactoryFixture factory;
+  ComponentFactoryFixture factory_;
 
-  libconfig::Config cfg;
-  libconfig::Setting* stubSetting = nullptr;
+  libconfig::Config cfg_;
+  libconfig::Setting* stubSetting_ = nullptr;
 };
