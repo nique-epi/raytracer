@@ -35,6 +35,12 @@ void SceneBuilder::addObject(const std::string& type,
   }
 }
 
+void SceneBuilder::addObject(std::shared_ptr<IObject> object) {
+  if (object) {
+    scene_->add(object);
+  }
+}
+
 void SceneBuilder::addLight(const std::string& type,
                             const libconfig::Setting& cfg) {
   typeCounts_[type]++;
@@ -45,6 +51,12 @@ void SceneBuilder::addLight(const std::string& type,
     }
   } catch (const raytracer::core::RaytracerException& e) {
     throw raytracer::core::RaytracerException(e.what());
+  }
+}
+
+void SceneBuilder::addLight(std::shared_ptr<ILight> light) {
+  if (light) {
+    scene_->addLight(light);
   }
 }
 
@@ -59,6 +71,12 @@ void SceneBuilder::addCamera(const libconfig::Setting& cfg) {
     }
   } catch (const raytracer::core::RaytracerException& e) {
     throw raytracer::core::RaytracerException(e.what());
+  }
+}
+
+void SceneBuilder::addCamera(std::shared_ptr<ICamera> camera) {
+  if (camera) {
+    scene_->setCamera(camera);
   }
 }
 

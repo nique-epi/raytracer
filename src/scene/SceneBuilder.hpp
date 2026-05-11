@@ -52,6 +52,13 @@ class SceneBuilder {
   void addObject(const std::string& type, const libconfig::Setting& cfg);
 
   /**
+   * @brief Add a primitive object to the scene.
+   *
+   * @param [in] object Shared pointer to the primitive object to add.
+   */
+  void addObject(std::shared_ptr<IObject> object);
+
+  /**
    * @brief Resolve @p type in the light registry and add it to the scene.
    *
    * @param [in] type Registry key identifying the light type.
@@ -62,16 +69,32 @@ class SceneBuilder {
   void addLight(const std::string& type, const libconfig::Setting& cfg);
 
   /**
-   * @brief Resolve the camera type in the camera registry and set it on the scene.
+   * @brief Add a light source to the scene.
+   *
+   * @param [in] light Shared pointer to the light source to add.
+   */
+  void addLight(std::shared_ptr<ILight> light);
+
+  /**
+   * @brief Resolve the camera type in the camera registry and set it on the
+   * scene.
    *
    * The type is read from @p cfg under the key @c "type"; it defaults to
    * @c "perspective" when the key is absent.
    *
    * @param [in] cfg Configuration block passed to the factory.
    *
-   * @throws raytracer::core::RaytracerException If the resolved type is not registered.
+   * @throws raytracer::core::RaytracerException If the resolved type is not
+   * registered.
    */
   void addCamera(const libconfig::Setting& cfg);
+
+  /**
+   * @brief Set the scene's camera.
+   *
+   * @param [in] camera Shared pointer to the camera to set.
+   */
+  void addCamera(std::shared_ptr<ICamera> camera);
 
   /**
    * @brief Finalise and return the assembled scene.
@@ -103,8 +126,7 @@ class SceneBuilder {
   std::reference_wrapper<raytracer::core::registry::CameraRegistry>
       cameraRegistry_;
   [[maybe_unused]] std::reference_wrapper<
-      raytracer::core::registry::MaterialRegistry>
-      materialRegistry_;
+      raytracer::core::registry::MaterialRegistry> materialRegistry_;
   std::map<std::string, std::size_t> typeCounts_;
 };
 
