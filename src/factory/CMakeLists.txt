@@ -2,11 +2,11 @@ add_library(raytracer_factory STATIC)
 
 target_sources(raytracer_factory
   PRIVATE
-    PrimitiveFactory.cpp
-    LightFactory.cpp
-    MaterialFactory.cpp
-    CameraFactory.cpp
-    TransformationFactory.cpp
+    primitive/PrimitiveFactory.cpp
+    light/LightFactory.cpp
+    material/MaterialFactory.cpp
+    camera/CameraFactory.cpp
+    transformation/TransformationFactory.cpp
     ComponentFactory.cpp
 )
 

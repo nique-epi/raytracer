@@ -9,7 +9,7 @@
 #include <libconfig.h++>
 #include <memory>
 #include "exceptions/Exceptions.hpp"
-#include "factory/TransformationFactory.hpp"
+#include "factory/transformation/TransformationFactory.hpp"
 #include "utils/math/Vector3D.hpp"
 
 using raytracer::core::factory::TransformationFactory;

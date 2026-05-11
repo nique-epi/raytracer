@@ -9,7 +9,7 @@
 #include <libconfig.h++>
 #include <memory>
 #include "exceptions/Exceptions.hpp"
-#include "factory/MaterialFactory.hpp"
+#include "factory/material/MaterialFactory.hpp"
 #include "utils/math/Color.hpp"
 
 using raytracer::core::factory::MaterialFactory;

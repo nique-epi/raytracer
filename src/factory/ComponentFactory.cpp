@@ -6,11 +6,11 @@
 */
 
 #include "ComponentFactory.hpp"
-#include "CameraFactory.hpp"
-#include "LightFactory.hpp"
-#include "MaterialFactory.hpp"
-#include "PrimitiveFactory.hpp"
-#include "TransformationFactory.hpp"
+#include "camera/CameraFactory.hpp"
+#include "light/LightFactory.hpp"
+#include "material/MaterialFactory.hpp"
+#include "primitive/PrimitiveFactory.hpp"
+#include "transformation/TransformationFactory.hpp"
 
 namespace raytracer::core::factory {
 

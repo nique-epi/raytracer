@@ -9,7 +9,7 @@
 #include <libconfig.h++>
 #include <memory>
 #include "exceptions/Exceptions.hpp"
-#include "factory/LightFactory.hpp"
+#include "factory/light/LightFactory.hpp"
 #include "utils/math/Color.hpp"
 #include "utils/math/Vector3D.hpp"
 

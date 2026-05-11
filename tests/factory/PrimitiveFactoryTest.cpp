@@ -10,7 +10,7 @@
 #include <memory>
 #include "components/Primitives/IObject.hpp"
 #include "exceptions/Exceptions.hpp"
-#include "factory/PrimitiveFactory.hpp"
+#include "factory/primitive/PrimitiveFactory.hpp"
 #include "utils/math/AABB.hpp"
 
 using raytracer::core::factory::PrimitiveFactory;

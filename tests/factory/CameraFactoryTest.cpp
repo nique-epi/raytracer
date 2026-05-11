@@ -9,7 +9,7 @@
 #include <libconfig.h++>
 #include <memory>
 #include "exceptions/Exceptions.hpp"
-#include "factory/CameraFactory.hpp"
+#include "factory/camera/CameraFactory.hpp"
 
 using raytracer::core::factory::CameraFactory;
 
