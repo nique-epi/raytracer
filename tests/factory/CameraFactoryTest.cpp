@@ -10,26 +10,10 @@
 #include <memory>
 #include "exceptions/Exceptions.hpp"
 #include "factory/camera/CameraFactory.hpp"
+#include "helpers/CfgFromString.hpp"
 
 using raytracer::core::factory::CameraFactory;
-
-namespace {
-
-class CfgFromString {
- public:
-  explicit CfgFromString(const char* source) {
-    config_.readString(source);
-  }
-
-  [[nodiscard]] const libconfig::Setting& at(const char* path) const {
-    return config_.lookup(path);
-  }
-
- private:
-  libconfig::Config config_;
-};
-
-}  // namespace
+using raytracer::tests::CfgFromString;
 
 TEST(CameraFactoryTest, CreatePerspectiveWithDefaultsReturnsNonNull) {
   auto camera = CameraFactory::createPerspective();

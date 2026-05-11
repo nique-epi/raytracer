@@ -11,27 +11,11 @@
 #include "exceptions/Exceptions.hpp"
 #include "factory/ComponentFactory.hpp"
 #include "factory/IComponentFactory.hpp"
+#include "helpers/CfgFromString.hpp"
 
 using raytracer::core::factory::ComponentFactory;
 using raytracer::core::factory::IComponentFactory;
-
-namespace {
-
-class CfgFromString {
- public:
-  explicit CfgFromString(const char* source) {
-    config_.readString(source);
-  }
-
-  [[nodiscard]] const libconfig::Setting& at(const char* path) const {
-    return config_.lookup(path);
-  }
-
- private:
-  libconfig::Config config_;
-};
-
-}  // namespace
+using raytracer::tests::CfgFromString;
 
 TEST(ComponentFactoryTest, AllInterfacesDispatchThroughBase) {
   ComponentFactory concrete;
@@ -50,9 +34,9 @@ TEST(ComponentFactoryTest, AllInterfacesDispatchThroughBase) {
   EXPECT_NE(factory.createMaterial("diffuse", matCfg.at("entry")), nullptr);
   EXPECT_NE(factory.createCamera("perspective", cameraCfg.at("entry")),
             nullptr);
-  EXPECT_NE(factory.createTransformation("translation",
-                                          translationCfg.at("entry")),
-            nullptr);
+  EXPECT_NE(
+      factory.createTransformation("translation", translationCfg.at("entry")),
+      nullptr);
 }
 
 TEST(ComponentFactoryTest, UnknownTypeOnEachInterfaceThrows) {

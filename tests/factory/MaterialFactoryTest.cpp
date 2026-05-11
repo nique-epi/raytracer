@@ -10,28 +10,12 @@
 #include <memory>
 #include "exceptions/Exceptions.hpp"
 #include "factory/material/MaterialFactory.hpp"
+#include "helpers/CfgFromString.hpp"
 #include "utils/math/Color.hpp"
 
 using raytracer::core::factory::MaterialFactory;
 using raytracer::math::Color;
-
-namespace {
-
-class CfgFromString {
- public:
-  explicit CfgFromString(const char* source) {
-    config_.readString(source);
-  }
-
-  [[nodiscard]] const libconfig::Setting& at(const char* path) const {
-    return config_.lookup(path);
-  }
-
- private:
-  libconfig::Config config_;
-};
-
-}  // namespace
+using raytracer::tests::CfgFromString;
 
 TEST(MaterialFactoryTest, CreateDiffuseWithDefaultsReturnsNonEmissive) {
   auto material = MaterialFactory::createDiffuse();
@@ -43,8 +27,7 @@ TEST(MaterialFactoryTest, CreateDiffuseWithDefaultsReturnsNonEmissive) {
 }
 
 TEST(MaterialFactoryTest, CreateDiffuseFromCfg) {
-  CfgFromString cfg(
-      "diffuse = { albedo = { r = 200; g = 100; b = 50; }; };");
+  CfgFromString cfg("diffuse = { albedo = { r = 200; g = 100; b = 50; }; };");
   auto material = MaterialFactory::create("diffuse", cfg.at("diffuse"));
   EXPECT_NE(material, nullptr);
 }

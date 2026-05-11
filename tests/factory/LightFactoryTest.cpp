@@ -10,30 +10,14 @@
 #include <memory>
 #include "exceptions/Exceptions.hpp"
 #include "factory/light/LightFactory.hpp"
+#include "helpers/CfgFromString.hpp"
 #include "utils/math/Color.hpp"
 #include "utils/math/Vector3D.hpp"
 
 using raytracer::core::factory::LightFactory;
 using raytracer::math::Color;
 using raytracer::math::Vector3D;
-
-namespace {
-
-class CfgFromString {
- public:
-  explicit CfgFromString(const char* source) {
-    config_.readString(source);
-  }
-
-  [[nodiscard]] const libconfig::Setting& at(const char* path) const {
-    return config_.lookup(path);
-  }
-
- private:
-  libconfig::Config config_;
-};
-
-}  // namespace
+using raytracer::tests::CfgFromString;
 
 TEST(LightFactoryTest, CreateAmbientWithDefaultsReturnsUnitIntensity) {
   auto light = LightFactory::createAmbient();
@@ -43,7 +27,8 @@ TEST(LightFactoryTest, CreateAmbientWithDefaultsReturnsUnitIntensity) {
 
 TEST(LightFactoryTest, CreateAmbientFromCfgReadsIntensity) {
   CfgFromString cfg(
-      "ambient = { color = { r = 255; g = 255; b = 255; }; intensity = 0.3; };");
+      "ambient = { color = { r = 255; g = 255; b = 255; }; intensity = 0.3; "
+      "};");
   auto light = LightFactory::create("ambient", cfg.at("ambient"));
   ASSERT_NE(light, nullptr);
   EXPECT_DOUBLE_EQ(light->getIntensity(), 0.3);

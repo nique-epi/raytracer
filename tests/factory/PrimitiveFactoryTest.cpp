@@ -11,32 +11,12 @@
 #include "components/Primitives/IObject.hpp"
 #include "exceptions/Exceptions.hpp"
 #include "factory/primitive/PrimitiveFactory.hpp"
+#include "helpers/CfgFromString.hpp"
 #include "utils/math/AABB.hpp"
 
 using raytracer::core::factory::PrimitiveFactory;
 using raytracer::math::Vector3D;
-
-namespace {
-
-class CfgFromString {
- public:
-  explicit CfgFromString(const char* source) {
-    config_.readString(source);
-  }
-
-  [[nodiscard]] const libconfig::Setting& root() const {
-    return config_.getRoot();
-  }
-
-  [[nodiscard]] const libconfig::Setting& at(const char* path) const {
-    return config_.lookup(path);
-  }
-
- private:
-  libconfig::Config config_;
-};
-
-}  // namespace
+using raytracer::tests::CfgFromString;
 
 TEST(PrimitiveFactoryTest, CreateSphereWithDefaultsReturnsUnitSphereAtOrigin) {
   PrimitiveFactory factory;

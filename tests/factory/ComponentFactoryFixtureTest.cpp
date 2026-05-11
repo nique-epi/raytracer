@@ -69,18 +69,17 @@ TEST_F(ComponentFactoryFixtureTest, RegisterPrimitiveRejectsEmptyCreator) {
 }
 
 TEST_F(ComponentFactoryFixtureTest, AllInterfacesThrowOnUnknownType) {
-  EXPECT_THROW(
-      static_cast<void>(factory.createLight("ambient", *stubSetting)),
-      raytracer::core::RaytracerException);
+  EXPECT_THROW(static_cast<void>(factory.createLight("ambient", *stubSetting)),
+               raytracer::core::RaytracerException);
   EXPECT_THROW(
       static_cast<void>(factory.createMaterial("lambertian", *stubSetting)),
       raytracer::core::RaytracerException);
   EXPECT_THROW(
       static_cast<void>(factory.createCamera("perspective", *stubSetting)),
       raytracer::core::RaytracerException);
-  EXPECT_THROW(
-      static_cast<void>(factory.createTransformation("translation", *stubSetting)),
-      raytracer::core::RaytracerException);
+  EXPECT_THROW(static_cast<void>(
+                   factory.createTransformation("translation", *stubSetting)),
+               raytracer::core::RaytracerException);
 }
 
 }  // namespace

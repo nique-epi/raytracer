@@ -10,28 +10,12 @@
 #include <memory>
 #include "exceptions/Exceptions.hpp"
 #include "factory/transformation/TransformationFactory.hpp"
+#include "helpers/CfgFromString.hpp"
 #include "utils/math/Vector3D.hpp"
 
 using raytracer::core::factory::TransformationFactory;
 using raytracer::math::Vector3D;
-
-namespace {
-
-class CfgFromString {
- public:
-  explicit CfgFromString(const char* source) {
-    config_.readString(source);
-  }
-
-  [[nodiscard]] const libconfig::Setting& at(const char* path) const {
-    return config_.lookup(path);
-  }
-
- private:
-  libconfig::Config config_;
-};
-
-}  // namespace
+using raytracer::tests::CfgFromString;
 
 TEST(TransformationFactoryTest, DefaultTranslationIsIdentity) {
   auto translation = TransformationFactory::createTranslation();
@@ -63,7 +47,7 @@ TEST(TransformationFactoryTest, CreateRotationFromCfgReturnsNonNull) {
 
 TEST(TransformationFactoryTest, CreateUnknownTypeThrows) {
   CfgFromString cfg("entry = { };");
-  EXPECT_THROW(
-      static_cast<void>(TransformationFactory::create("scale", cfg.at("entry"))),
-      raytracer::core::RaytracerException);
+  EXPECT_THROW(static_cast<void>(
+                   TransformationFactory::create("scale", cfg.at("entry"))),
+               raytracer::core::RaytracerException);
 }
