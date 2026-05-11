@@ -5,4 +5,6 @@ target_sources(raytracer_components
 		cone/Cone.cpp
 		cylinder/Cylinder.cpp
 		plane/Plane.cpp
+        triangle/Triangle.cpp
+        mesh/Mesh.cpp
 )

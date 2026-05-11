@@ -10,7 +10,6 @@
 #include <cmath>
 #include <memory>
 #include "components/Primitives/IObject.hpp"
-#include "core/registry/registry.hpp"
 #include "utils/math/Constants.hpp"
 
 namespace gsl {
@@ -93,16 +92,3 @@ void Triangle::applyTransformation(const ITransformation& transformation) {
 }
 
 }  // namespace raytracer::components::primitives
-
-extern "C" void createPrimitive(
-    raytracer::core::registry::Registry<IObject>& registry) {
-  registry.registerType(
-      "triangle", [](const libconfig::Setting&) -> std::shared_ptr<IObject> {
-        return std::make_shared<raytracer::components::primitives::Triangle>(
-            raytracer::math::Point3D(0.0, 0.0, 0.0),
-            raytracer::math::Point3D(1.0, 0.0, 0.0),
-            raytracer::math::Point3D(0.0, 1.0, 0.0), nullptr);
-      });
-}
-
-extern "C" void destroyPrimitive(gsl::owner<IObject*> obj) { delete obj; }

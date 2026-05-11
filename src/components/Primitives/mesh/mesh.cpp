@@ -9,7 +9,6 @@
 #include <memory>
 #include <utility>
 #include "components/Primitives/IObject.hpp"
-#include "core/registry/registry.hpp"
 
 namespace gsl {
 template <typename T>
@@ -70,16 +69,3 @@ void Mesh::applyTransformation(const ITransformation& transform) {
   bboxDirty_ = true;
 }
 }  // namespace raytracer::components::primitives
-
-extern "C" void createPrimitive(
-    raytracer::core::registry::Registry<IObject>& registry) {
-  registry.registerType(
-      "mesh", [](const libconfig::Setting&) -> std::shared_ptr<IObject> {
-        return std::make_shared<raytracer::components::primitives::Mesh>();
-      });
-}
-
-extern "C" void destroyPrimitive(
-    gsl::owner<raytracer::components::primitives::Mesh*> obj) {
-  delete obj;
-}
