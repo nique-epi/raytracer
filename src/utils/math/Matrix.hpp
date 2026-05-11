@@ -25,6 +25,7 @@ class Matrix4x4 {
   Matrix4x4& operator=(Matrix4x4&& other) noexcept;
 
   Matrix4x4 operator+(const Matrix4x4& other) const;
+  Matrix4x4 operator*(const Matrix4x4& other) const;
   [[nodiscard]] bool operator==(const Matrix4x4& other) const;
   [[nodiscard]] Vector3D transformPoint(const Vector3D& point) const;
   [[nodiscard]] Vector3D transformDirection(const Vector3D& direction) const;
@@ -34,6 +35,12 @@ class Matrix4x4 {
   static Matrix4x4 translation(const Vector3D& vector);
   static Matrix4x4 scaling(const Vector3D& vector);
   static Matrix4x4 rotation(double angle, const Vector3D& axis);
+
+  [[nodiscard]] double get(int row, int col) const {
+    return _matrixData[row][col];
+  }
+
+  void set(int row, int col, double value) { _matrixData[row][col] = value; }
 
  private:
   static constexpr std::size_t MATRIX_SIZE = 4;

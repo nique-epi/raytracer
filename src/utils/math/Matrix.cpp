@@ -71,6 +71,24 @@ Matrix4x4 Matrix4x4::operator+(const Matrix4x4& other) const {
   return result;
 }
 
+Matrix4x4 Matrix4x4::operator*(const Matrix4x4& other) const {
+  if (_cols != other._rows || _rows != 4 || other._cols != 4) {
+    // NOLINTNEXTLINE(modernize-return-braced-init-list)
+    return Matrix4x4();
+  }
+  Matrix4x4 result(4, 4);
+  for (int i = 0; i < 4; ++i) {
+    for (int j = 0; j < 4; ++j) {
+      double sum = 0.0;
+      for (int k = 0; k < 4; ++k) {
+        sum += _matrixData[i][k] * other._matrixData[k][j];
+      }
+      result._matrixData[i][j] = sum;
+    }
+  }
+  return result;
+}
+
 bool Matrix4x4::operator==(const Matrix4x4& other) const {
   if (_rows != other._rows || _cols != other._cols) {
     return false;
