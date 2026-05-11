@@ -44,8 +44,6 @@ void overrideVec3IfPresent(const libconfig::Setting& cfg, const char* key,
   }
 }
 
-// Parse `{ r = ...; g = ...; b = ...; }` block; values are interpreted as
-// 0-255 sRGB-ish channels and normalised to [0, 1] for the renderer.
 Color parseColorOrDefault(const libconfig::Setting& s, const Color& fallback) {
   int rRaw = static_cast<int>(fallback.r * colorChannelMaximum);
   int gRaw = static_cast<int>(fallback.g * colorChannelMaximum);

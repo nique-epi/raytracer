@@ -5,8 +5,7 @@
 ** MaterialFactory
 */
 
-#ifndef FACTORY_MATERIALFACTORY_HPP_
-#define FACTORY_MATERIALFACTORY_HPP_
+#pragma once
 
 #include <memory>
 #include <string>
@@ -83,5 +82,3 @@ class MaterialFactory {
 };
 
 }  // namespace raytracer::core::factory
-
-#endif  // FACTORY_MATERIALFACTORY_HPP_

@@ -5,8 +5,7 @@
 ** CameraFactory
 */
 
-#ifndef FACTORY_CAMERAFACTORY_HPP_
-#define FACTORY_CAMERAFACTORY_HPP_
+#pragma once
 
 #include <memory>
 #include <string>
@@ -79,5 +78,3 @@ class CameraFactory {
 };
 
 }  // namespace raytracer::core::factory
-
-#endif  // FACTORY_CAMERAFACTORY_HPP_

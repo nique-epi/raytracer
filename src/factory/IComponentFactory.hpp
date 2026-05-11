@@ -5,8 +5,7 @@
 ** IComponentFactory
 */
 
-#ifndef FACTORY_ICOMPONENTFACTORY_HPP_
-#define FACTORY_ICOMPONENTFACTORY_HPP_
+#pragma once
 
 #include <memory>
 #include <string>
@@ -114,5 +113,3 @@ class IComponentFactory {
 };
 
 }  // namespace raytracer::core::factory
-
-#endif  // FACTORY_ICOMPONENTFACTORY_HPP_

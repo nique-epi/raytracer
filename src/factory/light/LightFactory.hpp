@@ -5,8 +5,7 @@
 ** LightFactory
 */
 
-#ifndef FACTORY_LIGHTFACTORY_HPP_
-#define FACTORY_LIGHTFACTORY_HPP_
+#pragma once
 
 #include <memory>
 #include <string>
@@ -81,5 +80,3 @@ class LightFactory {
 };
 
 }  // namespace raytracer::core::factory
-
-#endif  // FACTORY_LIGHTFACTORY_HPP_

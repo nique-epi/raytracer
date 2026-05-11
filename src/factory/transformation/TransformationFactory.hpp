@@ -5,8 +5,7 @@
 ** TransformationFactory
 */
 
-#ifndef FACTORY_TRANSFORMATIONFACTORY_HPP_
-#define FACTORY_TRANSFORMATIONFACTORY_HPP_
+#pragma once
 
 #include <memory>
 #include <string>
@@ -71,5 +70,3 @@ class TransformationFactory {
 };
 
 }  // namespace raytracer::core::factory
-
-#endif  // FACTORY_TRANSFORMATIONFACTORY_HPP_

@@ -5,8 +5,7 @@
 ** PrimitiveFactory
 */
 
-#ifndef FACTORY_PRIMITIVEFACTORY_HPP_
-#define FACTORY_PRIMITIVEFACTORY_HPP_
+#pragma once
 
 #include <memory>
 #include <numbers>
@@ -22,7 +21,6 @@ class Setting;
 
 namespace raytracer::core::factory {
 
-// NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
 inline constexpr double defaultConeAngle = std::numbers::pi / 4.0;
 
 /**
@@ -120,5 +118,3 @@ class PrimitiveFactory {
 };
 
 }  // namespace raytracer::core::factory
-
-#endif  // FACTORY_PRIMITIVEFACTORY_HPP_

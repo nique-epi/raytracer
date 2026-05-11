@@ -49,8 +49,6 @@ std::shared_ptr<ICamera> createPerspectiveFromCfg(
   double focusDist = 1.0;
 
   overrideVec3IfPresent(cfg, "position", lookFrom);
-  // `direction` is a relative vector from the camera; `lookAt` is absolute.
-  // Whichever is present wins; if both, `lookAt` takes precedence.
   if (cfg.exists("direction")) {
     Vector3D direction{0.0, 0.0, -1.0};
     direction = parseVec3OrDefault(cfg.lookup("direction"), direction);
