@@ -33,10 +33,6 @@ class CfgFromString {
 
 }  // namespace
 
-// Given: a ComponentFactory used through the IComponentFactory interface.
-// When:  each createX is invoked with a known type and a libconfig setting.
-// Then:  the call routes to the matching sub-factory and returns a non-null
-//        component.
 TEST(ComponentFactoryTest, AllInterfacesDispatchThroughBase) {
   ComponentFactory concrete;
   IComponentFactory& factory = concrete;
@@ -59,9 +55,6 @@ TEST(ComponentFactoryTest, AllInterfacesDispatchThroughBase) {
             nullptr);
 }
 
-// Given: an unknown type name on every interface.
-// When:  each createX is called.
-// Then:  each one throws RaytracerException.
 TEST(ComponentFactoryTest, UnknownTypeOnEachInterfaceThrows) {
   ComponentFactory factory;
   CfgFromString cfg("entry = { };");

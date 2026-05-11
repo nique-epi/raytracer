@@ -5,8 +5,7 @@
 ** ComponentFactoryFixture fixture for unit tests
 */
 
-#ifndef TESTS_FIXTURES_COMPONENTFACTORYFIXTURE_HPP_
-#define TESTS_FIXTURES_COMPONENTFACTORYFIXTURE_HPP_
+#pragma once
 
 #include <functional>
 #include <map>
@@ -83,5 +82,3 @@ class ComponentFactoryFixture
   std::map<std::string, CameraCreator> cameraCreators_;
   std::map<std::string, TransformationCreator> transformationCreators_;
 };
-
-#endif  // TESTS_FIXTURES_COMPONENTFACTORYFIXTURE_HPP_

@@ -31,17 +31,11 @@ class CfgFromString {
 
 }  // namespace
 
-// Given: a default call to createPerspective.
-// When:  no parameters are passed.
-// Then:  the factory returns a non-null camera.
 TEST(CameraFactoryTest, CreatePerspectiveWithDefaultsReturnsNonNull) {
   auto camera = CameraFactory::createPerspective();
   EXPECT_NE(camera, nullptr);
 }
 
-// Given: the example.cfg camera schema (position + direction + fov).
-// When:  create("perspective", cfg) is called.
-// Then:  the resulting camera is non-null.
 TEST(CameraFactoryTest, CreatePerspectiveFromExampleCfgSchema) {
   CfgFromString cfg(
       "camera = {"
@@ -53,18 +47,12 @@ TEST(CameraFactoryTest, CreatePerspectiveFromExampleCfgSchema) {
   EXPECT_NE(camera, nullptr);
 }
 
-// Given: an empty libconfig setting.
-// When:  create("perspective", cfg) is called.
-// Then:  the camera is created with default arguments.
 TEST(CameraFactoryTest, CreatePerspectiveFromEmptyCfgFallsBackToDefaults) {
   CfgFromString cfg("camera = { };");
   auto camera = CameraFactory::create("perspective", cfg.at("camera"));
   EXPECT_NE(camera, nullptr);
 }
 
-// Given: an unknown type name.
-// When:  create() is called.
-// Then:  it throws RaytracerException.
 TEST(CameraFactoryTest, CreateUnknownTypeThrows) {
   CfgFromString cfg("entry = { };");
   EXPECT_THROW(

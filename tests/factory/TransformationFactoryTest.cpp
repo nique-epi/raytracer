@@ -33,9 +33,6 @@ class CfgFromString {
 
 }  // namespace
 
-// Given: a default call to createTranslation.
-// When:  no parameters are passed.
-// Then:  the factory returns the identity translation.
 TEST(TransformationFactoryTest, DefaultTranslationIsIdentity) {
   auto translation = TransformationFactory::createTranslation();
   ASSERT_NE(translation, nullptr);
@@ -46,9 +43,6 @@ TEST(TransformationFactoryTest, DefaultTranslationIsIdentity) {
   EXPECT_DOUBLE_EQ(applied.z, point.z);
 }
 
-// Given: a libconfig setting describing a non-zero translation offset.
-// When:  create("translation", cfg) is called.
-// Then:  the resulting transformation shifts a point by the offset.
 TEST(TransformationFactoryTest, CreateTranslationFromCfgAppliesOffset) {
   CfgFromString cfg(
       "translation = { offset = { x = 1.0; y = 2.0; z = 3.0; }; };");
@@ -60,9 +54,6 @@ TEST(TransformationFactoryTest, CreateTranslationFromCfgAppliesOffset) {
   EXPECT_DOUBLE_EQ(applied.z, 3.0);
 }
 
-// Given: a libconfig setting for a rotation around +Z by zero.
-// When:  create("rotation", cfg) is called.
-// Then:  the resulting transformation is a non-null identity-like rotation.
 TEST(TransformationFactoryTest, CreateRotationFromCfgReturnsNonNull) {
   CfgFromString cfg(
       "rotation = { axis = { x = 0.0; y = 0.0; z = 1.0; }; angle = 0.0; };");
@@ -70,9 +61,6 @@ TEST(TransformationFactoryTest, CreateRotationFromCfgReturnsNonNull) {
   EXPECT_NE(r, nullptr);
 }
 
-// Given: an unknown type name.
-// When:  create() is called.
-// Then:  it throws RaytracerException.
 TEST(TransformationFactoryTest, CreateUnknownTypeThrows) {
   CfgFromString cfg("entry = { };");
   EXPECT_THROW(
