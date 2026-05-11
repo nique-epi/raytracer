@@ -8,11 +8,6 @@
 #include "Rotation.hpp"
 #include "utils/math/Matrix.hpp"
 
-namespace gsl {
-template <typename T>
-using owner = T;
-}  // namespace gsl
-
 namespace raytracer::components::transformation {
 
 Rotation::Rotation() : axis_(0.0, 0.0, 1.0) { syncRotationMatrix(); }
@@ -58,11 +53,3 @@ std::shared_ptr<ITransformation> Rotation::inverse() const {
   return inverseTransform;
 }
 }  // namespace raytracer::components::transformation
-
-extern "C" gsl::owner<ITransformation*> createTransformations() {
-  return new raytracer::components::transformation::Rotation();
-}
-
-extern "C" void destroyTransformations(gsl::owner<ITransformation*> transform) {
-  delete transform;
-}
