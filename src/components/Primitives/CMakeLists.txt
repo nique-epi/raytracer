@@ -6,5 +6,5 @@ target_sources(raytracer_components
 		cylinder/Cylinder.cpp
 		plane/Plane.cpp
         triangle/Triangle.cpp
-        mesh/Mesh.cpp
+        mesh/mesh.cpp
 )
