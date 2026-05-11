@@ -6,10 +6,12 @@
 */
 
 #include "Application.hpp"
+#include <iostream>
 #include <memory>
 #include "exceptions/Exceptions.hpp"
 #include "components/image/Image.hpp"
 #include "output/ppm/ppm.hpp"
+#include "renderer/monoThreadRenderer/MonoThreadRenderer.hpp"
 #include "scene/CFGSceneLoader.hpp"
 #include "scene/SceneBuilder.hpp"
 #include "utils/math/RenderSettings.hpp"
@@ -38,7 +40,21 @@ int Application::run(const std::string& scenePath) {
                              scenePath);
   }
 
-  components::Image image(settings.imageWidth, settings.imageHeight);
+  auto scene = builder.build();
+  scene->getCamera()->setResolution(settings.imageWidth, settings.imageHeight);
+
+  MonoThreadRenderer renderer;
+  renderer.setProgressCallback([](double progress) {
+    const int percent = static_cast<int>(progress * 100);
+    std::cerr << "\rRendering: " << percent << "%" << std::flush;
+    if (progress >= 1.0) {
+      std::cerr << "\n";
+    }
+  });
+
+  const components::Image image =
+      renderer.render(*scene, *scene->getCamera(), settings);
+
   output::ppm writer;
   writer.write(image, "out.ppm");
   return 0;

@@ -11,6 +11,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include "background/IBackground.hpp"
 #include "factory/IComponentFactory.hpp"
 
 namespace raytracer::scene {
@@ -66,6 +67,14 @@ class SceneBuilder {
    * @throws raytracer::core::RaytracerException If the resolved type is not supported.
    */
   void addCamera(const libconfig::Setting& cfg);
+
+  /**
+   * @brief Set the background on the scene.
+   *
+   * @param [in] background Background implementation to attach.
+   */
+  void setBackground(
+      std::shared_ptr<raytracer::scene::background::IBackground> background);
 
   /**
    * @brief Finalise and return the assembled scene.
