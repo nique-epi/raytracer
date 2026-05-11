@@ -36,8 +36,8 @@ components::Image MonoThreadRenderer::render(
       for (int s = 0; s < settings.samplesPerPixel; ++s) {
         thread_local std::mt19937 gen(std::random_device{}());
         thread_local std::uniform_real_distribution<double> dist(0.0, 1.0);
-        const double jitterU = (settings.samplesPerPixel > 1) ? dist(gen) : 0.5;
-        const double jitterV = (settings.samplesPerPixel > 1) ? dist(gen) : 0.5;
+        const double jitterU = (settings.samplesPerPixel > 1) ? dist(gen) : 0.0;
+        const double jitterV = (settings.samplesPerPixel > 1) ? dist(gen) : 0.0;
         const double u = (width > 1)
                              ? (static_cast<double>(x) + jitterU) / (width - 1)
                              : 0.5;
