@@ -71,12 +71,13 @@ void AssimpLoader::processMesh(
   builder.addObject(std::move(myMesh));
 }
 
-std::vector < std::shared_ptr<IMaterial> AssimpLoader::loadMaterials(
-                  const aiScene* scene) {
-  std::vector<std::shared_ptr<IMaterial>> materials;
-}
-return materials;
-}
+std::vector<std::shared_ptr<IMaterial>> AssimpLoader::loadMaterials(
+    const aiScene* scene) {}
+
+void AssimpLoader::processLights(const aiScene* scene, SceneBuilder& builder) {}
+
+void AssimpLoader::processCamera(const aiScene* scene, SceneBuilder& builder,
+                                 math::RenderSettings& settings) {}
 
 bool AssimpLoader::load(const std::string& path, SceneBuilder& builder,
                         math::RenderSettings& settings) {
