@@ -28,7 +28,6 @@ function(raytracer_enable_target_warnings target)
 endfunction()
 
 add_subdirectory(src)
-add_subdirectory(plugins)
 
 if(BUILD_BONUS)
   add_subdirectory(bonus)

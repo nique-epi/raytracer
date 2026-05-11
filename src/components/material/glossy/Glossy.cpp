@@ -29,15 +29,3 @@ bool Glossy::scatter(const raytracer::math::Ray& in,
   return true;
 }
 }  // namespace raytracer::components::material
-
-namespace gsl {
-template <typename T>
-using owner = T;
-}  // namespace gsl
-
-extern "C" gsl::owner<IMaterial*> createMaterial(
-    double fuzz, const raytracer::math::Color& albedo) {
-  return new raytracer::components::material::Glossy(fuzz, albedo);
-}
-
-extern "C" void destroyMaterial(gsl::owner<IMaterial*> mat) { delete mat; }
