@@ -105,6 +105,7 @@ add_executable(raytracer_tests
   factory/TransformationFactoryTest.cpp
   components/material/textures/SolidColorTest.cpp
   components/material/textures/CheckerTextureTest.cpp
+  components/material/TexturedMaterialTest.cpp
   fixtures/SphereFixture.cpp
   fixtures/OrthoCameraFixture.cpp
   fixtures/ComponentFactoryFixture.cpp
