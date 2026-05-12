@@ -7,7 +7,7 @@
 
 #pragma once
 #include <string>
-#include "registry/registry.hpp"
+#include "factory/ComponentFactory.hpp"
 #include "scene/SceneLoaderFactory.hpp"
 
 namespace raytracer::core {
@@ -26,10 +26,7 @@ class Application {
 
  private:
   scene::SceneLoaderFactory _factory;
-  registry::ObjectRegistry _objectRegistry;
-  registry::LightRegistry _lightRegistry;
-  registry::CameraRegistry _cameraRegistry;
-  registry::MaterialRegistry _materialRegistry;
+  factory::ComponentFactory _componentFactory;
 };
 
 }  // namespace raytracer::core

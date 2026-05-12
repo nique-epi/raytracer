@@ -17,11 +17,6 @@
 #include "utils/math/Ray.hpp"
 #include "utils/math/Vector3D.hpp"
 
-namespace gsl {
-template <typename T>
-using owner = T;
-}  // namespace gsl
-
 namespace raytracer::components::primitives {
 
 using raytracer::math::constants::epsilon;
@@ -62,11 +57,3 @@ void Plane::applyTransformation(const ITransformation& transform) {
 }
 
 }  // namespace raytracer::components::primitives
-
-extern "C" gsl::owner<IObject*> createPrimitive(
-    const raytracer::math::Vector3D& point,
-    const raytracer::math::Vector3D& normal) {
-  return new raytracer::components::primitives::Plane(point, normal, nullptr);
-}
-
-extern "C" void destroyPrimitive(gsl::owner<IObject*> obj) { delete obj; }

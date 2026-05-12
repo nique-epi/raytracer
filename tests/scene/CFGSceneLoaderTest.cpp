@@ -6,11 +6,13 @@
 */
 
 #include <gtest/gtest.h>
+#include <memory>
 #include "fixtures/SceneBuilderFixture.hpp"
 #include "scene/CFGSceneLoader.hpp"
 #include "scene/SceneBuilder.hpp"
 #include "scene/SceneFileNotFoundException.hpp"
 #include "scene/SceneParseException.hpp"
+#include "scene/background/Gradient/GradientBackground.hpp"
 #include "utils/math/RenderSettings.hpp"
 
 using raytracer::scene::CFGSceneLoader;
@@ -25,6 +27,8 @@ static const std::string NoPrimitivesCfg =
 static const std::string EmptyListsCfg = SCENE_FIXTURES_DIR "/empty_lists.cfg";
 static const std::string NoCameraCfg = SCENE_FIXTURES_DIR "/no_camera.cfg";
 static const std::string MalformedCfg = SCENE_FIXTURES_DIR "/malformed.cfg";
+static const std::string GradientBackgroundCfg =
+    SCENE_FIXTURES_DIR "/gradient_background.cfg";
 
 class CFGSceneLoaderTest : public SceneBuilderFixture {
  protected:
@@ -45,8 +49,7 @@ TEST_F(CFGSceneLoaderTest, SupportsOnlyCfg) {
 // When:  load() is called with a fresh builder and settings.
 // Then:  it returns true, indicating the file was parsed without error.
 TEST_F(CFGSceneLoaderTest, LoadExampleSucceeds) {
-  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
-                       materialRegistry);
+  SceneBuilder builder(factory_);
   raytracer::math::RenderSettings settings;
 
   EXPECT_TRUE(loader.load(ExampleCfg, builder, settings));
@@ -57,8 +60,7 @@ TEST_F(CFGSceneLoaderTest, LoadExampleSucceeds) {
 // When:  load() is called.
 // Then:  the builder has recorded exactly that many calls of each type.
 TEST_F(CFGSceneLoaderTest, LoadExampleContainsExpectedObjects) {
-  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
-                       materialRegistry);
+  SceneBuilder builder(factory_);
   raytracer::math::RenderSettings settings;
 
   loader.load(ExampleCfg, builder, settings);
@@ -75,8 +77,7 @@ TEST_F(CFGSceneLoaderTest, LoadExampleContainsExpectedObjects) {
 // When:  load() is called.
 // Then:  the RenderSettings struct reflects every value defined in the file.
 TEST_F(CFGSceneLoaderTest, LoadExamplePopulatesSettings) {
-  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
-                       materialRegistry);
+  SceneBuilder builder(factory_);
   raytracer::math::RenderSettings settings;
 
   loader.load(ExampleCfg, builder, settings);
@@ -91,8 +92,7 @@ TEST_F(CFGSceneLoaderTest, LoadExamplePopulatesSettings) {
 // When:  load() is called with that path.
 // Then:  it throws SceneFileNotFoundException.
 TEST_F(CFGSceneLoaderTest, LoadMissingFileThrows) {
-  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
-                       materialRegistry);
+  SceneBuilder builder(factory_);
   raytracer::math::RenderSettings settings;
 
   EXPECT_THROW(loader.load("/nonexistent/path/scene.cfg", builder, settings),
@@ -103,8 +103,7 @@ TEST_F(CFGSceneLoaderTest, LoadMissingFileThrows) {
 // When:  load() is called with that file.
 // Then:  it throws SceneParseException.
 TEST_F(CFGSceneLoaderTest, LoadMalformedFileThrows) {
-  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
-                       materialRegistry);
+  SceneBuilder builder(factory_);
   raytracer::math::RenderSettings settings;
 
   EXPECT_THROW(loader.load(MalformedCfg, builder, settings),
@@ -116,8 +115,7 @@ TEST_F(CFGSceneLoaderTest, LoadMalformedFileThrows) {
 // When:  load() is called.
 // Then:  every field of RenderSettings stays at its compile-time default.
 TEST_F(CFGSceneLoaderTest, LoadWithoutSettingsBlockKeepsDefaults) {
-  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
-                       materialRegistry);
+  SceneBuilder builder(factory_);
   raytracer::math::RenderSettings settings;
   const raytracer::math::RenderSettings defaults;
 
@@ -135,8 +133,7 @@ TEST_F(CFGSceneLoaderTest, LoadWithoutSettingsBlockKeepsDefaults) {
 // When:  load() is called with a fresh RenderSettings.
 // Then:  samplesPerPixel is updated, while every other field stays at default.
 TEST_F(CFGSceneLoaderTest, LoadWithPartialSettingsKeepsOtherDefaults) {
-  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
-                       materialRegistry);
+  SceneBuilder builder(factory_);
   raytracer::math::RenderSettings settings;
   const raytracer::math::RenderSettings defaults;
 
@@ -153,8 +150,7 @@ TEST_F(CFGSceneLoaderTest, LoadWithPartialSettingsKeepsOtherDefaults) {
 // When:  load() is called.
 // Then:  it returns true and the builder has zero primitive calls.
 TEST_F(CFGSceneLoaderTest, LoadWithoutPrimitivesSucceedsWithNoObjects) {
-  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
-                       materialRegistry);
+  SceneBuilder builder(factory_);
   raytracer::math::RenderSettings settings;
 
   EXPECT_TRUE(loader.load(NoPrimitivesCfg, builder, settings));
@@ -164,10 +160,10 @@ TEST_F(CFGSceneLoaderTest, LoadWithoutPrimitivesSucceedsWithNoObjects) {
 
 // Given: a .cfg file where every list is declared but empty, plus a camera.
 // When:  load() is called.
-// Then:  it returns true, no primitive or light is registered, camera is parsed.
+// Then:  it returns true, no primitive or light is registered, camera is
+// parsed.
 TEST_F(CFGSceneLoaderTest, LoadWithEmptyListsSucceedsWithNoObjects) {
-  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
-                       materialRegistry);
+  SceneBuilder builder(factory_);
   raytracer::math::RenderSettings settings;
 
   EXPECT_TRUE(loader.load(EmptyListsCfg, builder, settings));
@@ -182,11 +178,43 @@ TEST_F(CFGSceneLoaderTest, LoadWithEmptyListsSucceedsWithNoObjects) {
 // When:  load() is called.
 // Then:  it returns true, no camera is registered, primitives are parsed.
 TEST_F(CFGSceneLoaderTest, LoadWithoutCameraSucceedsWithNoCamera) {
-  SceneBuilder builder(objectRegistry, lightRegistry, cameraRegistry,
-                       materialRegistry);
+  SceneBuilder builder(factory_);
   raytracer::math::RenderSettings settings;
 
   EXPECT_TRUE(loader.load(NoCameraCfg, builder, settings));
   EXPECT_EQ(builder.count("camera"), 0u);
   EXPECT_EQ(builder.count("sphere"), 1u);
+}
+
+// Given: a .cfg file whose background block declares a gradient.
+// When:  load() is called.
+// Then:  the resulting scene background is a GradientBackground with the
+//        expected endpoint colours.
+TEST_F(CFGSceneLoaderTest, LoadGradientBackgroundCreatesGradientBackground) {
+  SceneBuilder builder(factory_);
+  raytracer::math::RenderSettings settings;
+
+  EXPECT_TRUE(loader.load(GradientBackgroundCfg, builder, settings));
+
+  const auto scene = builder.build();
+  const auto background = scene->getBackground();
+  const auto gradient = std::dynamic_pointer_cast<
+      raytracer::scene::background::GradientBackground>(background);
+
+  ASSERT_NE(gradient, nullptr);
+
+  const raytracer::math::Ray topRay(raytracer::math::Vector3D(0, 0, 0),
+                                    raytracer::math::Vector3D(0, -1, 0));
+  const raytracer::math::Ray bottomRay(raytracer::math::Vector3D(0, 0, 0),
+                                       raytracer::math::Vector3D(0, 1, 0));
+
+  const auto topColor = gradient->getColor(topRay);
+  const auto bottomColor = gradient->getColor(bottomRay);
+
+  EXPECT_DOUBLE_EQ(topColor.r, 1.0);
+  EXPECT_DOUBLE_EQ(topColor.g, 1.0);
+  EXPECT_DOUBLE_EQ(topColor.b, 1.0);
+  EXPECT_DOUBLE_EQ(bottomColor.r, 0.0);
+  EXPECT_DOUBLE_EQ(bottomColor.g, 0.0);
+  EXPECT_DOUBLE_EQ(bottomColor.b, 0.0);
 }

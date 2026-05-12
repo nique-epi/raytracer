@@ -18,11 +18,6 @@
 #include "utils/math/Ray.hpp"
 #include "utils/math/Vector3D.hpp"
 
-namespace gsl {
-template <typename T>
-using owner = T;
-}  // namespace gsl
-
 namespace {
 constexpr double positiveInfinity = std::numeric_limits<double>::infinity();
 }  // namespace
@@ -150,12 +145,3 @@ math::AABB Cylinder::getBoundingBox() const {
 void Cylinder::applyTransformation(const ITransformation& /*transform*/) {}
 
 }  // namespace raytracer::components::primitives
-
-extern "C" gsl::owner<IObject*> createPrimitive(
-    const raytracer::math::Vector3D& center,
-    const raytracer::math::Vector3D& axis, double radius, double height) {
-  return new raytracer::components::primitives::Cylinder(center, axis, radius,
-                                                         height, nullptr);
-}
-
-extern "C" void destroyPrimitive(gsl::owner<IObject*> obj) { delete obj; }

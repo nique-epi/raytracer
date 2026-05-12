@@ -13,4 +13,9 @@ target_link_libraries(raytracer_material
 target_sources(raytracer_components
   PRIVATE
     abstract/AMaterial.cpp
-)
+    diffuse/DiffuseMaterial.cpp
+    glossy/Glossy.cpp
+    glass/Glass.cpp
+    Textures/solid/SolidColor.cpp
+    Textures/checker/CheckerTexture.cpp
+    )

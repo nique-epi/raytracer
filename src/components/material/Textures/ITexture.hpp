@@ -24,10 +24,8 @@ namespace raytracer::materials {
  */
 class ITexture {
  public:
-  /**
-   * @brief Virtual destructor.
-   */
-  virtual ~ITexture();
+  ITexture() = default;
+  virtual ~ITexture() = default;
 
   ITexture(const ITexture&) = default;
   ITexture& operator=(const ITexture&) = default;
