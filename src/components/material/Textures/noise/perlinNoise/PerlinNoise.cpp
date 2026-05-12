@@ -10,6 +10,7 @@
 #include <array>
 #include <cmath>
 #include <random>
+#include "utils/math/Constants.hpp"
 
 namespace raytracer::materials::textures::utils {
 PerlinNoise::PerlinNoise()
@@ -86,10 +87,8 @@ double PerlinNoise::turbulence(const math::Vector3D& point, int depth) const {
 
   for (int i = 0; i < depth; ++i) {
     accum += weight * noise(tempPoint);
-    // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
-    weight *= 0.5;
-    // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
-    tempPoint *= 2.0;
+    weight *= raytracer::math::constants::HALF;
+    tempPoint *= raytracer::math::constants::DOUBLE;
   }
   return std::abs(accum);
 }
