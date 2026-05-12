@@ -23,6 +23,9 @@ constexpr const char* MATH_VECTOR_ZERO_NORMALIZE =
     "cannot normalize a zero vector";
 constexpr const char* MATH_GAMMA_INVALID = "gamma must be > 0";
 
+constexpr const char* CONFIG_FIELD_MISSING = "missing required config field";
+constexpr const char* CONFIG_TYPE_INVALID = "invalid type for config field";
+
 constexpr const char* SCENE_FILE_NOT_FOUND = "scene file not found";
 constexpr const char* SCENE_PARSE_ERROR = "scene parse error";
 constexpr const char* SCENE_BUILD_ERROR = "scene build error";
