@@ -42,6 +42,10 @@ void Scene::setBackground(std::shared_ptr<raytracer::scene::background::IBackgro
   _background = std::move(background);
 }
 
+const World& Scene::getWorld() const { return world_; }
+
+World& Scene::getWorld() { return world_; }
+
 Scene::Scene()
   : _background(std::make_shared<raytracer::scene::background::SolidBackground>(
       raytracer::math::Color{0, 0, 0})) {}

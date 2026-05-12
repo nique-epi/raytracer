@@ -11,6 +11,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include "World.hpp"
 #include "background/IBackground.hpp"
 #include "factory/IComponentFactory.hpp"
 
@@ -75,6 +76,13 @@ class SceneBuilder {
    */
   void setBackground(
       std::shared_ptr<raytracer::scene::background::IBackground> background);
+
+  /**
+   * @brief Set the viewport (shading) mode on the scene's World.
+   *
+   * @param [in] mode Shading strategy used by the renderer.
+   */
+  void setViewportMode(ViewportMode mode);
 
   /**
    * @brief Finalise and return the assembled scene.

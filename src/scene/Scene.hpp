@@ -9,6 +9,7 @@
 
 #include <memory>
 #include <vector>
+#include "World.hpp"
 #include "background/IBackground.hpp"
 #include "components/Primitives/Collection/Collection.hpp"
 #include "components/Primitives/IObject.hpp"
@@ -43,11 +44,15 @@ class Scene {
   void setBackground(
       std::shared_ptr<raytracer::scene::background::IBackground> background);
 
+  [[nodiscard]] const World& getWorld() const;
+  [[nodiscard]] World& getWorld();
+
  private:
   raytracer::components::Collection _rootCollection;
   std::vector<std::shared_ptr<ILight>> _lights;
   std::shared_ptr<ICamera> _camera;
   std::shared_ptr<raytracer::scene::background::IBackground> _background;
+  World world_;
 };
 
 }  // namespace raytracer::scene
