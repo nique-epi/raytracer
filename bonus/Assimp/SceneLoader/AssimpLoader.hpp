@@ -31,15 +31,18 @@ class AssimpLoader : public ISceneLoader {
   [[nodiscard]] bool supports(const std::string& ext) const override;
 
  private:
-  void processNode(aiNode* rootNode, const aiScene* scene,
-                   SceneBuilder& builder, aiMatrix4x4 initialTransform,
-                   const std::vector<std::shared_ptr<IMaterial>>& materials);
-  void processMesh(aiMesh* mesh, SceneBuilder& builder, aiMatrix4x4 transform,
-                   const std::vector<std::shared_ptr<IMaterial>>& materials);
-  void processLights(const aiScene* scene, SceneBuilder& builder);
-  void processCamera(const aiScene* scene, SceneBuilder& builder,
-                     math::RenderSettings& settings);
-  std::vector<std::shared_ptr<IMaterial>> loadMaterials(const aiScene* scene);
+  static void processNode(
+      aiNode* rootNode, const aiScene* scene, SceneBuilder& builder,
+      aiMatrix4x4 initialTransform,
+      const std::vector<std::shared_ptr<IMaterial>>& materials);
+  static void processMesh(
+      aiMesh* mesh, SceneBuilder& builder, aiMatrix4x4 transform,
+      const std::vector<std::shared_ptr<IMaterial>>& materials);
+  static void processLights(const aiScene* scene, SceneBuilder& builder);
+  static void processCamera(const aiScene* scene, SceneBuilder& builder,
+                            math::RenderSettings& settings);
+  static std::vector<std::shared_ptr<IMaterial>> loadMaterials(
+      const aiScene* scene);
 };
 
 }  // namespace raytracer::scene

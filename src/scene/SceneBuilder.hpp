@@ -89,6 +89,12 @@ class SceneBuilder {
   void addCamera(const libconfig::Setting& cfg);
 
   /**
+   * @brief Add a camera to the scene.
+   *
+   * @param [in] camera Shared pointer to the camera to add.
+   */
+  void addCamera(std::shared_ptr<ICamera> camera);
+  /**
    * @brief Set the background on the scene.
    *
    * @param [in] background Background implementation to attach.

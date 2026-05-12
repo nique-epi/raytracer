@@ -1,12 +1,14 @@
 
 add_library(bonus_assimp_loader
     Assimp/SceneLoader/AssimpLoader.cpp
+    Assimp/SceneLoader/AssimpLoaderRegistration.cpp
 )
 
 
 target_include_directories(bonus_assimp_loader
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/Assimp/include
+    ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_SOURCE_DIR}/src
 )
 

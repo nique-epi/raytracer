@@ -66,6 +66,12 @@ void SceneBuilder::addCamera(const libconfig::Setting& cfg) {
   }
 }
 
+void SceneBuilder::addCamera(std::shared_ptr<ICamera> camera) {
+  if (camera) {
+    scene_->setCamera(camera);
+  }
+}
+
 void SceneBuilder::setBackground(
     std::shared_ptr<raytracer::scene::background::IBackground> background) {
   scene_->setBackground(std::move(background));
