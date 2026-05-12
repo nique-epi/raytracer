@@ -14,11 +14,8 @@
 #define MATERIAL_IMATERIAL_HPP_
 
 #include "utils/math/Color.hpp"
+#include "utils/math/HitRecord.hpp"
 #include "utils/math/Ray.hpp"
-
-namespace raytracer::math {
-class HitRecord;
-}  // namespace raytracer::math
 
 /**
  * @brief Pure interface shared by all scene materials.

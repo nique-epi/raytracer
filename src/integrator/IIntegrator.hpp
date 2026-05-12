@@ -7,12 +7,9 @@
 
 #pragma once
 
+#include "scene/Scene.hpp"
 #include "utils/math/Color.hpp"
 #include "utils/math/Ray.hpp"
-
-namespace raytracer::scene {
-class Scene;
-}  // namespace raytracer::scene
 
 namespace raytracer::core {
 
