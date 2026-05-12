@@ -26,13 +26,13 @@ class PerlinNoise {
   [[nodiscard]] double turbulence(const math::Vector3D& point, int depth) const;
 
  private:
-  static constexpr int kPointCount = 256;
+  static constexpr int PointCount = 256;
 
-  std::array<math::Vector3D, kPointCount> gradients_;
-  std::array<int, kPointCount> permX_;
-  std::array<int, kPointCount> permY_;
-  std::array<int, kPointCount> permZ_;
+  std::array<math::Vector3D, PointCount> gradients_;
+  std::array<int, PointCount> permX_;
+  std::array<int, PointCount> permY_;
+  std::array<int, PointCount> permZ_;
 
-  static std::array<int, kPointCount> generatePermutation();
+  static std::array<int, PointCount> generatePermutation();
 };
 }  // namespace raytracer::materials::textures::utils

@@ -34,5 +34,5 @@ class NoiseTexture : public ITexture {
   static constexpr double turbulenceAmplitude = 10.0;
   // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
   static constexpr double colorScale = 0.5;
-};  // namespace raytracer::class
+};
 }  // namespace raytracer::materials::textures
