@@ -54,4 +54,8 @@ bool DiffuseMaterial::scatter(const raytracer::math::Ray& /*in*/,
   return true;
 }
 
+raytracer::math::Color DiffuseMaterial::diffuseAlbedo() const {
+  return albedo;
+}
+
 }  // namespace raytracer::components::material

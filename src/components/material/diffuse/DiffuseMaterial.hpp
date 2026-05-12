@@ -34,6 +34,8 @@ class DiffuseMaterial : public AMaterial {
                raytracer::math::Color& attenuation,
                raytracer::math::Ray& scattered) const override;
 
+  [[nodiscard]] raytracer::math::Color diffuseAlbedo() const override;
+
  private:
   raytracer::math::Color albedo;
 };

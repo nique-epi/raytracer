@@ -10,3 +10,7 @@
 raytracer::math::Color AMaterial::emitted() const {
   return {};
 }
+
+raytracer::math::Color AMaterial::diffuseAlbedo() const {
+  return {};
+}

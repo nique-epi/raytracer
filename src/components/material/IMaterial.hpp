@@ -64,6 +64,21 @@ class IMaterial {
    * @returns Emitted color. Non-emissive materials return black.
    */
   [[nodiscard]] virtual raytracer::math::Color emitted() const = 0;
+
+  /**
+   * @brief Lambertian albedo used to weight direct lighting.
+   *
+   * Direct-lighting contribution at a shaded point is evaluated by the
+   * renderer as `diffuseAlbedo() * incomingRadiance * max(0, N · L)`.
+   * Materials whose response to direct light is purely specular or
+   * refractive (mirrors, glass) return black so a `PointLight` does not
+   * paint them as if they were Lambertian. Their lighting comes from the
+   * scattered ray instead.
+   *
+   * @returns Linear RGB albedo. `Color(0, 0, 0)` for non-diffuse
+   *          materials.
+   */
+  [[nodiscard]] virtual raytracer::math::Color diffuseAlbedo() const = 0;
 };
 
 #endif  // MATERIAL_IMATERIAL_HPP_

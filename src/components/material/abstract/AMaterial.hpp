@@ -43,6 +43,17 @@ class AMaterial : public IMaterial {
    * @returns Color(0, 0, 0).
    */
   [[nodiscard]] raytracer::math::Color emitted() const override;
+
+  /**
+   * @brief Default diffuse albedo for non-Lambertian materials.
+   *
+   * Returns black so specular (mirror, glass) materials do not receive
+   * Lambert direct lighting. Lambert-style materials override this to
+   * return their albedo.
+   *
+   * @returns Color(0, 0, 0).
+   */
+  [[nodiscard]] raytracer::math::Color diffuseAlbedo() const override;
 };
 
 #endif  // MATERIAL_ABSTRACT_AMATERIAL_HPP_
