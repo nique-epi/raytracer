@@ -10,6 +10,7 @@
 #include <memory>
 #include <string>
 #include "components/material/IMaterial.hpp"
+#include "components/material/Textures/ITexture.hpp"
 #include "utils/math/Color.hpp"
 
 namespace libconfig {
@@ -67,9 +68,33 @@ class MaterialFactory {
       double refractionIndex = defaultGlassRefractionIndex);
 
   /**
+   * @brief Create a textured Lambertian material.
+   *
+   * @param [in] texture Texture used to modulate the surface color.
+   * @param [in] albedo  Base color multiplied by the texture sample (default: white).
+   * @returns Shared pointer to the freshly constructed material.
+   */
+  [[nodiscard]] static std::shared_ptr<IMaterial> createTextured(
+      std::shared_ptr<raytracer::materials::ITexture> texture,
+      const math::Color& albedo = math::Color(1.0, 1.0, 1.0));
+
+  /**
+   * @brief Parse an `ITexture` from a libconfig texture block.
+   *
+   * Supported type names: `"solid"`, `"checker"`, `"noise"`.
+   *
+   * @param [in] cfg libconfig setting containing `type` and texture-specific fields.
+   * @returns Shared pointer to the constructed texture.
+   *
+   * @throws raytracer::core::RaytracerException If the type is unknown.
+   */
+  [[nodiscard]] static std::shared_ptr<raytracer::materials::ITexture> parseTexture(
+      const libconfig::Setting& cfg);
+
+  /**
    * @brief Dispatch by type name and parse @p cfg into typed arguments.
    *
-   * Supported type names: `"diffuse"`, `"glossy"`, `"glass"`.
+   * Supported type names: `"diffuse"`, `"glossy"`, `"glass"`, `"textured"`.
    *
    * @param [in] type Type discriminant (one of the supported names above).
    * @param [in] cfg  libconfig setting; absent fields keep their typed defaults.

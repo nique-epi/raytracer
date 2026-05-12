@@ -9,7 +9,8 @@
 #include <cmath>
 #include <random>
 #include "constants/Errors.hpp"
-#include "exceptions/Exceptions.hpp"
+#include "exceptions/Exceptions.hpp"  // NOLINT(misc-include-cleaner)
+#include "utils/math/Constants.hpp"   // NOLINT(misc-include-cleaner)
 
 namespace raytracer::math {
 
@@ -90,6 +91,12 @@ Vector3D& Vector3D::operator/=(double scalar) {
 }
 
 Vector3D operator*(double scalar, const Vector3D& v) { return v * scalar; }
+
+bool Vector3D::isNearZero() const {
+  return std::fabs(x) < constants::epsilon &&
+         std::fabs(y) < constants::epsilon &&
+         std::fabs(z) < constants::epsilon;
+}
 
 Vector3D Vector3D::randomInUnitSphere() {
   thread_local std::mt19937 gen(std::random_device{}());
