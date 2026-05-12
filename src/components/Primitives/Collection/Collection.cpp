@@ -5,7 +5,7 @@
 ** Collection (composite) of IObject
 */
 
-#include "Collection.hpp"
+#include "components/Primitives/Collection/Collection.hpp"
 
 namespace raytracer::components {
 

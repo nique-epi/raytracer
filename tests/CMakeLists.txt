@@ -94,6 +94,7 @@ add_executable(raytracer_tests
   components/image/ImageTest.cpp
   components/image/ImageExceptionTest.cpp
   components/Primitives/CollectionTest.cpp
+	components/Primitives/TransformedObjectTest.cpp
   output/ppm/PPMTest.cpp
   ApplicationTest.cpp
   ArgsParserTest.cpp
@@ -128,6 +129,7 @@ target_compile_definitions(raytracer_tests
 target_link_libraries(raytracer_tests
   PRIVATE
     raytracer_src
+	raytracer_translation
     raytracer_tests_helpers
     GTest::gtest_main
 )
