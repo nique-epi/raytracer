@@ -167,16 +167,6 @@ math::Color MonoThreadRenderer::castRay(const math::Ray& ray,
                 rec)) {
     return shade(ray, rec, scene, depth);
   }
-  // Background sampling rules driven by the scene's viewport mode:
-  //  - MaterialPreview: the scene background is sampled on every miss
-  //    (primary and secondary) — it acts as an infinite environment
-  //    light in lieu of a real HDRI. TODO: a dedicated issue will swap
-  //    this for a built-in studio HDRI matching Blender's forest.exr.
-  //  - Rendered: the scene background is only visible to primary rays.
-  //    Secondary rays return black so the background does not implicitly
-  //    behave as an env light; explicit ILight sources do the work.
-  //  - Wireframe: primary rays still see the scene background as a
-  //    backdrop. Secondary rays do not exist in this mode (no scatter).
   const bool allowEnvironment =
       isPrimary ||
       scene.getWorld().viewportMode() == scene::ViewportMode::MaterialPreview;
@@ -201,8 +191,6 @@ math::Color MonoThreadRenderer::shade(const math::Ray& inRay,
     case scene::ViewportMode::Rendered:
       return shadeRendered(inRay, rec, scene, depth);
   }
-  // Unreachable: every ViewportMode enumerator is handled above. Falling
-  // back to black keeps the function total without hiding a missing case.
   return {0, 0, 0};
 }
 
@@ -211,13 +199,10 @@ math::Color MonoThreadRenderer::shadeWireframe(const math::HitRecord& rec) {
 }
 
 // NOLINTNEXTLINE(misc-no-recursion)
-math::Color MonoThreadRenderer::shadeMaterialPreview(
-    const math::Ray& inRay, const math::HitRecord& rec,
-    const scene::Scene& scene, int depth) {
-  // Scene ILights are ignored (mirrors Blender's "Scene Lights = OFF"
-  // default in Material Preview). Lighting comes from the environment
-  // collected by the scattered ray — castRay() samples the background
-  // on every miss in this mode.
+math::Color MonoThreadRenderer::shadeMaterialPreview(const math::Ray& inRay,
+                                                     const math::HitRecord& rec,
+                                                     const scene::Scene& scene,
+                                                     int depth) {
   if (!rec.material) {
     return normalAsColor(unitShadingNormal(rec));
   }
@@ -243,10 +228,6 @@ math::Color MonoThreadRenderer::shadeRendered(const math::Ray& inRay,
   const math::Vector3D shadingPoint =
       rec.point + (unitNormal * math::constants::shadowRayEpsilon);
 
-  // Direct lighting: Lambertian BRDF evaluated per light. Materials that
-  // are not diffuse-like return Color(0, 0, 0) from diffuseAlbedo(), so
-  // glass / mirror / glossy surfaces are not painted with a fake matte
-  // term — they receive their lighting via the scattered ray instead.
   math::Color directLighting(0, 0, 0);
   const math::Color albedo = rec.material->diffuseAlbedo();
   const bool hasDiffuseTerm =
@@ -259,10 +240,6 @@ math::Color MonoThreadRenderer::shadeRendered(const math::Ray& inRay,
     }
   }
 
-  // Indirect lighting: one bounce through the material's scatter. The
-  // scatter contribution is independent of the direct term — it is the
-  // material's actual reflection / refraction response, captured via
-  // recursion.
   math::Color attenuation(0, 0, 0);
   math::Ray scattered(math::Vector3D(0, 0, 0), math::Vector3D(0, 0, 1));
   if (rec.material->scatter(inRay, rec, attenuation, scattered)) {
