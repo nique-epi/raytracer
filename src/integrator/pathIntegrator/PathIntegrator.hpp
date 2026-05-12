@@ -7,8 +7,9 @@
 
 #pragma once
 
-#include "core/integrator/IIntegrator.hpp"
-using IIntegrator = raytracer::core::IIntegrator;
+#include "integrator/IIntegrator.hpp"
+
+namespace raytracer::core {
 
 class PathIntegrator : public IIntegrator {
  public:
@@ -20,7 +21,8 @@ class PathIntegrator : public IIntegrator {
   PathIntegrator(PathIntegrator&&) = delete;
   PathIntegrator& operator=(PathIntegrator&&) = delete;
 
-  raytracer::math::Color Li(const raytracer::math::Ray& ray,
-                            const raytracer::scene::Scene& scene,
-                            int depth) override;
+  math::Color Li(const math::Ray& ray, const scene::Scene& scene,
+                 int depth) override;
 };
+
+}  // namespace raytracer::core

@@ -10,6 +10,7 @@
 #include <type_traits>
 #include "../fixtures/OrthoCameraFixture.hpp"
 #include "../fixtures/SphereFixture.hpp"
+#include "integrator/pathIntegrator/PathIntegrator.hpp"
 #include "renderer/IRenderer.hpp"
 #include "renderer/monoThreadRenderer/MonoThreadRenderer.hpp"
 #include "scene/Scene.hpp"
@@ -31,7 +32,8 @@ TEST(MonoThreadRendererTest, RendersOneSphereAndHashStable) {
   settings.imageHeight = 101;
   settings.maxDepth = 1;
 
-  raytracer::core::MonoThreadRenderer renderer;
+  raytracer::core::MonoThreadRenderer renderer(
+      std::make_shared<raytracer::core::PathIntegrator>());
   int progressCalls = 0;
   renderer.setProgressCallback([&](double) { progressCalls++; });
 

@@ -10,7 +10,7 @@
 #include <functional>
 #include "components/camera/ICamera.hpp"
 #include "components/image/Image.hpp"
-#include "core/integrator/IIntegrator.hpp"
+#include "integrator/IIntegrator.hpp"
 #include "scene/Scene.hpp"
 #include "utils/math/RenderSettings.hpp"
 

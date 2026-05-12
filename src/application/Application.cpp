@@ -11,6 +11,7 @@
 #include "exceptions/Exceptions.hpp"
 #include "components/image/Image.hpp"
 #include "output/ppm/ppm.hpp"
+#include "integrator/pathIntegrator/PathIntegrator.hpp"
 #include "renderer/monoThreadRenderer/MonoThreadRenderer.hpp"
 #include "scene/CFGSceneLoader.hpp"
 #include "scene/SceneBuilder.hpp"
@@ -43,7 +44,7 @@ int Application::run(const std::string& scenePath) {
   auto scene = builder.build();
   scene->getCamera()->setResolution(settings.imageWidth, settings.imageHeight);
 
-  MonoThreadRenderer renderer;
+  MonoThreadRenderer renderer(std::make_shared<PathIntegrator>());
   renderer.setProgressCallback([](double progress) {
     const int percent = static_cast<int>(progress * 100);
     std::cerr << "\rRendering: " << percent << "%" << std::flush;
