@@ -143,6 +143,7 @@ std::shared_ptr<IMaterial> MaterialFactory::create(
   }
   if (type == "textured") {
     Color albedo(1.0, 1.0, 1.0);
+    overrideColorIfPresent(cfg, "color", albedo);
     overrideColorIfPresent(cfg, "albedo", albedo);
     const std::shared_ptr<ITexture> texture =
         cfg.exists("texture") ? parseTexture(cfg.lookup("texture"))
