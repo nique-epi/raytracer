@@ -37,7 +37,7 @@ class DiffuseMaterial : public AMaterial {
   [[nodiscard]] raytracer::math::Color diffuseAlbedo() const override;
 
  private:
-  raytracer::math::Color albedo;
+  raytracer::math::Color albedo_;
 };
 
 }  // namespace raytracer::components::material
