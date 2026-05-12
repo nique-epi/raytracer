@@ -87,14 +87,18 @@ add_executable(raytracer_tests
   utils/math/OpticsTest.cpp
   scene/CFGSceneLoaderTest.cpp
   scene/SceneBuilderTest.cpp
+  scene/SceneExceptionTest.cpp
   scene/SceneTest.cpp
-	scene/background/SolidBackgroundTest.cpp
+  scene/background/SolidBackgroundTest.cpp
+  scene/background/GradientBackgroundTest.cpp
   exceptions/ExceptionsTest.cpp
   renderer/BasicRendererTest.cpp
+  config/ConfigExceptionTest.cpp
   components/image/ImageTest.cpp
   components/image/ImageExceptionTest.cpp
   components/Primitives/CollectionTest.cpp
 	components/Primitives/TransformedObjectTest.cpp
+  components/light/PointLightTest.cpp
   output/ppm/PPMTest.cpp
   ApplicationTest.cpp
   ArgsParserTest.cpp
@@ -107,6 +111,8 @@ add_executable(raytracer_tests
   factory/TransformationFactoryTest.cpp
   components/material/textures/SolidColorTest.cpp
   components/material/textures/CheckerTextureTest.cpp
+  components/material/textures/PerlinNoiseTest.cpp
+  components/material/textures/NoiseTextureTest.cpp
   fixtures/SphereFixture.cpp
   fixtures/OrthoCameraFixture.cpp
   fixtures/ComponentFactoryFixture.cpp

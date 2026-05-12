@@ -11,6 +11,7 @@
 #include <string>
 #include "components/light/ambient/AmbientLight.hpp"
 #include "components/light/directional/Directional.hpp"
+#include "components/light/point/Point.hpp"
 #include "exceptions/Exceptions.hpp"
 #include "utils/math/Color.hpp"
 #include "utils/math/Vector3D.hpp"
@@ -21,6 +22,7 @@ namespace {
 
 using raytracer::components::light::ambient::Ambient;
 using raytracer::components::light::directional::Directional;
+using raytracer::components::light::point::PointLight;
 using raytracer::math::Color;
 using raytracer::math::Vector3D;
 
@@ -82,6 +84,16 @@ std::shared_ptr<ILight> createDirectionalFromCfg(
   return LightFactory::createDirectional(direction, color, intensity);
 }
 
+std::shared_ptr<ILight> createPointFromCfg(const libconfig::Setting& cfg) {
+  Vector3D position{0.0, 1.0, 0.0};
+  Color color(1.0, 1.0, 1.0);
+  double intensity = 1.0;
+  overrideVec3IfPresent(cfg, "position", position);
+  overrideColorIfPresent(cfg, "color", color);
+  cfg.lookupValue("intensity", intensity);
+  return LightFactory::createPoint(position, color, intensity);
+}
+
 }  // namespace
 
 std::shared_ptr<ILight> LightFactory::createAmbient(const math::Color& color,
@@ -95,6 +107,12 @@ std::shared_ptr<ILight> LightFactory::createDirectional(
   return std::make_shared<Directional>(direction, color, intensity);
 }
 
+std::shared_ptr<ILight> LightFactory::createPoint(
+    const math::Vector3D& position, const math::Color& color,
+    double intensity) {
+  return std::make_shared<PointLight>(position, color, intensity);
+}
+
 std::shared_ptr<ILight> LightFactory::create(const std::string& type,
                                               const libconfig::Setting& cfg) {
   if (type == "ambient") {
@@ -102,6 +120,9 @@ std::shared_ptr<ILight> LightFactory::create(const std::string& type,
   }
   if (type == "directional") {
     return createDirectionalFromCfg(cfg);
+  }
+  if (type == "point") {
+    return createPointFromCfg(cfg);
   }
   throw RaytracerException("LightFactory: unknown light type '" + type + "'");
 }

@@ -2,8 +2,11 @@ add_library(raytracer_scene STATIC
   CFGSceneLoader.cpp
   SceneLoaderFactory.cpp
   SceneBuilder.cpp
+  SceneFileNotFoundException.cpp
+  SceneParseException.cpp
   Scene.cpp
   background/Solid/SolidBackground.cpp
+  background/Gradient/GradientBackground.cpp
 )
 
 target_include_directories(raytracer_scene

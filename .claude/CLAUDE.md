@@ -242,3 +242,47 @@ constexpr double epsilon = 1e-9;
 // dans un header :
 constexpr double DEFAULT_FOV = 90.0;
 ```
+
+### R6 — Pas d'abréviation dans les identifiants
+
+**Règle :** les identifiants publics (méthodes, fonctions, classes, variables
+membres exposées) doivent utiliser des **noms complets et explicites**, jamais
+des abréviations — même quand l'abréviation est une convention répandue dans
+le domaine (ex. PBRT, mitsuba, etc.).
+
+**Pourquoi :** une abréviation idiomatique pour un expert du domaine est
+opaque pour tout autre lecteur. Le code est lu plus souvent qu'écrit, et le
+public du projet (jury, futurs collaborateurs Epitech) ne partage pas
+forcément le bagage théorique sous-jacent. Le coût supplémentaire à
+l'écriture est négligeable, le gain en lisibilité est durable.
+
+**À appliquer :** toute nouvelle déclaration et toute déclaration touchée
+lors d'un refactoring. Les abréviations établies pour les types fondamentaux
+de la STL (`std::ptr`, `std::ref`) ne sont pas concernées — la règle vise les
+identifiants **du projet**.
+
+**Exemple interdit :**
+
+```cpp
+// Référence PBRT : Li = "incoming radiance"
+virtual math::Color Li(const math::Ray& ray,
+                       const scene::Scene& scene, int depth) = 0;
+
+// Idem pour des abréviations "métier"
+double calcBRDF(const Vector3D& wi, const Vector3D& wo);  // wi, wo, BRDF
+int computeNbHits();                                       // Nb
+void initCfg();                                            // Cfg
+```
+
+**Exemple correct :**
+
+```cpp
+virtual math::Color computeRadiance(const math::Ray& ray,
+                                    const scene::Scene& scene,
+                                    int depth) = 0;
+
+double computeReflectance(const Vector3D& incomingDirection,
+                          const Vector3D& outgoingDirection);
+int computeHitCount();
+void initConfiguration();
+```
