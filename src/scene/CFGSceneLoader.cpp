@@ -9,6 +9,7 @@
 #include <iostream>
 #include <libconfig.h++>
 #include "SceneBuilder.hpp"
+#include "background/Gradient/GradientBackground.hpp"  // NOLINT(misc-include-cleaner)
 #include "background/Solid/SolidBackground.hpp"  // NOLINT(misc-include-cleaner)
 #include "factory/material/MaterialFactory.hpp"
 
@@ -104,6 +105,20 @@ void CFGSceneLoader::parseBackground(const libconfig::Setting& root,
   const auto& bg = root["background"];
   std::string type = "solid";
   bg.lookupValue("type", type);
+
+  if (type == "gradient") {
+    const math::Color topColor =
+        bg.exists("topColor")
+            ? MaterialFactory::parseColor(bg["topColor"], {1, 1, 1})
+            : math::Color{1, 1, 1};
+    const math::Color bottomColor =
+        bg.exists("bottomColor")
+            ? MaterialFactory::parseColor(bg["bottomColor"], {0, 0, 0})
+            : math::Color{0, 0, 0};
+    builder.setBackground(std::make_shared<background::GradientBackground>(
+        topColor, bottomColor));
+    return;
+  }
 
   const math::Color color =
       bg.exists("color") ? MaterialFactory::parseColor(bg["color"], {0, 0, 0})
