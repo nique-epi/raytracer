@@ -34,6 +34,7 @@ function(raytracer_add_test)
 	target_include_directories(${ARG_NAME}
 		PRIVATE
 			${CMAKE_SOURCE_DIR}/src
+
 			${ARG_INCLUDES}
 	)
 
@@ -115,6 +116,7 @@ add_executable(raytracer_tests
 target_include_directories(raytracer_tests
 	PRIVATE
 		${CMAKE_SOURCE_DIR}/src
+
 )
 
 target_compile_definitions(raytracer_tests
