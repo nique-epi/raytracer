@@ -11,7 +11,7 @@ target_include_directories(raytracer_application
 target_link_libraries(raytracer_application
   PRIVATE
     raytracer_renderer
-    raytracer_registry
+    raytracer_factory
     raytracer_scene
     raytracer_math
     raytracer_exceptions
