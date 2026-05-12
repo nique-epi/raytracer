@@ -23,6 +23,10 @@ constexpr const char* MATH_VECTOR_ZERO_NORMALIZE =
     "cannot normalize a zero vector";
 constexpr const char* MATH_GAMMA_INVALID = "gamma must be > 0";
 
+constexpr const char* SCENE_FILE_NOT_FOUND = "scene file not found";
+constexpr const char* SCENE_PARSE_ERROR = "scene parse error";
+constexpr const char* SCENE_BUILD_ERROR = "scene build error";
+
 }  // namespace raytracer::constants::errors
 
 #endif  // CONSTANTS_ERRORS_HPP_

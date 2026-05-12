@@ -10,6 +10,8 @@
 #include "fixtures/SceneBuilderFixture.hpp"
 #include "scene/CFGSceneLoader.hpp"
 #include "scene/SceneBuilder.hpp"
+#include "scene/SceneFileNotFoundException.hpp"
+#include "scene/SceneParseException.hpp"
 #include "scene/background/Gradient/GradientBackground.hpp"
 #include "utils/math/RenderSettings.hpp"
 
@@ -88,23 +90,24 @@ TEST_F(CFGSceneLoaderTest, LoadExamplePopulatesSettings) {
 
 // Given: a file path that does not exist on disk.
 // When:  load() is called with that path.
-// Then:  it catches the libconfig::FileIOException and returns false
-//        (no exception escapes to the caller).
-TEST_F(CFGSceneLoaderTest, LoadMissingFileReturnsFalse) {
+// Then:  it throws SceneFileNotFoundException.
+TEST_F(CFGSceneLoaderTest, LoadMissingFileThrows) {
   SceneBuilder builder(factory_);
   raytracer::math::RenderSettings settings;
 
-  EXPECT_FALSE(loader.load("/nonexistent/path/scene.cfg", builder, settings));
+  EXPECT_THROW(loader.load("/nonexistent/path/scene.cfg", builder, settings),
+               raytracer::scene::SceneFileNotFoundException);
 }
 
 // Given: a .cfg file containing invalid libconfig syntax.
 // When:  load() is called with that file.
-// Then:  it catches the libconfig::ParseException and returns false.
-TEST_F(CFGSceneLoaderTest, LoadMalformedFileReturnsFalse) {
+// Then:  it throws SceneParseException.
+TEST_F(CFGSceneLoaderTest, LoadMalformedFileThrows) {
   SceneBuilder builder(factory_);
   raytracer::math::RenderSettings settings;
 
-  EXPECT_FALSE(loader.load(MalformedCfg, builder, settings));
+  EXPECT_THROW(loader.load(MalformedCfg, builder, settings),
+               raytracer::scene::SceneParseException);
 }
 
 // Given: a .cfg file that has no `settings` block, and a freshly
