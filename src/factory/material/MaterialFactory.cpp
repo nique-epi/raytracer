@@ -91,7 +91,9 @@ std::shared_ptr<IMaterial> MaterialFactory::createTextured(
 std::shared_ptr<raytracer::materials::ITexture> MaterialFactory::parseTexture(
     const libconfig::Setting& cfg) {
   std::string type;
-  cfg.lookupValue("type", type);
+  if (!cfg.lookupValue("type", type)) {
+    throw RaytracerException("MaterialFactory: missing required texture field 'type'");
+  }
 
   if (type == "solid") {
     Color color(1.0, 1.0, 1.0);
