@@ -14,7 +14,9 @@ namespace raytracer::components::material {
 class Glass : public AMaterial {
  public:
   Glass() = delete;
-  explicit Glass(double refractionIndex) : refractionIndex_(refractionIndex) {}
+  explicit Glass(double refractionIndex,
+                 const math::Color& tint = math::Color(1.0, 1.0, 1.0))
+      : refractionIndex_(refractionIndex), tint_(tint) {}
   ~Glass() override = default;
 
   Glass(const Glass&) = delete;
@@ -29,5 +31,6 @@ class Glass : public AMaterial {
 
  private:
   double refractionIndex_;
+  math::Color tint_;
 };
 }  // namespace raytracer::components::material

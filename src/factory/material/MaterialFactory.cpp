@@ -50,7 +50,9 @@ std::shared_ptr<IMaterial> createGlossyFromCfg(const libconfig::Setting& cfg) {
 std::shared_ptr<IMaterial> createGlassFromCfg(const libconfig::Setting& cfg) {
   double refractionIndex = defaultGlassRefractionIndex;
   cfg.lookupValue("refractionIndex", refractionIndex);
-  return MaterialFactory::createGlass(refractionIndex);
+  Color tint(1.0, 1.0, 1.0);
+  overrideColorIfPresent(cfg, "tint", tint);
+  return MaterialFactory::createGlass(refractionIndex, tint);
 }
 
 }  // namespace
@@ -65,8 +67,9 @@ std::shared_ptr<IMaterial> MaterialFactory::createGlossy(
   return std::make_shared<Glossy>(fuzz, albedo);
 }
 
-std::shared_ptr<IMaterial> MaterialFactory::createGlass(double refractionIndex) {
-  return std::make_shared<Glass>(refractionIndex);
+std::shared_ptr<IMaterial> MaterialFactory::createGlass(
+    double refractionIndex, const math::Color& tint) {
+  return std::make_shared<Glass>(refractionIndex, tint);
 }
 
 math::Color MaterialFactory::parseColor(const libconfig::Setting& s,

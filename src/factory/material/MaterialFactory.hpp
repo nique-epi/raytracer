@@ -61,10 +61,13 @@ class MaterialFactory {
    * @brief Create a dielectric (glass-like) material.
    *
    * @param [in] refractionIndex Index of refraction (default: 1.5).
+   * @param [in] tint            Tint color applied when light passes through
+   * (default: white).
    * @returns Shared pointer to the freshly constructed material.
    */
   [[nodiscard]] static std::shared_ptr<IMaterial> createGlass(
-      double refractionIndex = defaultGlassRefractionIndex);
+      double refractionIndex = defaultGlassRefractionIndex,
+      const math::Color& tint = math::Color(1.0, 1.0, 1.0));
 
   /**
    * @brief Dispatch by type name and parse @p cfg into typed arguments.
@@ -72,7 +75,8 @@ class MaterialFactory {
    * Supported type names: `"diffuse"`, `"glossy"`, `"glass"`.
    *
    * @param [in] type Type discriminant (one of the supported names above).
-   * @param [in] cfg  libconfig setting; absent fields keep their typed defaults.
+   * @param [in] cfg  libconfig setting; absent fields keep their typed
+   * defaults.
    * @returns Shared pointer to the freshly constructed material.
    *
    * @throws raytracer::core::RaytracerException If @p type is unknown.

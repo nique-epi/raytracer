@@ -6,6 +6,7 @@
 */
 
 #include "AssimpLoader.hpp"
+#include <cmath>
 #include <iostream>
 #include <memory>
 #include <numbers>
@@ -96,6 +97,22 @@ double computeVerticalFov(const aiCamera* cam, double aspectRatio) {
       halfTurn * std::atan(std::tan(hfov / halfTurn) / aspectRatio);
   return vfovRad * degreesPerRadian;
 }
+
+unsigned int countTriangles(const aiScene* scene) {
+  unsigned int triangleCount = 0;
+
+  for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
+    const aiMesh* mesh = scene->mMeshes[i];
+
+    for (unsigned int j = 0; j < mesh->mNumFaces; ++j) {
+      if (mesh->mFaces[j].mNumIndices == 3) {
+        ++triangleCount;
+      }
+    }
+  }
+
+  return triangleCount;
+}
 }  // namespace
 
 namespace raytracer::scene {
@@ -171,13 +188,50 @@ void AssimpLoader::processMesh(
 std::vector<std::shared_ptr<IMaterial>> AssimpLoader::loadMaterials(
     const aiScene* scene) {
   std::vector<std::shared_ptr<IMaterial>> materials;
+  constexpr float shininessThreshold = 32.0F;
+  constexpr float maxShininessValue = 128.0F;
+
   for (unsigned int i = 0; i < scene->mNumMaterials; ++i) {
     aiMaterial* mat = scene->mMaterials[i];
-    aiColor3D color(1.0, 1.0, 1.0);
-    mat->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+    aiColor3D diffuseColor(1.0F, 1.0F, 1.0F);
+    mat->Get(AI_MATKEY_COLOR_DIFFUSE, diffuseColor);
+    math::Color albedo(diffuseColor.r, diffuseColor.g, diffuseColor.b);
+    float opacity = 1.0F;
+    mat->Get(AI_MATKEY_OPACITY, opacity);
+    float shininess = 0.0F;
+    mat->Get(AI_MATKEY_SHININESS, shininess);
+    float refractionIndex = 1.0F;
+    mat->Get(AI_MATKEY_REFRACTI, refractionIndex);
 
-    materials.push_back(core::factory::MaterialFactory::createDiffuse(
-        math::Color(color.r, color.g, color.b)));
+    std::cerr << "    mat[" << i << "] raw: opacity=" << opacity
+              << ", shininess=" << shininess << ", refracti=" << refractionIndex
+              << ", color=(" << albedo.r << "," << albedo.g << "," << albedo.b
+              << ")" << '\n';
+
+    std::shared_ptr<IMaterial> material;
+    if (opacity < 0.9F && refractionIndex > 1.0F) {
+      const math::Color glassTint(opacity, opacity, opacity);
+      material = core::factory::MaterialFactory::createGlass(refractionIndex,
+                                                             glassTint);
+      std::cerr << "    mat[" << i
+                << "]: Glass (refractiveIndex=" << refractionIndex
+                << ", opacity=" << opacity << ", tint=(" << glassTint.r << ","
+                << glassTint.g << "," << glassTint.b << ")" << ')' << '\n';
+    } else if (shininess > shininessThreshold) {
+      double fuzz =
+          std::log(1.0 + shininess) / std::log(1.0 + maxShininessValue);
+      fuzz = 1.0 - fuzz;
+      fuzz = (fuzz < 0.0) ? 0.0 : (fuzz > 1.0) ? 1.0 : fuzz;
+      material = core::factory::MaterialFactory::createGlossy(fuzz, albedo);
+      std::cerr << "    mat[" << i << "]: Glossy (shininess=" << shininess
+                << ", fuzz=" << fuzz << ")" << '\n';
+    } else {
+      material = core::factory::MaterialFactory::createDiffuse(albedo);
+      std::cerr << "    mat[" << i << "]: Diffuse (color=(" << albedo.r << ","
+                << albedo.g << "," << albedo.b << "))" << '\n';
+    }
+
+    materials.push_back(std::move(material));
   }
   return materials;
 }
@@ -212,6 +266,7 @@ void AssimpLoader::processLights(const aiScene* scene, SceneBuilder& builder) {
         std::make_shared<raytracer::components::light::ambient::Ambient>(
             math::Color(1.0, 1.0, 1.0), 1.0));
   }
+  // TODO Implement the parsing of light and link them to our light components
 }
 
 void AssimpLoader::processCamera(const aiScene* scene, SceneBuilder& builder,
@@ -267,7 +322,8 @@ bool AssimpLoader::load(const std::string& path, SceneBuilder& builder,
 
   std::cerr << "Loaded GLTF: " << scene->mNumMeshes << " meshes, "
             << scene->mNumMaterials << " materials, " << scene->mNumCameras
-            << " cameras, " << scene->mNumLights << " lights" << '\n';
+            << " cameras, " << scene->mNumLights << " lights, "
+            << countTriangles(scene) << " triangles" << '\n';
 
   std::vector<std::shared_ptr<IMaterial>> materials = loadMaterials(scene);
   processNode(scene->mRootNode, scene, builder, aiMatrix4x4(), materials);

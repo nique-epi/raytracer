@@ -26,7 +26,7 @@ bool Glass::scatter(const raytracer::math::Ray& in,
                     const raytracer::math::HitRecord& rec,
                     raytracer::math::Color& attenuation,
                     raytracer::math::Ray& scattered) const {
-  attenuation = raytracer::math::Color(1.0, 1.0, 1.0);
+  attenuation = tint_;
 
   double niOverNt = rec.frontFace ? (1.0 / refractionIndex_) : refractionIndex_;
   raytracer::math::Vector3D unitDir = in.getDirection().normalize();
