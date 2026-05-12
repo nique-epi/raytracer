@@ -89,6 +89,7 @@ add_executable(raytracer_tests
   scene/SceneBuilderTest.cpp
   scene/SceneTest.cpp
 	scene/background/SolidBackgroundTest.cpp
+	scene/background/GradientBackgroundTest.cpp
   exceptions/ExceptionsTest.cpp
   renderer/BasicRendererTest.cpp
   components/image/ImageTest.cpp

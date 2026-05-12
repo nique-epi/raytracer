@@ -13,11 +13,11 @@ namespace raytracer::scene::background {
 
 class GradientBackground : public IBackground {
  public:
-  GradientBackground();
+  GradientBackground() = default;
   GradientBackground(const raytracer::math::Color& topColor,
                      const raytracer::math::Color& bottomColor)
       : topColor_(topColor), bottomColor_(bottomColor) {};
-  ~GradientBackground() override;
+  ~GradientBackground() override = default;
 
   GradientBackground(const GradientBackground&) = delete;
   GradientBackground& operator=(const GradientBackground&) = delete;
