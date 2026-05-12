@@ -9,11 +9,6 @@
 #include "components/Transformations/ITransformation.hpp"
 #include "utils/math/Vector3D.hpp"
 
-namespace gsl {
-template <typename T>
-using owner = T;
-}  // namespace gsl
-
 namespace raytracer::components::transformation {
 Translation::Translation(const raytracer::math::Vector3D& offset)
     : offset_(offset) {}
@@ -40,11 +35,3 @@ std::shared_ptr<ITransformation> Translation::inverse() const {
 }
 
 }  // namespace raytracer::components::transformation
-
-extern "C" gsl::owner<ITransformation*> createTransformations() {
-  return new raytracer::components::transformation::Translation();
-}
-
-extern "C" void destroyTransformations(gsl::owner<ITransformation*> transform) {
-  delete transform;
-}

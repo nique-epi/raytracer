@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <cmath>
 #include "constants/Errors.hpp"
-#include "core/Exceptions.hpp"
+#include "exceptions/Exceptions.hpp"
 
 namespace {
 constexpr double kRgbScale = 255.0;

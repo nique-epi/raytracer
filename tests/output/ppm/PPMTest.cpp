@@ -12,7 +12,7 @@
 #include <string>
 #include "../fixture/PPMFixture.hpp"
 #include "constants/Errors.hpp"
-#include "core/Exceptions.hpp"
+#include "exceptions/Exceptions.hpp"
 
 TEST_F(PPMFixture, SupportsOnlyPpmExtension) {
   EXPECT_TRUE(writer.supports(".ppm"));

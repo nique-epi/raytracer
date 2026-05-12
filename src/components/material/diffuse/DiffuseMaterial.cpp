@@ -55,15 +55,3 @@ bool DiffuseMaterial::scatter(const raytracer::math::Ray& /*in*/,
 }
 
 }  // namespace raytracer::components::material
-
-namespace gsl {
-template <typename T>
-using owner = T;
-}  // namespace gsl
-
-extern "C" gsl::owner<IMaterial*> createMaterial(
-    const raytracer::math::Color& albedo) {
-  return new raytracer::components::material::DiffuseMaterial(albedo);
-}
-
-extern "C" void destroyMaterial(gsl::owner<IMaterial*> mat) { delete mat; }

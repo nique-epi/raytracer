@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include <cmath>
 #include <tuple>
-#include "core/Exceptions.hpp"
+#include "exceptions/Exceptions.hpp"
 #include "utils/math/Color.hpp"
 
 using raytracer::math::Color;

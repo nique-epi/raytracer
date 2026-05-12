@@ -2,4 +2,11 @@ target_sources(raytracer_components
 	PRIVATE
 		Collection/Collection.cpp
 		TransformedObject/TransformedObject.cpp
+		Collection.cpp
+		sphere/Sphere.cpp
+		cone/Cone.cpp
+		cylinder/Cylinder.cpp
+		plane/Plane.cpp
+        triangle/Triangle.cpp
+        mesh/mesh.cpp
 )

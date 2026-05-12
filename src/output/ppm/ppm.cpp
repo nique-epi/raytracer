@@ -8,7 +8,7 @@
 #include "output/ppm/ppm.hpp"
 #include <fstream>
 #include "constants/Errors.hpp"
-#include "core/Exceptions.hpp"
+#include "exceptions/Exceptions.hpp"
 
 namespace raytracer::output {
 void ppm::write(const raytracer::components::Image& image,

@@ -6,11 +6,11 @@
 */
 
 #include "Directional.hpp"
-
-namespace gsl {
-template <typename T>
-using owner = T;
-}  // namespace gsl
+#include <limits>
+#include "scene/Scene.hpp"
+#include "utils/math/Constants.hpp"
+#include "utils/math/HitRecord.hpp"
+#include "utils/math/Ray.hpp"
 
 namespace raytracer::components::light::directional {
 
@@ -36,22 +36,12 @@ raytracer::math::Vector3D Directional::getDirection(
 
 double Directional::getIntensity() const { return intensity; }
 
-/**
- * @todo implement proper shadow ray occlusion test once Scene exposes a hits()
- * API.
- */
-bool Directional::isOccluded(const raytracer::math::Vector3D& /*point*/,
-                             const raytracer::scene::Scene& /*scene*/) const {
-  //   raytracer::math::Ray shadowRay(point, -direction);
-  //   return scene.hits(shadowRay, 0.0,
-  //                     std::numeric_limits<double>::infinity());
-  return false;
+bool Directional::isOccluded(const raytracer::math::Vector3D& point,
+                             const raytracer::scene::Scene& scene) const {
+  const raytracer::math::Ray shadowRay(point, -direction);
+  raytracer::math::HitRecord rec;
+  return scene.hit(shadowRay, raytracer::math::constants::epsilon,
+                   std::numeric_limits<double>::infinity(), rec);
 }
 
 }  // namespace raytracer::components::light::directional
-
-extern "C" gsl::owner<ILight*> createLight() {
-  return new raytracer::components::light::directional::Directional();
-}
-
-extern "C" void DestroyLight(gsl::owner<ILight*> light) { delete light; }

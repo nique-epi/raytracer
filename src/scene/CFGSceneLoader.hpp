@@ -92,6 +92,19 @@ class CFGSceneLoader : public ISceneLoader {
    */
   static void parseSettings(const libconfig::Setting& root,
                             math::RenderSettings& settings);
+
+  /**
+   * @brief Parse the optional `background` block and attach it to the scene
+   *        via the builder.
+   *
+   * Supported types: `"solid"`, `"gradient"`. Defaults to a black solid
+   * background when the block is absent.
+   *
+   * @param [in]     root    Root setting of the parsed config.
+   * @param [in,out] builder Builder whose scene background will be set.
+   */
+  static void parseBackground(const libconfig::Setting& root,
+                              SceneBuilder& builder);
 };
 
 }  // namespace raytracer::scene

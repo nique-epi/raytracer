@@ -9,17 +9,23 @@
 #include <iostream>
 #include <libconfig.h++>
 #include "SceneBuilder.hpp"
+#include "background/Solid/SolidBackground.hpp"  // NOLINT(misc-include-cleaner)
+#include "factory/material/MaterialFactory.hpp"
 
 namespace {
 
+using AddFn = void (raytracer::scene::SceneBuilder::*)(
+    const std::string&, const libconfig::Setting&);
+
 void addList(const libconfig::Setting& parent, const char* key,
-             const char* type, raytracer::scene::SceneBuilder& builder) {
+             const char* type, raytracer::scene::SceneBuilder& builder,
+             AddFn adder) {
   if (!parent.exists(key)) {
     return;
   }
   const auto& list = parent[key];
   for (int i = 0; i < list.getLength(); ++i) {
-    builder.addObject(type, list[i]);
+    (builder.*adder)(type, list[i]);
   }
 }
 
@@ -51,6 +57,7 @@ bool CFGSceneLoader::load(const std::string& path, SceneBuilder& builder,
   parseLights(root, builder);
   parseCamera(root, builder);
   parseSettings(root, settings);
+  parseBackground(root, builder);
   return true;
 }
 
@@ -60,8 +67,10 @@ void CFGSceneLoader::parsePrimitives(const libconfig::Setting& root,
     return;
   }
   const auto& p = root["primitives"];
-  addList(p, "spheres", "sphere", builder);
-  addList(p, "planes", "plane", builder);
+  addList(p, "spheres", "sphere", builder, &SceneBuilder::addObject);
+  addList(p, "planes", "plane", builder, &SceneBuilder::addObject);
+  addList(p, "cylinders", "cylinder", builder, &SceneBuilder::addObject);
+  addList(p, "cones", "cone", builder, &SceneBuilder::addObject);
 }
 
 void CFGSceneLoader::parseLights(const libconfig::Setting& root,
@@ -70,8 +79,8 @@ void CFGSceneLoader::parseLights(const libconfig::Setting& root,
     return;
   }
   const auto& l = root["lights"];
-  addList(l, "ambient", "ambient", builder);
-  addList(l, "directional", "directional", builder);
+  addList(l, "ambient", "ambient", builder, &SceneBuilder::addLight);
+  addList(l, "directional", "directional", builder, &SceneBuilder::addLight);
 }
 
 void CFGSceneLoader::parseCamera(const libconfig::Setting& root,
@@ -79,7 +88,27 @@ void CFGSceneLoader::parseCamera(const libconfig::Setting& root,
   if (!root.exists("camera")) {
     return;
   }
-  builder.addObject("camera", root["camera"]);
+  builder.addCamera(root["camera"]);
+}
+
+void CFGSceneLoader::parseBackground(const libconfig::Setting& root,
+                                     SceneBuilder& builder) {
+  using core::factory::MaterialFactory;
+
+  if (!root.exists("background")) {
+    builder.setBackground(
+        std::make_shared<background::SolidBackground>(math::Color{0, 0, 0}));
+    return;
+  }
+
+  const auto& bg = root["background"];
+  std::string type = "solid";
+  bg.lookupValue("type", type);
+
+  const math::Color color =
+      bg.exists("color") ? MaterialFactory::parseColor(bg["color"], {0, 0, 0})
+                         : math::Color{0, 0, 0};
+  builder.setBackground(std::make_shared<background::SolidBackground>(color));
 }
 
 void CFGSceneLoader::parseSettings(const libconfig::Setting& root,
