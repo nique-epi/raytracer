@@ -15,9 +15,11 @@
 
 namespace raytracer::core {
 
-components::Image MonoThreadRenderer::render(
-    const Scene& scene, const ICamera& camera,
-    const math::RenderSettings& settings) {
+components::Image MonoThreadRenderer::render(const RendererConfig& config,
+                                             const Frame& frame) {
+  const scene::Scene& scene = config.scene;
+  const ICamera& camera = frame.camera;
+  const math::RenderSettings& settings = config.settings;
   const int width = settings.imageWidth;
   const int height = settings.imageHeight;
   components::Image image(width, height);
@@ -64,7 +66,7 @@ void MonoThreadRenderer::setProgressCallback(std::function<void(double)> fn) {
 
 // NOLINTNEXTLINE(misc-no-recursion)
 math::Color MonoThreadRenderer::castRay(const math::Ray& ray,
-                                        const Scene& scene, int depth) {
+                                        const scene::Scene& scene, int depth) {
   if (depth <= 0) {
     return {0, 0, 0};
   }
@@ -84,7 +86,7 @@ math::Color MonoThreadRenderer::castRay(const math::Ray& ray,
 // NOLINTNEXTLINE(misc-no-recursion)
 math::Color MonoThreadRenderer::computeLighting(const math::Ray& inRay,
                                                 const math::HitRecord& rec,
-                                                const Scene& scene, int depth) {
+                                                const scene::Scene& scene, int depth) {
   if (rec.material) {
     math::Color attenuation(0, 0, 0);
     math::Ray scattered(math::Vector3D(0, 0, 0), math::Vector3D(0, 0, 1));
