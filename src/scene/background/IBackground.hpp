@@ -8,7 +8,10 @@
 #pragma once
 
 #include "utils/math/Color.hpp"
-#include "utils/math/Ray.hpp"
+
+namespace raytracer::math {
+class Ray;
+}  // namespace raytracer::math
 
 namespace raytracer::scene::background {
 

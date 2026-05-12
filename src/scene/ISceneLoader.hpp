@@ -7,10 +7,11 @@
 
 #pragma once
 #include <string>
-#include "scene/SceneBuilder.hpp"
 #include "utils/math/RenderSettings.hpp"
 
 namespace raytracer::scene {
+
+class SceneBuilder;
 
 /**
  * @brief Contract for any scene-file format loader (CFG, JSON, GLB, ...).

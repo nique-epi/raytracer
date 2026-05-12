@@ -13,9 +13,10 @@
 #include <string>
 #include "background/IBackground.hpp"
 #include "factory/IComponentFactory.hpp"
-#include "scene/Scene.hpp"
 
 namespace raytracer::scene {
+
+class Scene;
 
 /**
  * @brief Assembles a @ref Scene from parsed configuration entries.
