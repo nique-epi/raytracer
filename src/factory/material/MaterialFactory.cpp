@@ -146,7 +146,7 @@ std::shared_ptr<IMaterial> MaterialFactory::create(
     overrideColorIfPresent(cfg, "albedo", albedo);
     const std::shared_ptr<ITexture> texture =
         cfg.exists("texture") ? parseTexture(cfg.lookup("texture"))
-                              : std::make_shared<SolidColor>(albedo);
+                              : std::make_shared<SolidColor>(Color(1.0, 1.0, 1.0));
     return createTextured(texture, albedo);
   }
   throw RaytracerException("MaterialFactory: unknown material type '" + type +
