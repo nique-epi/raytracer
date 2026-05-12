@@ -15,6 +15,13 @@ namespace raytracer::math::constants {
  */
 constexpr double epsilon = 1e-8;
 
+/**
+ * @brief Geometric offset applied along the surface normal before
+ *        casting a shadow ray, to avoid self-intersection caused by
+ *        floating-point imprecision at the shading point.
+ */
+constexpr double shadowRayEpsilon = 1e-3;
+
 constexpr double HALF = 0.5;
 
 constexpr double DOUBLE = 2.0;
