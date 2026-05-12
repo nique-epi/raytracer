@@ -9,15 +9,20 @@
 #include <limits>
 #include <random>
 #include <utility>
+#include "components/camera/ICamera.hpp"
 #include "components/material/IMaterial.hpp"
+#include "scene/Scene.hpp"
 #include "utils/math/Color.hpp"
+#include "utils/math/HitRecord.hpp"
 #include "utils/math/Ray.hpp"
 
 namespace raytracer::core {
 
-components::Image MonoThreadRenderer::render(
-    const Scene& scene, const ICamera& camera,
-    const math::RenderSettings& settings) {
+components::Image MonoThreadRenderer::render(const RendererConfig& config,
+                                             const Frame& frame) {
+  const scene::Scene& scene = *config.scene;
+  const ICamera& camera = *frame.camera;
+  const math::RenderSettings& settings = config.settings;
   const int width = settings.imageWidth;
   const int height = settings.imageHeight;
   components::Image image(width, height);
@@ -41,15 +46,15 @@ components::Image MonoThreadRenderer::render(
         const double u = (width > 1)
                              ? (static_cast<double>(x) + jitterU) / (width - 1)
                              : 0.5;
-        const double v = (height > 1)
-                             ? (static_cast<double>(height - 1 - y) + jitterV) /
-                                   (height - 1)
-                             : 0.5;
+        const double v =
+            (height > 1)
+                ? (static_cast<double>(height - 1 - y) + jitterV) / (height - 1)
+                : 0.5;
         const math::Ray ray = camera.getRay(u, v);
         accumulated = accumulated + castRay(ray, scene, settings.maxDepth);
       }
-      image.setPixel(x, y,
-                     accumulated / static_cast<double>(settings.samplesPerPixel));
+      image.setPixel(
+          x, y, accumulated / static_cast<double>(settings.samplesPerPixel));
     }
   }
   if (_progressCallback) {
@@ -64,7 +69,7 @@ void MonoThreadRenderer::setProgressCallback(std::function<void(double)> fn) {
 
 // NOLINTNEXTLINE(misc-no-recursion)
 math::Color MonoThreadRenderer::castRay(const math::Ray& ray,
-                                        const Scene& scene, int depth) {
+                                        const scene::Scene& scene, int depth) {
   if (depth <= 0) {
     return {0, 0, 0};
   }
@@ -84,7 +89,8 @@ math::Color MonoThreadRenderer::castRay(const math::Ray& ray,
 // NOLINTNEXTLINE(misc-no-recursion)
 math::Color MonoThreadRenderer::computeLighting(const math::Ray& inRay,
                                                 const math::HitRecord& rec,
-                                                const Scene& scene, int depth) {
+                                                const scene::Scene& scene,
+                                                int depth) {
   if (rec.material) {
     math::Color attenuation(0, 0, 0);
     math::Ray scattered(math::Vector3D(0, 0, 0), math::Vector3D(0, 0, 1));

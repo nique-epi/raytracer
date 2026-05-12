@@ -8,11 +8,14 @@
 #include "Application.hpp"
 #include <iostream>
 #include <memory>
-#include "exceptions/Exceptions.hpp"
 #include "components/image/Image.hpp"
+#include "exceptions/Exceptions.hpp"
 #include "output/ppm/ppm.hpp"
+#include "renderer/Frame.hpp"
+#include "renderer/RendererConfig.hpp"
 #include "renderer/monoThreadRenderer/MonoThreadRenderer.hpp"
 #include "scene/CFGSceneLoader.hpp"
+#include "scene/Scene.hpp"
 #include "scene/SceneBuilder.hpp"
 #include "utils/math/RenderSettings.hpp"
 
@@ -50,8 +53,10 @@ int Application::run(const std::string& scenePath) {
     }
   });
 
-  const components::Image image =
-      renderer.render(*scene, *scene->getCamera(), settings);
+  const RendererConfig config{
+      .scene = scene, .settings = settings, .integrator = nullptr};
+  const Frame frame{.camera = scene->getCamera()};
+  const components::Image image = renderer.render(config, frame);
 
   output::ppm writer;
   writer.write(image, "out.ppm");
