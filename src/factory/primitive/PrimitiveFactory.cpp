@@ -15,6 +15,7 @@
 #include "components/Primitives/plane/Plane.hpp"
 #include "components/Primitives/sphere/Sphere.hpp"
 #include "exceptions/Exceptions.hpp"
+#include "factory/material/MaterialFactory.hpp"
 #include "utils/math/Vector3D.hpp"
 
 namespace raytracer::core::factory {
@@ -45,6 +46,16 @@ void overrideVec3IfPresent(const libconfig::Setting& cfg, const char* key,
   }
 }
 
+std::shared_ptr<IMaterial> parseMaterialFromCfg(const libconfig::Setting& cfg) {
+  if (!cfg.exists("material")) {
+    return nullptr;
+  }
+  const auto& matCfg = cfg["material"];
+  std::string type = "diffuse";
+  matCfg.lookupValue("type", type);
+  return raytracer::core::factory::MaterialFactory::create(type, matCfg);
+}
+
 Vector3D axisVectorFromName(const std::string& name) {
   if (name == "X" || name == "x") {
     return {1.0, 0.0, 0.0};
@@ -63,7 +74,7 @@ std::shared_ptr<IObject> createSphereFromCfg(const libconfig::Setting& cfg) {
   double radius = 1.0;
   overrideVec3IfPresent(cfg, "center", center);
   cfg.lookupValue("radius", radius);
-  return PrimitiveFactory::createSphere(center, radius);
+  return PrimitiveFactory::createSphere(center, radius, parseMaterialFromCfg(cfg));
 }
 
 std::shared_ptr<IObject> createConeFromCfg(const libconfig::Setting& cfg) {
@@ -75,7 +86,8 @@ std::shared_ptr<IObject> createConeFromCfg(const libconfig::Setting& cfg) {
   overrideVec3IfPresent(cfg, "axis", axis);
   cfg.lookupValue("angle", angle);
   cfg.lookupValue("height", height);
-  return PrimitiveFactory::createCone(apex, axis, angle, height);
+  return PrimitiveFactory::createCone(apex, axis, angle, height,
+                                      parseMaterialFromCfg(cfg));
 }
 
 std::shared_ptr<IObject> createCylinderFromCfg(const libconfig::Setting& cfg) {
@@ -87,7 +99,8 @@ std::shared_ptr<IObject> createCylinderFromCfg(const libconfig::Setting& cfg) {
   overrideVec3IfPresent(cfg, "axis", axis);
   cfg.lookupValue("radius", radius);
   cfg.lookupValue("height", height);
-  return PrimitiveFactory::createCylinder(center, axis, radius, height);
+  return PrimitiveFactory::createCylinder(center, axis, radius, height,
+                                          parseMaterialFromCfg(cfg));
 }
 
 std::shared_ptr<IObject> createPlaneFromCfg(const libconfig::Setting& cfg) {
@@ -104,7 +117,7 @@ std::shared_ptr<IObject> createPlaneFromCfg(const libconfig::Setting& cfg) {
     point = axisVec * position;
     normal = axisVec;
   }
-  return PrimitiveFactory::createPlane(point, normal);
+  return PrimitiveFactory::createPlane(point, normal, parseMaterialFromCfg(cfg));
 }
 
 }  // namespace

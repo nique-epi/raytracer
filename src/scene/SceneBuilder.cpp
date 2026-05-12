@@ -54,6 +54,11 @@ void SceneBuilder::addCamera(const libconfig::Setting& cfg) {
   }
 }
 
+void SceneBuilder::setBackground(
+    std::shared_ptr<raytracer::scene::background::IBackground> background) {
+  scene_->setBackground(std::move(background));
+}
+
 std::shared_ptr<Scene> SceneBuilder::build() {
   if (!scene_->getCamera()) {
     throw raytracer::core::RaytracerException(

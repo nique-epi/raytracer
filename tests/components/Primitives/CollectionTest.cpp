@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <memory>
 #include "../../fixtures/SphereFixture.hpp"
-#include "components/Primitives/Collection.hpp"
+#include "components/Primitives/Collection/Collection.hpp"
 #include "utils/math/HitRecord.hpp"
 #include "utils/math/Ray.hpp"
 #include "utils/math/Vector3D.hpp"
