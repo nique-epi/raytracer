@@ -34,6 +34,7 @@ function(raytracer_add_test)
 	target_include_directories(${ARG_NAME}
 		PRIVATE
 			${CMAKE_SOURCE_DIR}/src
+
 			${ARG_INCLUDES}
 	)
 
@@ -88,19 +89,31 @@ add_executable(raytracer_tests
   scene/SceneBuilderTest.cpp
   scene/SceneTest.cpp
 	scene/background/SolidBackgroundTest.cpp
+	scene/background/GradientBackgroundTest.cpp
   exceptions/ExceptionsTest.cpp
-  registry/RegistryTest.cpp
   renderer/BasicRendererTest.cpp
   plugin/PluginExceptionTest.cpp
   config/ConfigExceptionTest.cpp
   components/image/ImageTest.cpp
   components/image/ImageExceptionTest.cpp
   components/Primitives/CollectionTest.cpp
+	components/Primitives/TransformedObjectTest.cpp
+  components/light/PointLightTest.cpp
   output/ppm/PPMTest.cpp
   ApplicationTest.cpp
   ArgsParserTest.cpp
+  factory/ComponentFactoryFixtureTest.cpp
+  factory/ComponentFactoryTest.cpp
+  factory/PrimitiveFactoryTest.cpp
+  factory/LightFactoryTest.cpp
+  factory/MaterialFactoryTest.cpp
+  factory/CameraFactoryTest.cpp
+  factory/TransformationFactoryTest.cpp
+  components/material/textures/SolidColorTest.cpp
+  components/material/textures/CheckerTextureTest.cpp
   fixtures/SphereFixture.cpp
   fixtures/OrthoCameraFixture.cpp
+  fixtures/ComponentFactoryFixture.cpp
   scene/fixtures/NullLightFixture.cpp
   scene/fixtures/SceneBuilderFixture.cpp
 )
@@ -108,6 +121,7 @@ add_executable(raytracer_tests
 target_include_directories(raytracer_tests
 	PRIVATE
 		${CMAKE_SOURCE_DIR}/src
+
 )
 
 target_compile_definitions(raytracer_tests
@@ -119,6 +133,7 @@ target_compile_definitions(raytracer_tests
 target_link_libraries(raytracer_tests
   PRIVATE
     raytracer_src
+	raytracer_translation
     raytracer_tests_helpers
     GTest::gtest_main
 )
@@ -132,45 +147,4 @@ raytracer_enable_target_warnings(raytracer_tests)
 
 gtest_discover_tests(raytracer_tests)
 
-add_executable(plugin_loader_test
-	plugin_loader_test.cpp
-)
-
-target_include_directories(plugin_loader_test
-	PRIVATE
-		${CMAKE_SOURCE_DIR}/src
-)
-
-target_link_libraries(plugin_loader_test PRIVATE raytracer_src)
-
-raytracer_enable_target_warnings(plugin_loader_test)
-
-add_library(fake_plugin SHARED
-	plugins/fake_plugin.cpp
-)
-
-set_target_properties(fake_plugin PROPERTIES
-	PREFIX ""
-	SUFFIX ".so"
-	LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-)
-
-set_target_properties(plugin_loader_test PROPERTIES
-	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-)
-
-add_test(
-	NAME plugin_loader_test
-	COMMAND plugin_loader_test
-	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-)
-set_tests_properties(plugin_loader_test PROPERTIES
-	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-)
-
-add_subdirectory(components/camera)
-add_subdirectory(components/light)
-add_subdirectory(components/material)
-add_subdirectory(components/Primitives)
 add_subdirectory(components/Transformations)

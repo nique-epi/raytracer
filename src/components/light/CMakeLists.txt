@@ -10,3 +10,10 @@ target_link_libraries(raytracer_light
 	INTERFACE
 		raytracer_math
 )
+
+target_sources(raytracer_components
+	PRIVATE
+		ambient/AmbientLight.cpp
+		directional/Directional.cpp
+		point/Point.cpp
+)
