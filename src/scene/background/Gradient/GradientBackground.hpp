@@ -11,9 +11,21 @@
 
 namespace raytracer::scene::background {
 
+/**
+ * @brief Background implementation that blends two colours vertically.
+ *
+ * Rays with a downward direction sample the top colour, while upward rays
+ * sample the bottom colour. Intermediate directions return a linear blend.
+ */
 class GradientBackground : public IBackground {
  public:
   GradientBackground() = default;
+  /**
+   * @brief Construct a gradient background from two endpoint colours.
+   *
+   * @param [in] topColor Colour returned for downward rays.
+   * @param [in] bottomColor Colour returned for upward rays.
+   */
   GradientBackground(const raytracer::math::Color& topColor,
                      const raytracer::math::Color& bottomColor)
       : topColor_(topColor), bottomColor_(bottomColor) {};
@@ -24,6 +36,11 @@ class GradientBackground : public IBackground {
   GradientBackground(GradientBackground&&) = delete;
   GradientBackground& operator=(GradientBackground&&) = delete;
 
+  /**
+   * @brief Return the interpolated gradient colour for @p ray.
+   *
+   * @inheritDoc
+   */
   [[nodiscard]] raytracer::math::Color getColor(
       const raytracer::math::Ray& ray) const override;
 
