@@ -21,8 +21,8 @@ class PathIntegrator : public IIntegrator {
   PathIntegrator(PathIntegrator&&) = delete;
   PathIntegrator& operator=(PathIntegrator&&) = delete;
 
-  math::Color Li(const math::Ray& ray, const scene::Scene& scene,
-                 int depth) override;
+  math::Color computeRadiance(const math::Ray& ray, const scene::Scene& scene,
+                              int depth) override;
 };
 
 }  // namespace raytracer::core

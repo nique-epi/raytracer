@@ -19,8 +19,9 @@ namespace raytracer::core {
 class IIntegrator {
  public:
   virtual ~IIntegrator() = default;
-  virtual math::Color Li(const math::Ray& ray, const scene::Scene& scene,
-                         int depth) = 0;
+
+  virtual math::Color computeRadiance(const math::Ray& ray,
+                                      const scene::Scene& scene, int depth) = 0;
 };
 
 }  // namespace raytracer::core
