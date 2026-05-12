@@ -81,6 +81,7 @@ void CFGSceneLoader::parseLights(const libconfig::Setting& root,
   const auto& l = root["lights"];
   addList(l, "ambient", "ambient", builder, &SceneBuilder::addLight);
   addList(l, "directional", "directional", builder, &SceneBuilder::addLight);
+  addList(l, "point", "point", builder, &SceneBuilder::addLight);
 }
 
 void CFGSceneLoader::parseCamera(const libconfig::Setting& root,
