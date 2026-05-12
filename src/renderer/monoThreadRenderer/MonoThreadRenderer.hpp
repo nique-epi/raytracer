@@ -16,6 +16,14 @@
 #include "../IRenderer.hpp"
 #include "utils/math/Ray.hpp"
 
+namespace raytracer::math {
+class HitRecord;
+}  // namespace raytracer::math
+
+namespace raytracer::scene {
+class Scene;
+}  // namespace raytracer::scene
+
 namespace raytracer::core {
 
 /**
