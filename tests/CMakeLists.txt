@@ -96,6 +96,7 @@ add_executable(raytracer_tests
   components/image/ImageExceptionTest.cpp
   components/Primitives/CollectionTest.cpp
 	components/Primitives/TransformedObjectTest.cpp
+  components/light/PointLightTest.cpp
   output/ppm/PPMTest.cpp
   ApplicationTest.cpp
   ArgsParserTest.cpp

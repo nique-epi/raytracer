@@ -17,7 +17,7 @@ namespace raytracer::scene {
  * Supports the keys mandated by the project subject:
  *  - `camera`
  *  - `primitives.spheres`, `primitives.planes`
- *  - `lights.ambient`, `lights.directional`
+ *  - `lights.ambient`, `lights.directional`, `lights.point`
  *  - `settings` (optional) with imageWidth, imageHeight, tileWidth,
  *    tileHeight, numThreads, samplesPerPixel, maxDepth.
  *
