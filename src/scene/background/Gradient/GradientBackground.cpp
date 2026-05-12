@@ -6,17 +6,15 @@
 */
 
 #include "GradientBackground.hpp"
+#include "utils/math/Constants.hpp"
 #include "utils/math/Ray.hpp"
-
-namespace {
-constexpr double HALF = 0.5;
-}  // namespace
 
 namespace raytracer::scene::background {
 
 [[nodiscard]] raytracer::math::Color GradientBackground::getColor(
     const raytracer::math::Ray& ray) const {
-  double t = HALF * (ray.getDirection().normalize().y + 1.0);
+  double t = raytracer::math::constants::HALF *
+             (ray.getDirection().normalize().y + 1.0);
   return (1.0 - t) * topColor_ + t * bottomColor_;
 }
 }  // namespace raytracer::scene::background
