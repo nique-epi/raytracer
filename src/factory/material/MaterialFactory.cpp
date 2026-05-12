@@ -9,9 +9,14 @@
 #include <libconfig.h++>
 #include <memory>
 #include <string>
+#include "components/material/Textures/ITexture.hpp"
+#include "components/material/Textures/checker/CheckerTexture.hpp"
+#include "components/material/Textures/noise/NoiseTexture.hpp"
+#include "components/material/Textures/solid/SolidColor.hpp"
 #include "components/material/diffuse/DiffuseMaterial.hpp"
 #include "components/material/glass/Glass.hpp"
 #include "components/material/glossy/Glossy.hpp"
+#include "components/material/textured/TexturedMaterial.hpp"
 #include "exceptions/Exceptions.hpp"
 #include "utils/math/Color.hpp"
 
@@ -22,6 +27,11 @@ namespace {
 using raytracer::components::material::DiffuseMaterial;
 using raytracer::components::material::Glass;
 using raytracer::components::material::Glossy;
+using raytracer::components::material::TexturedMaterial;
+using raytracer::materials::ITexture;
+using raytracer::materials::textures::CheckerTexture;
+using raytracer::materials::textures::NoiseTexture;
+using raytracer::materials::textures::SolidColor;
 using raytracer::math::Color;
 
 void overrideColorIfPresent(const libconfig::Setting& cfg, const char* key,
@@ -65,8 +75,43 @@ std::shared_ptr<IMaterial> MaterialFactory::createGlossy(
   return std::make_shared<Glossy>(fuzz, albedo);
 }
 
-std::shared_ptr<IMaterial> MaterialFactory::createGlass(double refractionIndex) {
+std::shared_ptr<IMaterial> MaterialFactory::createGlass(
+    double refractionIndex) {
   return std::make_shared<Glass>(refractionIndex);
+}
+
+// NOLINTNEXTLINE(misc-use-internal-linkage)
+std::shared_ptr<IMaterial> MaterialFactory::createTextured(
+    std::shared_ptr<raytracer::materials::ITexture> texture,
+    const math::Color& albedo) {
+  return std::make_shared<TexturedMaterial>(std::move(texture), albedo);
+}
+
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
+std::shared_ptr<raytracer::materials::ITexture> MaterialFactory::parseTexture(
+    const libconfig::Setting& cfg) {
+  std::string type;
+  cfg.lookupValue("type", type);
+
+  if (type == "solid") {
+    Color color(1.0, 1.0, 1.0);
+    overrideColorIfPresent(cfg, "color", color);
+    return std::make_shared<SolidColor>(color);
+  }
+  if (type == "checker") {
+    Color odd(0.0, 0.0, 0.0);
+    Color even(1.0, 1.0, 1.0);
+    double scale = 1.0;
+    overrideColorIfPresent(cfg, "odd", odd);
+    overrideColorIfPresent(cfg, "even", even);
+    cfg.lookupValue("scale", scale);
+    return std::make_shared<CheckerTexture>(odd, even, scale);
+  }
+  if (type == "noise") {
+    return std::make_shared<NoiseTexture>();
+  }
+  throw RaytracerException("MaterialFactory: unknown texture type '" + type +
+                           "'");
 }
 
 math::Color MaterialFactory::parseColor(const libconfig::Setting& s,
@@ -93,6 +138,14 @@ std::shared_ptr<IMaterial> MaterialFactory::create(
   }
   if (type == "glass") {
     return createGlassFromCfg(cfg);
+  }
+  if (type == "textured") {
+    Color albedo(1.0, 1.0, 1.0);
+    overrideColorIfPresent(cfg, "albedo", albedo);
+    const std::shared_ptr<ITexture> texture =
+        cfg.exists("texture") ? parseTexture(cfg.lookup("texture"))
+                              : std::make_shared<SolidColor>(albedo);
+    return createTextured(texture, albedo);
   }
   throw RaytracerException("MaterialFactory: unknown material type '" + type +
                            "'");
