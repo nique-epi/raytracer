@@ -2,6 +2,7 @@ add_library(raytracer_scene STATIC
   CFGSceneLoader.cpp
   SceneLoaderFactory.cpp
   SceneBuilder.cpp
+  TransformsParser.cpp
   SceneFileNotFoundException.cpp
   SceneParseException.cpp
   Scene.cpp
