@@ -74,8 +74,22 @@ double PerlinNoise::noise(const math::Vector3D& point) const {
       }
     }
   }
-
   return accum;
+}
+
+double PerlinNoise::turbulence(const math::Vector3D& point, int depth) const {
+  double accum = 0.0;
+  math::Vector3D tempPoint = point;
+  double weight = 1.0;
+
+  for (int i = 0; i < depth; ++i) {
+    accum += weight * noise(tempPoint);
+    // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
+    weight *= 0.5;
+    // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
+    tempPoint *= 2.0;
+  }
+  return std::abs(accum);
 }
 
 }  // namespace raytracer::materials::textures::utils
