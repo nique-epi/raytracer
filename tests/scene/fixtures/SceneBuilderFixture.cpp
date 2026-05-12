@@ -22,28 +22,28 @@ raytracer::math::AABB DummyObject::getBoundingBox() const {
 void DummyObject::applyTransformation(const ITransformation&) {}
 
 void SceneBuilderFixture::SetUp() {
-  objectRegistry.registerType(
+  factory_.registerPrimitive(
       "sphere", [](const libconfig::Setting&) -> std::shared_ptr<IObject> {
         return std::make_shared<DummyObject>();
       });
-  objectRegistry.registerType(
+  factory_.registerPrimitive(
       "plane", [](const libconfig::Setting&) -> std::shared_ptr<IObject> {
         return std::make_shared<DummyObject>();
       });
-  lightRegistry.registerType(
+  factory_.registerLight(
       "ambient", [](const libconfig::Setting&) -> std::shared_ptr<ILight> {
         return std::make_shared<NullLightFixture>();
       });
-  lightRegistry.registerType(
+  factory_.registerLight(
       "directional", [](const libconfig::Setting&) -> std::shared_ptr<ILight> {
         return std::make_shared<NullLightFixture>();
       });
-  cameraRegistry.registerType(
+  factory_.registerCamera(
       "perspective",
       [](const libconfig::Setting&) -> std::shared_ptr<ICamera> {
         return std::make_shared<OrthoCameraFixture>();
       });
 
-  cfg.getRoot().add("stub", libconfig::Setting::TypeGroup);
-  stubSetting = &cfg.getRoot()["stub"];
+  cfg_.getRoot().add("stub", libconfig::Setting::TypeGroup);
+  stubSetting_ = &cfg_.getRoot()["stub"];
 }

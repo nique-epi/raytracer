@@ -12,17 +12,11 @@
 #include <numbers>
 #include <utility>
 #include "components/Primitives/IObject.hpp"
-#include "core/registry/registry.hpp"
 #include "utils/math/AABB.hpp"
 #include "utils/math/HitRecord.hpp"
 #include "utils/math/Constants.hpp"
 #include "utils/math/Ray.hpp"
 #include "utils/math/Vector3D.hpp"
-
-namespace gsl {
-template <typename T>
-using owner = T;
-}  // namespace gsl
 
 namespace raytracer::components::primitives {
 
@@ -82,14 +76,3 @@ void Sphere::computeUV(const math::Vector3D& unitSphere, double& u, double& v) {
 }
 
 }  // namespace raytracer::components::primitives
-
-extern "C" void createPrimitive(
-    raytracer::core::registry::Registry<IObject>& registry) {
-  registry.registerType(
-      "sphere", [](const libconfig::Setting&) -> std::shared_ptr<IObject> {
-        return std::make_shared<raytracer::components::primitives::Sphere>(
-            raytracer::math::Vector3D(0.0, 0.0, 0.0), 1.0, nullptr);
-      });
-}
-
-extern "C" void destroyPrimitive(gsl::owner<IObject*> obj) { delete obj; }

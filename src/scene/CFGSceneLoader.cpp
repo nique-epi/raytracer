@@ -9,6 +9,8 @@
 #include <iostream>
 #include <libconfig.h++>
 #include "SceneBuilder.hpp"
+#include "background/Solid/SolidBackground.hpp"  // NOLINT(misc-include-cleaner)
+#include "factory/material/MaterialFactory.hpp"
 
 namespace {
 
@@ -55,6 +57,7 @@ bool CFGSceneLoader::load(const std::string& path, SceneBuilder& builder,
   parseLights(root, builder);
   parseCamera(root, builder);
   parseSettings(root, settings);
+  parseBackground(root, builder);
   return true;
 }
 
@@ -66,6 +69,8 @@ void CFGSceneLoader::parsePrimitives(const libconfig::Setting& root,
   const auto& p = root["primitives"];
   addList(p, "spheres", "sphere", builder, &SceneBuilder::addObject);
   addList(p, "planes", "plane", builder, &SceneBuilder::addObject);
+  addList(p, "cylinders", "cylinder", builder, &SceneBuilder::addObject);
+  addList(p, "cones", "cone", builder, &SceneBuilder::addObject);
 }
 
 void CFGSceneLoader::parseLights(const libconfig::Setting& root,
@@ -84,6 +89,26 @@ void CFGSceneLoader::parseCamera(const libconfig::Setting& root,
     return;
   }
   builder.addCamera(root["camera"]);
+}
+
+void CFGSceneLoader::parseBackground(const libconfig::Setting& root,
+                                     SceneBuilder& builder) {
+  using core::factory::MaterialFactory;
+
+  if (!root.exists("background")) {
+    builder.setBackground(
+        std::make_shared<background::SolidBackground>(math::Color{0, 0, 0}));
+    return;
+  }
+
+  const auto& bg = root["background"];
+  std::string type = "solid";
+  bg.lookupValue("type", type);
+
+  const math::Color color =
+      bg.exists("color") ? MaterialFactory::parseColor(bg["color"], {0, 0, 0})
+                         : math::Color{0, 0, 0};
+  builder.setBackground(std::make_shared<background::SolidBackground>(color));
 }
 
 void CFGSceneLoader::parseSettings(const libconfig::Setting& root,
