@@ -10,7 +10,9 @@
 #include <type_traits>
 #include "../fixtures/OrthoCameraFixture.hpp"
 #include "../fixtures/SphereFixture.hpp"
+#include "renderer/Frame.hpp"
 #include "renderer/IRenderer.hpp"
+#include "renderer/RendererConfig.hpp"
 #include "renderer/monoThreadRenderer/MonoThreadRenderer.hpp"
 #include "scene/Scene.hpp"
 #include "utils/math/RenderSettings.hpp"
@@ -19,13 +21,13 @@ static_assert(std::is_base_of_v<raytracer::core::IRenderer,
                                 raytracer::core::MonoThreadRenderer>);
 
 TEST(MonoThreadRendererTest, RendersOneSphereAndHashStable) {
-  raytracer::scene::Scene scene;
+  auto scene = std::make_shared<raytracer::scene::Scene>();
 
   auto sphere =
       std::make_shared<SphereFixture>(raytracer::math::Vector3D(0, 0, -2), 1.0);
-  scene.add(sphere);
+  scene->add(sphere);
 
-  OrthoCameraFixture camera;
+  auto camera = std::make_shared<OrthoCameraFixture>();
   raytracer::math::RenderSettings settings;
   settings.imageWidth = 101;
   settings.imageHeight = 101;
@@ -35,7 +37,10 @@ TEST(MonoThreadRendererTest, RendersOneSphereAndHashStable) {
   int progressCalls = 0;
   renderer.setProgressCallback([&](double) { progressCalls++; });
 
-  raytracer::components::Image img = renderer.render(scene, camera, settings);
+  const raytracer::core::RendererConfig config{
+      .scene = scene, .settings = settings, .integrator = nullptr};
+  const raytracer::core::Frame frame{.camera = camera};
+  raytracer::components::Image img = renderer.render(config, frame);
 
   EXPECT_GT(progressCalls, 0);
 

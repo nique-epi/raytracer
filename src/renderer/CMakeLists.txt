@@ -14,6 +14,7 @@ target_link_libraries(raytracer_renderer
   PUBLIC
     raytracer_components
     raytracer_scene
+    raytracer_integrator
     raytracer_math
 )
 

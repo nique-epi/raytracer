@@ -79,6 +79,19 @@ class MaterialFactory {
    */
   [[nodiscard]] static std::shared_ptr<IMaterial> create(
       const std::string& type, const libconfig::Setting& cfg);
+
+  /**
+   * @brief Parse an RGB color block from @p s, keeping @p fallback for absent
+   *        channels.
+   *
+   * Channels are read as integers in [0, 255] under keys `"r"`, `"g"`, `"b"`.
+   *
+   * @param [in] s        libconfig setting containing the color fields.
+   * @param [in] fallback Color used when a channel key is absent.
+   * @returns Normalised color with each channel in [0, 1].
+   */
+  [[nodiscard]] static math::Color parseColor(const libconfig::Setting& s,
+                                              const math::Color& fallback);
 };
 
 }  // namespace raytracer::core::factory

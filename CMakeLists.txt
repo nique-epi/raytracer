@@ -19,9 +19,6 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(libconfig)
 
-if(BUILD_BONUS)
-  find_package(SFML QUIET COMPONENTS graphics window system)
-endif()
 
 function(raytracer_enable_target_warnings target)
   target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic -fPIC)

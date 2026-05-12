@@ -65,9 +65,22 @@ class LightFactory {
       double intensity = 1.0);
 
   /**
+   * @brief Create a point light from typed parameters.
+   *
+   * @param [in] position  World-space position of the light (default: {0,1,0}).
+   * @param [in] color     Light colour (default: white {1,1,1}).
+   * @param [in] intensity Scalar multiplier (default: 1.0).
+   * @returns Shared pointer to the freshly constructed point light.
+   */
+  [[nodiscard]] static std::shared_ptr<ILight> createPoint(
+      const math::Vector3D& position = {0.0, 1.0, 0.0},
+      const math::Color& color = math::Color(1.0, 1.0, 1.0),
+      double intensity = 1.0);
+
+  /**
    * @brief Dispatch by type name and parse @p cfg into typed arguments.
    *
-   * Supported type names: `"ambient"`, `"directional"`.
+   * Supported type names: `"ambient"`, `"directional"`, `"point"`.
    *
    * @param [in] type Type discriminant (one of the supported names above).
    * @param [in] cfg  libconfig setting; absent fields keep their typed defaults.

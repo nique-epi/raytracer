@@ -10,7 +10,7 @@
 
 #include <memory>
 #include <vector>
-#include "IObject.hpp"
+#include "components/Primitives/IObject.hpp"
 
 namespace raytracer::components {
 

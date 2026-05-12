@@ -19,4 +19,6 @@ target_sources(raytracer_components
     Textures/solid/SolidColor.cpp
     Textures/checker/CheckerTexture.cpp
     textured/TexturedMaterial.cpp
+    Textures/noise/NoiseTexture.cpp
+    Textures/noise/perlinNoise/PerlinNoise.cpp
 )

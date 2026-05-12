@@ -61,6 +61,28 @@ TEST(LightFactoryTest, CreateDirectionalNormalisesDirection) {
   EXPECT_DOUBLE_EQ(dir.z, 0.0);
 }
 
+TEST(LightFactoryTest, CreatePointWithDefaultsReturnsUnitIntensity) {
+  auto light = LightFactory::createPoint();
+  ASSERT_NE(light, nullptr);
+  EXPECT_DOUBLE_EQ(light->getIntensity(), 1.0);
+}
+
+TEST(LightFactoryTest, CreatePointFromCfgReadsIntensity) {
+  CfgFromString cfg(
+      "point = { position = { x = 0.0; y = 2.0; z = 0.0; };"
+      " color = { r = 255; g = 255; b = 255; }; intensity = 0.6; };");
+  auto light = LightFactory::create("point", cfg.at("point"));
+  ASSERT_NE(light, nullptr);
+  EXPECT_DOUBLE_EQ(light->getIntensity(), 0.6);
+}
+
+TEST(LightFactoryTest, CreatePointFromEmptyCfgFallsBackToDefaults) {
+  CfgFromString cfg("point = { };");
+  auto light = LightFactory::create("point", cfg.at("point"));
+  ASSERT_NE(light, nullptr);
+  EXPECT_DOUBLE_EQ(light->getIntensity(), 1.0);
+}
+
 TEST(LightFactoryTest, CreateUnknownTypeThrows) {
   CfgFromString cfg("entry = { };");
   EXPECT_THROW(

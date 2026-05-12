@@ -15,4 +15,8 @@ namespace raytracer::math::constants {
  */
 constexpr double epsilon = 1e-8;
 
+constexpr double HALF = 0.5;
+
+constexpr double DOUBLE = 2.0;
+
 }  // namespace raytracer::math::constants

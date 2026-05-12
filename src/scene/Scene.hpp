@@ -9,13 +9,13 @@
 
 #include <memory>
 #include <vector>
-#include "components/Primitives/Collection.hpp"
+#include "background/IBackground.hpp"
+#include "components/Primitives/Collection/Collection.hpp"
 #include "components/Primitives/IObject.hpp"
 #include "components/camera/ICamera.hpp"
 #include "components/light/ILight.hpp"
 #include "utils/math/HitRecord.hpp"
 #include "utils/math/Ray.hpp"
-#include "background/IBackground.hpp"
 
 namespace raytracer::scene {
 
@@ -38,9 +38,9 @@ class Scene {
 
   [[nodiscard]] std::shared_ptr<ICamera> getCamera() const;
   [[nodiscard]] const std::vector<std::shared_ptr<ILight>>& getLights() const;
-    [[nodiscard]] std::shared_ptr<raytracer::scene::background::IBackground>
-      getBackground() const;
-    void setBackground(
+  [[nodiscard]] std::shared_ptr<raytracer::scene::background::IBackground>
+  getBackground() const;
+  void setBackground(
       std::shared_ptr<raytracer::scene::background::IBackground> background);
 
  private:

@@ -24,24 +24,10 @@ using raytracer::components::material::Glass;
 using raytracer::components::material::Glossy;
 using raytracer::math::Color;
 
-constexpr double colorChannelMaximum = 255.0;
-
-Color parseColorOrDefault(const libconfig::Setting& s, const Color& fallback) {
-  int rRaw = static_cast<int>(fallback.r * colorChannelMaximum);
-  int gRaw = static_cast<int>(fallback.g * colorChannelMaximum);
-  int bRaw = static_cast<int>(fallback.b * colorChannelMaximum);
-  s.lookupValue("r", rRaw);
-  s.lookupValue("g", gRaw);
-  s.lookupValue("b", bRaw);
-  return {static_cast<double>(rRaw) / colorChannelMaximum,
-          static_cast<double>(gRaw) / colorChannelMaximum,
-          static_cast<double>(bRaw) / colorChannelMaximum};
-}
-
 void overrideColorIfPresent(const libconfig::Setting& cfg, const char* key,
                             Color& target) {
   if (cfg.exists(key)) {
-    target = parseColorOrDefault(cfg.lookup(key), target);
+    target = MaterialFactory::parseColor(cfg.lookup(key), target);
   }
 }
 
@@ -81,6 +67,20 @@ std::shared_ptr<IMaterial> MaterialFactory::createGlossy(
 
 std::shared_ptr<IMaterial> MaterialFactory::createGlass(double refractionIndex) {
   return std::make_shared<Glass>(refractionIndex);
+}
+
+math::Color MaterialFactory::parseColor(const libconfig::Setting& s,
+                                        const math::Color& fallback) {
+  constexpr double colorChannelMaximum = 255.0;
+  int rRaw = static_cast<int>(fallback.r * colorChannelMaximum);
+  int gRaw = static_cast<int>(fallback.g * colorChannelMaximum);
+  int bRaw = static_cast<int>(fallback.b * colorChannelMaximum);
+  s.lookupValue("r", rRaw);
+  s.lookupValue("g", gRaw);
+  s.lookupValue("b", bRaw);
+  return {static_cast<double>(rRaw) / colorChannelMaximum,
+          static_cast<double>(gRaw) / colorChannelMaximum,
+          static_cast<double>(bRaw) / colorChannelMaximum};
 }
 
 std::shared_ptr<IMaterial> MaterialFactory::create(
