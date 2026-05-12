@@ -48,10 +48,10 @@ class Scene {
   [[nodiscard]] World& getWorld();
 
  private:
-  raytracer::components::Collection _rootCollection;
-  std::vector<std::shared_ptr<ILight>> _lights;
-  std::shared_ptr<ICamera> _camera;
-  std::shared_ptr<raytracer::scene::background::IBackground> _background;
+  raytracer::components::Collection rootCollection_;
+  std::vector<std::shared_ptr<ILight>> lights_;
+  std::shared_ptr<ICamera> camera_;
+  std::shared_ptr<raytracer::scene::background::IBackground> background_;
   World world_;
 };
 
