@@ -66,4 +66,43 @@ TEST(PointLightTest, IlluminateReturnsBlackWhenOccluded) {
   EXPECT_DOUBLE_EQ(c.b, 0.0);
 }
 
+// Degenerate case: a shading point landing exactly on a PointLight's
+// position would historically crash the renderer because
+// Vector3D::normalize() throws on zero-length input. The implementation
+// must return the zero-vector sentinel (the same one used by Ambient)
+// without throwing.
+TEST(PointLightTest, GetDirectionAtLightPositionReturnsZeroVector) {
+  const Vector3D lightPos(1.5, -2.0, 0.5);
+  PointLight light(lightPos, Color(1.0, 1.0, 1.0), 1.0);
+  const Vector3D dir = light.getDirection(lightPos);
+  EXPECT_DOUBLE_EQ(dir.x, 0.0);
+  EXPECT_DOUBLE_EQ(dir.y, 0.0);
+  EXPECT_DOUBLE_EQ(dir.z, 0.0);
+}
+
+// Degenerate case: isOccluded() previously divided distance by itself
+// to build the shadow-ray direction, producing NaN when distance is
+// zero. The implementation must short-circuit to "not occluded" so a
+// malformed scene cannot poison the renderer with NaN colours.
+TEST(PointLightTest, IsOccludedAtLightPositionReturnsFalse) {
+  const Vector3D lightPos(0.0, 0.0, 0.0);
+  Scene scene;
+  scene.add(std::make_shared<SphereFixture>(Vector3D(1.0, 0.0, 0.0), 0.5));
+  PointLight light(lightPos, Color(1.0, 1.0, 1.0), 1.0);
+  EXPECT_FALSE(light.isOccluded(lightPos, scene));
+}
+
+// Degenerate case: physically the radiance at the light's exact
+// position diverges (1 / 0 falloff). The implementation must skip the
+// contribution and return black rather than emit inf or NaN.
+TEST(PointLightTest, IlluminateAtLightPositionReturnsBlack) {
+  const Vector3D lightPos(0.0, 0.0, 0.0);
+  Scene scene;
+  PointLight light(lightPos, Color(1.0, 1.0, 1.0), 1.0);
+  const Color c = light.illuminate(lightPos, scene);
+  EXPECT_DOUBLE_EQ(c.r, 0.0);
+  EXPECT_DOUBLE_EQ(c.g, 0.0);
+  EXPECT_DOUBLE_EQ(c.b, 0.0);
+}
+
 }  // namespace
