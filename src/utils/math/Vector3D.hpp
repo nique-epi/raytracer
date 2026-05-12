@@ -33,6 +33,11 @@ class Vector3D {
 
   static Vector3D randomInUnitSphere();
 
+  /**
+   * @brief Returns true if all components are below the shared epsilon threshold.
+   */
+  [[nodiscard]] bool isNearZero() const;
+
   [[nodiscard]] Vector3D operator+(const Vector3D& other) const;
   [[nodiscard]] Vector3D operator-(const Vector3D& other) const;
   [[nodiscard]] Vector3D operator-() const;

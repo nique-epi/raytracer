@@ -57,3 +57,56 @@ TEST(MaterialFactoryTest, CreateUnknownTypeThrows) {
       static_cast<void>(MaterialFactory::create("plastic", cfg.at("entry"))),
       raytracer::core::RaytracerException);
 }
+
+TEST(MaterialFactoryTest, CreateTexturedWithSolidTexture) {
+  CfgFromString cfg(
+      "m = { albedo = { r=255; g=0; b=0; };"
+      "      texture = { type = \"solid\"; color = { r=255; g=0; b=0; }; }; "
+      "};");
+  auto material = MaterialFactory::create("textured", cfg.at("m"));
+  EXPECT_NE(material, nullptr);
+}
+
+TEST(MaterialFactoryTest, CreateTexturedWithCheckerTexture) {
+  CfgFromString cfg(
+      "m = { albedo = { r=255; g=255; b=255; };"
+      "      texture = { type = \"checker\";"
+      "                  odd  = { r=0;   g=0;   b=0;   };"
+      "                  even = { r=255; g=255; b=255; };"
+      "                  scale = 10.0; }; };");
+  auto material = MaterialFactory::create("textured", cfg.at("m"));
+  EXPECT_NE(material, nullptr);
+}
+
+TEST(MaterialFactoryTest, CreateTexturedWithNoiseTexture) {
+  CfgFromString cfg("m = { texture = { type = \"noise\"; }; };");
+  auto material = MaterialFactory::create("textured", cfg.at("m"));
+  EXPECT_NE(material, nullptr);
+}
+
+TEST(MaterialFactoryTest, CreateTexturedWithNoTextureFallsBackToSolid) {
+  CfgFromString cfg("m = { albedo = { r=100; g=150; b=200; }; };");
+  auto material = MaterialFactory::create("textured", cfg.at("m"));
+  EXPECT_NE(material, nullptr);
+}
+
+TEST(MaterialFactoryTest, CreateTexturedWithColorAliasForAlbedo) {
+  CfgFromString cfg(
+      "m = { color = { r=255; g=128; b=0; };"
+      "      texture = { type = \"solid\"; color = { r=255; g=128; b=0; }; }; "
+      "};");
+  auto material = MaterialFactory::create("textured", cfg.at("m"));
+  EXPECT_NE(material, nullptr);
+}
+
+TEST(MaterialFactoryTest, ParseTextureUnknownTypeThrows) {
+  CfgFromString cfg("t = { type = \"image\"; };");
+  EXPECT_THROW(static_cast<void>(MaterialFactory::parseTexture(cfg.at("t"))),
+               raytracer::core::RaytracerException);
+}
+
+TEST(MaterialFactoryTest, ParseTextureMissingTypeThrows) {
+  CfgFromString cfg("t = { };");
+  EXPECT_THROW(static_cast<void>(MaterialFactory::parseTexture(cfg.at("t"))),
+               raytracer::core::RaytracerException);
+}
