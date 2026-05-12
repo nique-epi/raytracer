@@ -20,8 +20,8 @@ namespace raytracer::core {
 
 components::Image MonoThreadRenderer::render(const RendererConfig& config,
                                              const Frame& frame) {
-  const auto& scene = config.scene;
-  const auto& camera = frame.camera;
+  const scene::Scene& scene = *config.scene;
+  const ICamera& camera = *frame.camera;
   const math::RenderSettings& settings = config.settings;
   const int width = settings.imageWidth;
   const int height = settings.imageHeight;
