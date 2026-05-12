@@ -2,6 +2,10 @@
 add_library(bonus_assimp_loader
     Assimp/SceneLoader/AssimpLoader.cpp
     Assimp/SceneLoader/AssimpLoaderRegistration.cpp
+    Assimp/SceneLoader/LightsParser.cpp
+    Assimp/SceneLoader/NodeParser.cpp
+    Assimp/SceneLoader/MaterialParser.cpp
+    Assimp/SceneLoader/CameraParser.cpp
 )
 
 
