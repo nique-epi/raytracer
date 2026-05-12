@@ -60,7 +60,9 @@ std::shared_ptr<IMaterial> createGlossyFromCfg(const libconfig::Setting& cfg) {
 std::shared_ptr<IMaterial> createGlassFromCfg(const libconfig::Setting& cfg) {
   double refractionIndex = defaultGlassRefractionIndex;
   cfg.lookupValue("refractionIndex", refractionIndex);
-  return MaterialFactory::createGlass(refractionIndex);
+  Color tint(1.0, 1.0, 1.0);
+  overrideColorIfPresent(cfg, "tint", tint);
+  return MaterialFactory::createGlass(refractionIndex, tint);
 }
 
 }  // namespace
@@ -76,8 +78,8 @@ std::shared_ptr<IMaterial> MaterialFactory::createGlossy(
 }
 
 std::shared_ptr<IMaterial> MaterialFactory::createGlass(
-    double refractionIndex) {
-  return std::make_shared<Glass>(refractionIndex);
+    double refractionIndex, const math::Color& tint) {
+  return std::make_shared<Glass>(refractionIndex, tint);
 }
 
 // NOLINTNEXTLINE(misc-use-internal-linkage)
@@ -92,7 +94,8 @@ std::shared_ptr<raytracer::materials::ITexture> MaterialFactory::parseTexture(
     const libconfig::Setting& cfg) {
   std::string type;
   if (!cfg.lookupValue("type", type)) {
-    throw RaytracerException("MaterialFactory: missing required texture field 'type'");
+    throw RaytracerException(
+        "MaterialFactory: missing required texture field 'type'");
   }
 
   if (type == "solid") {
@@ -146,8 +149,9 @@ std::shared_ptr<IMaterial> MaterialFactory::create(
     overrideColorIfPresent(cfg, "color", albedo);
     overrideColorIfPresent(cfg, "albedo", albedo);
     const std::shared_ptr<ITexture> texture =
-        cfg.exists("texture") ? parseTexture(cfg.lookup("texture"))
-                              : std::make_shared<SolidColor>(Color(1.0, 1.0, 1.0));
+        cfg.exists("texture")
+            ? parseTexture(cfg.lookup("texture"))
+            : std::make_shared<SolidColor>(Color(1.0, 1.0, 1.0));
     return createTextured(texture, albedo);
   }
   throw RaytracerException("MaterialFactory: unknown material type '" + type +

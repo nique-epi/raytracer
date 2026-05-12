@@ -47,6 +47,14 @@ class SceneBuilder {
   void addObject(const std::string& type, const libconfig::Setting& cfg);
 
   /**
+   * @brief Add a primitive object to the scene.
+   *
+   * @param [in] object Shared pointer to the primitive object to add.
+   */
+  void addObject(std::shared_ptr<IObject> object);
+
+  /**
+   * @brief Resolve @p type in the light registry and add it to the scene.
    * @brief Resolve @p type via the factory and add the light to the scene.
    *
    * @param [in] type Type discriminant identifying the light.
@@ -57,6 +65,15 @@ class SceneBuilder {
   void addLight(const std::string& type, const libconfig::Setting& cfg);
 
   /**
+   * @brief Add a light source to the scene.
+   *
+   * @param [in] light Shared pointer to the light source to add.
+   */
+  void addLight(std::shared_ptr<ILight> light);
+
+  /**
+   * @brief Resolve the camera type in the camera registry and set it on the
+   * scene.
    * @brief Resolve the camera type via the factory and set it on the scene.
    *
    * The type is read from @p cfg under the key @c "type"; it defaults to
@@ -64,10 +81,19 @@ class SceneBuilder {
    *
    * @param [in] cfg Configuration block passed to the factory.
    *
-   * @throws raytracer::core::RaytracerException If the resolved type is not supported.
+   * @throws raytracer::core::RaytracerException If the resolved type is not
+   * registered.
+   * @throws raytracer::core::RaytracerException If the resolved type is not
+   * supported.
    */
   void addCamera(const libconfig::Setting& cfg);
 
+  /**
+   * @brief Add a camera to the scene.
+   *
+   * @param [in] camera Shared pointer to the camera to add.
+   */
+  void addCamera(std::shared_ptr<ICamera> camera);
   /**
    * @brief Set the background on the scene.
    *

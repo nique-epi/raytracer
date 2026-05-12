@@ -19,10 +19,18 @@
 #include "scene/SceneBuilder.hpp"
 #include "utils/math/RenderSettings.hpp"
 
+#ifdef BUILD_BONUS
+#include "Assimp/SceneLoader/AssimpLoaderRegistration.hpp"
+#endif
+
 namespace raytracer::core {
 
 Application::Application() {
   _factory.registerLoader(std::make_shared<scene::CFGSceneLoader>());
+
+#ifdef BUILD_BONUS
+  raytracer::bonus::registerAssimpLoader(_factory);
+#endif
 }
 
 int Application::run(const std::string& scenePath) {
