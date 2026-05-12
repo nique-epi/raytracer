@@ -11,13 +11,13 @@
 namespace raytracer::math {
 
 namespace defaults {
-constexpr int imageWidth = 400;
-constexpr int imageHeight = 200;
+constexpr int imageWidth = 800;
+constexpr int imageHeight = 600;
 constexpr int tileWidth = 32;
 constexpr int tileHeight = 32;
 constexpr int numThreads = 0;
 constexpr int samplesPerPixel = 1;
-constexpr int maxDepth = 2;
+constexpr int maxDepth = 5;
 }  // namespace defaults
 
 class RenderSettings {
