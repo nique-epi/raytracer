@@ -8,9 +8,9 @@
 #include "AssimpLoader.hpp"
 #include <memory>
 #include <stack>
+#include "components/Primitives/mesh/mesh.hpp"
+#include "components/Primitives/triangle/Triangle.hpp"
 #include "components/material/IMaterial.hpp"
-#include "components/primitives/Mesh.hpp"
-#include "components/primitives/Triangle.hpp"
 #include "scene/SceneBuilder.hpp"
 #include "utils/math/Vector3D.hpp"
 
@@ -62,7 +62,7 @@ void AssimpLoader::processMesh(
     aiVector3D v1 = transform * mesh->mVertices[face.mIndices[1]];
     aiVector3D v2 = transform * mesh->mVertices[face.mIndices[2]];
 
-    auto tri = std::make_shared<Triangle>(
+    auto tri = std::make_shared<raytracer::components::primitives::Triangle>(
         math::Point3D(v0.x, v0.y, v0.z), math::Point3D(v1.x, v1.y, v1.z),
         math::Point3D(v2.x, v2.y, v2.z), meshMaterial);
 
@@ -97,5 +97,10 @@ bool AssimpLoader::load(const std::string& path, SceneBuilder& builder,
   processCamera(scene, builder, settings);
 
   return true;
+}
+
+[[nodiscard]] bool AssimpLoader::supports(const std::string& ext) const {
+  return ext == "obj" || ext == "fbx" || ext == "dae" || ext == "glb" ||
+         ext == "gltf";
 }
 }  // namespace raytracer::scene
