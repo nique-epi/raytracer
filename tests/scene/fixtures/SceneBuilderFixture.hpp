@@ -10,7 +10,7 @@
 #include <gtest/gtest.h>
 #include <libconfig.h++>
 #include "components/Primitives/IObject.hpp"
-#include "registry/registry.hpp"
+#include "../../fixtures/ComponentFactoryFixture.hpp"
 #include "scene/Scene.hpp"
 
 class DummyObject final : public IObject {
@@ -25,11 +25,8 @@ class SceneBuilderFixture : public ::testing::Test {
  protected:
   void SetUp() override;
 
-  raytracer::core::registry::ObjectRegistry objectRegistry;
-  raytracer::core::registry::LightRegistry lightRegistry;
-  raytracer::core::registry::CameraRegistry cameraRegistry;
-  raytracer::core::registry::MaterialRegistry materialRegistry;
+  ComponentFactoryFixture factory_;
 
-  libconfig::Config cfg;
-  libconfig::Setting* stubSetting = nullptr;
+  libconfig::Config cfg_;
+  libconfig::Setting* stubSetting_ = nullptr;
 };

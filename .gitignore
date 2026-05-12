@@ -15,4 +15,3 @@ tests/*.xml
 *.so
 # Sujet PDF — laissé en local, pas commit
 G-OOP-400_raytracer.pdf
-*.so

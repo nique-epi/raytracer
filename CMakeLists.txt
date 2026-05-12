@@ -20,13 +20,11 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(libconfig)
 
 
-
 function(raytracer_enable_target_warnings target)
   target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic -fPIC)
 endfunction()
 
 add_subdirectory(src)
-add_subdirectory(plugins)
 
 if(BUILD_BONUS)
   add_subdirectory(bonus)
