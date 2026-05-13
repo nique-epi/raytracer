@@ -45,6 +45,10 @@ raytracer::math::AABB Collection::getBoundingBox() const {
   return boundingBox_;
 }
 
+const std::vector<std::shared_ptr<IObject>>& Collection::getObjects() const {
+  return children_;
+}
+
 void Collection::applyTransformation(const ITransformation& transform) {
   for (const auto& child : children_) {
     if (child) {

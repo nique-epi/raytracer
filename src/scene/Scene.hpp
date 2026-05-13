@@ -34,6 +34,15 @@ class Scene {
   void addLight(std::shared_ptr<ILight> light);
   void setCamera(std::shared_ptr<ICamera> camera);
 
+  /**
+   * @brief Build a BVH acceleration structure from the current object list.
+   *
+   * Call once after all objects have been added and transformed, before
+   * rendering. Subsequent calls to hit() will use the BVH instead of the
+   * linear collection traversal.
+   */
+  void buildBVH();
+
   bool hit(const raytracer::math::Ray& ray, double tMin, double tMax,
            raytracer::math::HitRecord& rec) const;
 
@@ -53,6 +62,7 @@ class Scene {
   std::shared_ptr<ICamera> camera_;
   std::shared_ptr<raytracer::scene::background::IBackground> background_;
   World world_;
+  std::shared_ptr<IObject> accelerator_;
 };
 
 }  // namespace raytracer::scene

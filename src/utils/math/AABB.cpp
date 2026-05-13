@@ -19,9 +19,11 @@ AABB::AABB(const Vector3D& min_, const Vector3D& max_) : min(min_), max(max_) {}
 bool AABB::hit(const Ray& ray, double tMin, double tMax) const {
   const Vector3D& orig = ray.getOrigin();
   const Vector3D& dir = ray.getDirection();
+  const Vector3D& invDir = ray.getInverseDirection();
 
   const std::array<double, 3> orig_a = {orig.x, orig.y, orig.z};
   const std::array<double, 3> dir_a = {dir.x, dir.y, dir.z};
+  const std::array<double, 3> invDir_a = {invDir.x, invDir.y, invDir.z};
   const std::array<double, 3> min_a = {min.x, min.y, min.z};
   const std::array<double, 3> max_a = {max.x, max.y, max.z};
 
@@ -33,11 +35,10 @@ bool AABB::hit(const Ray& ray, double tMin, double tMax) const {
       continue;
     }
 
-    const double invD = 1.0 / dir_a[i];
-    double t0 = (min_a[i] - orig_a[i]) * invD;
-    double t1 = (max_a[i] - orig_a[i]) * invD;
+    double t0 = (min_a[i] - orig_a[i]) * invDir_a[i];
+    double t1 = (max_a[i] - orig_a[i]) * invDir_a[i];
 
-    if (invD < 0.0) {
+    if (invDir_a[i] < 0.0) {
       std::swap(t0, t1);
     }
 

@@ -15,8 +15,9 @@
 
 namespace {
 constexpr std::string_view usage =
-    "USAGE: ./raytracer <SCENE_FILE>\n"
-    "SCENE_FILE: scene configuration\n";
+    "USAGE: ./raytracer <SCENE_FILE> [--no-bvh]\n"
+    "SCENE_FILE: scene configuration\n"
+    "--no-bvh:    disable BVH acceleration structure\n";
 constexpr int error_exit_code = 84;
 }  // namespace
 
@@ -31,8 +32,8 @@ int main(int argc, char** argv) {
       std::cout << usage;
       return 0;
     }
-    return raytracer::core::Application{}.run(
-        std::get<raytracer::core::SceneRequest>(*config).scenePath);
+    const auto& req = std::get<raytracer::core::SceneRequest>(*config);
+    return raytracer::core::Application{}.run(req.scenePath, req.useBVH);
   } catch (const raytracer::core::RaytracerException& e) {
     std::cerr << "Error: " << e.what() << '\n';
     return error_exit_code;

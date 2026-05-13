@@ -75,6 +75,11 @@ class Collection : public IObject {
    */
   void applyTransformation(const ITransformation& transform) override;
 
+  /**
+   * @brief Return a read-only view of the child object list.
+   */
+  [[nodiscard]] const std::vector<std::shared_ptr<IObject>>& getObjects() const;
+
  private:
   std::vector<std::shared_ptr<IObject>> children_;
   raytracer::math::AABB boundingBox_;
