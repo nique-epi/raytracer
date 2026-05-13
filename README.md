@@ -89,6 +89,29 @@ pipe vers un viewer.
 
 Une scène d'exemple est fournie : [`scenes/example.cfg`](scenes/example.cfg).
 
+### Scènes d'exemple
+
+Le dossier [`scenes/`](scenes/) contient plusieurs scènes prêtes à
+rendre, chacune mettant en avant une fonctionnalité du raytracer :
+
+| Scène                                                   | Ce que ça met en avant                                                                       |
+| ------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| [`example.cfg`](scenes/example.cfg)                     | Scène minimale (sphères + plan + lumière directionnelle)                                     |
+| [`all_components.cfg`](scenes/all_components.cfg)       | Démo complète : sphères, plans, cylindres, cônes, matériaux diffuse / glossy / glass         |
+| [`cylinder.cfg`](scenes/cylinder.cfg)                   | Primitive cylindre avec différents axes, rayons et matériaux                                 |
+| [`cone.cfg`](scenes/cone.cfg)                           | Primitive cône avec ouvertures et orientations variées                                       |
+| [`rotation.cfg`](scenes/rotation.cfg)                   | Transformation `rotation` appliquée par objet (cylindres + cônes tournés autour de Z et X)   |
+| [`textured_materials.cfg`](scenes/textured_materials.cfg) | Matériau `textured` avec textures procédurales (`checker`, `noise`, `solid`)               |
+| [`bitmap_texture.cfg`](scenes/bitmap_texture.cfg)       | Matériau `textured` avec une texture bitmap chargée depuis un `.ppm`                         |
+
+Chacune se rend de la même manière :
+
+```bash
+./build/src/raytracer scenes/cylinder.cfg
+./build/src/raytracer scenes/cone.cfg
+./build/src/raytracer scenes/rotation.cfg
+```
+
 ## Plugins
 
 Les `.so` sont produits dans `plugins/` à la racine du dépôt (chemin
