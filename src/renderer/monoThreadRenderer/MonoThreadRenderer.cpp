@@ -112,7 +112,7 @@ components::Image MonoThreadRenderer::render(const RendererConfig& config,
   const int width = settings.imageWidth;
   const int height = settings.imageHeight;
   components::Image image(width, height);
-  constexpr int progressLineInterval = 10;
+  constexpr int progressLineInterval = 1;
   // NOLINTNEXTLINE(altera-id-dependent-backward-branch)
   for (int y = 0; y < height; ++y) {
     if (progressCallback_) {
