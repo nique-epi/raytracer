@@ -30,11 +30,13 @@ class BVHNode : public IObject {
   /**
    * @brief Passkey for the internal range-based constructor.
    *
-   * Kept public so std::make_shared can invoke the constructor, but
-   * the explicit default constructor signals that external callers
-   * should use BVHNode(std::vector<...>) instead.
+   * The type remains public so it can appear in the constructor
+   * signature, but only BVHNode itself can create a RangeTag and
+   * therefore call the internal range-based constructor.
    */
   struct RangeTag {
+   private:
+    friend class BVHNode;
     explicit RangeTag() = default;
   };
 
