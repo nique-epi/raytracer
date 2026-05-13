@@ -8,8 +8,8 @@
 #include <gtest/gtest.h>
 #include <libconfig.h++>
 #include <memory>
-#include "../fixtures/ComponentFactoryFixture.hpp"
-#include "../fixtures/SphereFixture.hpp"
+#include "fixtures/ComponentFactoryFixture.hpp"
+#include "fixtures/SphereFixture.hpp"
 #include "components/Transformations/ITransformation.hpp"
 #include "exceptions/Exceptions.hpp"
 #include "factory/transformation/TransformationFactory.hpp"

@@ -8,7 +8,7 @@
 #pragma once
 
 #include <gtest/gtest.h>
-#include "../../fixtures/ComponentFactoryFixture.hpp"
+#include "fixtures/ComponentFactoryFixture.hpp"
 
 /**
  * @brief End-to-end fixture for `SceneBuilder` tests that exercise transforms.

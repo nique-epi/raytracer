@@ -7,11 +7,10 @@
 
 #include <gtest/gtest.h>
 #include "exceptions/Exceptions.hpp"
-#include "../fixtures/ComponentFactoryFixture.hpp"
-#include "../fixtures/SphereFixture.hpp"
-#include "fixtures/SceneBuilderFixture.hpp"
-#include "fixtures/TransformsBuilderFixture.hpp"
-#include "scene/Scene.hpp"
+#include "fixtures/ComponentFactoryFixture.hpp"
+#include "fixtures/SphereFixture.hpp"
+#include "scene/fixtures/SceneBuilderFixture.hpp"
+#include "scene/fixtures/TransformsBuilderFixture.hpp"
 #include "scene/SceneBuilder.hpp"
 
 using raytracer::scene::SceneBuilder;

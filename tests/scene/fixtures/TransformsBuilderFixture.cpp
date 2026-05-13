@@ -7,9 +7,9 @@
 
 #include "TransformsBuilderFixture.hpp"
 #include <memory>
-#include "../../fixtures/OrthoCameraFixture.hpp"
-#include "../../fixtures/SphereFixture.hpp"
 #include "NullLightFixture.hpp"
+#include "fixtures/OrthoCameraFixture.hpp"
+#include "fixtures/SphereFixture.hpp"
 #include "components/Primitives/IObject.hpp"
 #include "components/Transformations/ITransformation.hpp"
 #include "components/camera/ICamera.hpp"

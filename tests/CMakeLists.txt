@@ -125,7 +125,7 @@ add_executable(raytracer_tests
 target_include_directories(raytracer_tests
 	PRIVATE
 		${CMAKE_SOURCE_DIR}/src
-
+		${CMAKE_SOURCE_DIR}/tests
 )
 
 target_compile_definitions(raytracer_tests
