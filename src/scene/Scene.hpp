@@ -18,10 +18,6 @@
 #include "utils/math/HitRecord.hpp"
 #include "utils/math/Ray.hpp"
 
-namespace raytracer::components {
-class BVHNode;
-}  // namespace raytracer::components
-
 namespace raytracer::scene {
 
 class Scene {
