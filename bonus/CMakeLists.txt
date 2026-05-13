@@ -45,6 +45,8 @@ target_include_directories(bonus_OID_denoiser
 target_link_libraries(bonus_OID_denoiser
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/OID/lib/libOpenImageDenoise.dylib
+    raytracer_components
+
 )
 
 raytracer_enable_target_warnings(bonus_OID_denoiser)

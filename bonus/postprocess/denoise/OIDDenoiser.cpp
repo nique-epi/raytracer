@@ -55,13 +55,31 @@ void OIDDenoiser::denoise(raytracer::components::Image& image) {
   std::size_t height = image.getHeight();
 
   std::vector<float> floatArray = toFloatArray(image);
-  float* colorPtr = floatArray.data();
+  std::vector<float> denoisedArray(floatArray.size());
 
-  oidn::DeviceRef device = oidn::newDevice();
+  if (!oidn::isCPUDeviceSupported()) {
+    std::cerr << "Erreur OIDN : no supported CPU device found" << '\n';
+    return;
+  }
+
+  oidn::DeviceRef device = oidn::newDevice(oidn::DeviceType::CPU);
+  if (!device) {
+    const char* errorMessage = nullptr;
+    if (oidn::getError(errorMessage) != oidn::Error::None &&
+        errorMessage != nullptr) {
+      std::cerr << "Erreur OIDN : " << errorMessage << '\n';
+    } else {
+      std::cerr << "Erreur OIDN inconnue" << '\n';
+    }
+    return;
+  }
+
   device.commit();
   oidn::FilterRef filter = device.newFilter("RT");
-  filter.setImage("color", colorPtr, oidn::Format::Float3, width, height);
-  filter.setImage("output", colorPtr, oidn::Format::Float3, width, height);
+  filter.setImage("color", floatArray.data(), oidn::Format::Float3, width,
+                  height);
+  filter.setImage("output", denoisedArray.data(), oidn::Format::Float3, width,
+                  height);
   filter.set("hdr", true);
   filter.commit();
   filter.execute();
@@ -73,6 +91,7 @@ void OIDDenoiser::denoise(raytracer::components::Image& image) {
       std::cerr << "Erreur OIDN inconnue" << '\n';
     }
   }
+
   image =
-      toImage(floatArray, static_cast<int>(width), static_cast<int>(height));
+      toImage(denoisedArray, static_cast<int>(width), static_cast<int>(height));
 }

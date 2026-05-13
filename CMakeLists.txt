@@ -28,11 +28,12 @@ add_subdirectory(src)
 
 if(BUILD_BONUS)
   add_subdirectory(bonus)
-
   target_compile_definitions(raytracer_application PRIVATE BUILD_BONUS)
   target_include_directories(raytracer_application PRIVATE ${CMAKE_SOURCE_DIR}/bonus)
   target_link_libraries(raytracer_application PRIVATE bonus_assimp_loader)
   target_link_libraries(raytracer PRIVATE bonus_assimp_loader)
+  target_link_libraries(raytracer_application PRIVATE bonus_OID_denoiser)
+  target_link_libraries(raytracer PRIVATE bonus_OID_denoiser)
 endif()
 
 if(BUILD_TESTS)
