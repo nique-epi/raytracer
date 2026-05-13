@@ -21,6 +21,7 @@
 
 #ifdef BUILD_BONUS
 #include "Assimp/SceneLoader/AssimpLoaderRegistration.hpp"
+#include "postprocess/denoise/OIDDenoiser.hpp"
 #endif
 
 namespace raytracer::core {
@@ -67,9 +68,12 @@ int Application::run(const std::string& scenePath, bool useBVH) {
   const RendererConfig config{
       .scene = scene, .settings = settings, .integrator = nullptr};
   const Frame frame{.camera = scene->getCamera()};
-  const components::Image image = renderer.render(config, frame);
+  components::Image image = renderer.render(config, frame);
 
   output::ppm writer;
+#ifdef BUILD_BONUS
+  OIDDenoiser::denoise(image);
+#endif
   writer.write(image, "out.ppm");
   return 0;
 }
