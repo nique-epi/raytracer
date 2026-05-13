@@ -21,4 +21,5 @@ target_sources(raytracer_components
     textured/TexturedMaterial.cpp
     Textures/noise/NoiseTexture.cpp
     Textures/noise/perlinNoise/PerlinNoise.cpp
+    Textures/image/ImageTexture.cpp
 )

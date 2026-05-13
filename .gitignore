@@ -3,7 +3,8 @@ build/
 *.gcda
 *.gcno
 *.profraw
-*.ppm
+out.ppm
+uv_grid.ppm
 .cache/
 compile_commands.json
 Makefile

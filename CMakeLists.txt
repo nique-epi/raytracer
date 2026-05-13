@@ -30,15 +30,25 @@ if(BUILD_BONUS)
   add_subdirectory(bonus)
 
   target_compile_definitions(raytracer_application PRIVATE BUILD_BONUS)
+  target_compile_definitions(raytracer_components PRIVATE BUILD_BONUS)
+  target_include_directories(raytracer_components PRIVATE ${CMAKE_SOURCE_DIR}/bonus/stb_image)
+  target_sources(raytracer_components PRIVATE
+      ${CMAKE_SOURCE_DIR}/bonus/stb_image/stb_image_impl.cpp)
+  set_source_files_properties(
+      ${CMAKE_SOURCE_DIR}/bonus/stb_image/stb_image_impl.cpp
+      PROPERTIES COMPILE_OPTIONS "-w"
+  )
   target_include_directories(raytracer_application PRIVATE ${CMAKE_SOURCE_DIR}/bonus)
   target_link_libraries(raytracer_application PRIVATE bonus_assimp_loader)
   target_link_libraries(raytracer PRIVATE bonus_assimp_loader)
+
 endif()
 
 if(BUILD_TESTS)
   enable_testing()
   add_subdirectory(tests)
 endif()
+
 
 find_program(CLANG_FORMAT NAMES clang-format-20 clang-format)
 if(CLANG_FORMAT)
