@@ -1,5 +1,6 @@
 target_sources(raytracer_components
 	PRIVATE
+		BVH/BVHNode.cpp
 		Collection/Collection.cpp
 		TransformedObject/TransformedObject.cpp
 		sphere/Sphere.cpp

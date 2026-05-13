@@ -33,7 +33,7 @@ Application::Application() {
 #endif
 }
 
-int Application::run(const std::string& scenePath) {
+int Application::run(const std::string& scenePath, bool useBVH) {
   const auto loader = _factory.getLoader(scenePath);
   if (!loader) {
     throw RaytracerException("No loader available for: " + scenePath);
@@ -50,6 +50,9 @@ int Application::run(const std::string& scenePath) {
   }
 
   auto scene = builder.build();
+  if (useBVH) {
+    scene->buildBVH();
+  }
   scene->getCamera()->setResolution(settings.imageWidth, settings.imageHeight);
 
   MonoThreadRenderer renderer;

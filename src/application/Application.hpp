@@ -22,7 +22,7 @@ class Application {
   Application(Application&&) = delete;
   Application& operator=(Application&&) = delete;
 
-  int run(const std::string& scenePath);
+  int run(const std::string& scenePath, bool useBVH = false);
 
  private:
   scene::SceneLoaderFactory _factory;
