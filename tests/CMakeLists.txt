@@ -87,6 +87,7 @@ add_executable(raytracer_tests
   utils/math/OpticsTest.cpp
   scene/CFGSceneLoaderTest.cpp
   scene/SceneBuilderTest.cpp
+  scene/TransformsParserTest.cpp
   scene/SceneExceptionTest.cpp
   scene/SceneTest.cpp
   scene/background/SolidBackgroundTest.cpp
@@ -121,12 +122,13 @@ add_executable(raytracer_tests
   fixtures/ComponentFactoryFixture.cpp
   scene/fixtures/NullLightFixture.cpp
   scene/fixtures/SceneBuilderFixture.cpp
+  scene/fixtures/TransformsBuilderFixture.cpp
 )
 
 target_include_directories(raytracer_tests
 	PRIVATE
 		${CMAKE_SOURCE_DIR}/src
-
+		${CMAKE_SOURCE_DIR}/tests
 )
 
 target_compile_definitions(raytracer_tests
