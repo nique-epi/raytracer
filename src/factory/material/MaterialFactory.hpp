@@ -84,7 +84,7 @@ class MaterialFactory {
   /**
    * @brief Parse an `ITexture` from a libconfig texture block.
    *
-   * Supported type names: `"solid"`, `"checker"`, `"noise"`.
+   * Supported type names: `"solid"`, `"checker"`, `"noise"`, `"bitmap"`.
    *
    * @param [in] cfg libconfig setting containing `type` and texture-specific fields.
    * @returns Shared pointer to the constructed texture.

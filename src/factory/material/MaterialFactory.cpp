@@ -11,6 +11,7 @@
 #include <string>
 #include "components/material/Textures/ITexture.hpp"
 #include "components/material/Textures/checker/CheckerTexture.hpp"
+#include "components/material/Textures/image/ImageTexture.hpp"
 #include "components/material/Textures/noise/NoiseTexture.hpp"
 #include "components/material/Textures/solid/SolidColor.hpp"
 #include "components/material/diffuse/DiffuseMaterial.hpp"
@@ -30,6 +31,7 @@ using raytracer::components::material::Glossy;
 using raytracer::components::material::TexturedMaterial;
 using raytracer::materials::ITexture;
 using raytracer::materials::textures::CheckerTexture;
+using raytracer::materials::textures::ImageTexture;
 using raytracer::materials::textures::NoiseTexture;
 using raytracer::materials::textures::SolidColor;
 using raytracer::math::Color;
@@ -114,6 +116,19 @@ std::shared_ptr<raytracer::materials::ITexture> MaterialFactory::parseTexture(
   }
   if (type == "noise") {
     return std::make_shared<NoiseTexture>();
+  }
+  if (type == "bitmap") {
+    std::string path;
+    if (!cfg.lookupValue("path", path)) {
+      throw RaytracerException(
+          "MaterialFactory: bitmap texture requires a 'path' field");
+    }
+    auto texture = std::make_shared<ImageTexture>();
+    if (!texture->loadFromFile(path)) {
+      throw RaytracerException(
+          "MaterialFactory: failed to load bitmap texture from '" + path + "'");
+    }
+    return texture;
   }
   throw RaytracerException("MaterialFactory: unknown texture type '" + type +
                            "'");
