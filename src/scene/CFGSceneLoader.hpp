@@ -105,6 +105,20 @@ class CFGSceneLoader : public ISceneLoader {
    */
   static void parseBackground(const libconfig::Setting& root,
                               SceneBuilder& builder);
+
+  /**
+   * @brief Parse the optional `world` block and apply its viewport mode
+   *        to the scene via the builder.
+   *
+   * Recognised key: `mode` with string values `"wireframe"`,
+   * `"materialPreview"`, or `"rendered"` (default). Unknown values are
+   * silently treated as `"rendered"` so a typo does not crash the load.
+   *
+   * @param [in]     root    Root setting of the parsed config.
+   * @param [in,out] builder Builder whose scene World will be updated.
+   */
+  static void parseWorld(const libconfig::Setting& root,
+                         SceneBuilder& builder);
 };
 
 }  // namespace raytracer::scene

@@ -78,13 +78,18 @@ void SceneBuilder::setBackground(
   scene_->setBackground(std::move(background));
 }
 
+void SceneBuilder::setViewportMode(ViewportMode mode) {
+  scene_->getWorld().setViewportMode(mode);
+}
+
 std::shared_ptr<Scene> SceneBuilder::build() {
   if (!scene_->getCamera()) {
     throw SceneBuildException(
         std::string(raytracer::constants::errors::SCENE_BUILD_ERROR) +
         ": scene has no camera defined");
   }
-  if (scene_->getLights().empty()) {
+  if (scene_->getWorld().viewportMode() == ViewportMode::Rendered &&
+      scene_->getLights().empty()) {
     throw SceneBuildException(
         std::string(raytracer::constants::errors::SCENE_BUILD_ERROR) +
         ": scene has no light sources defined");

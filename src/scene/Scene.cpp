@@ -12,38 +12,45 @@
 namespace raytracer::scene {
 
 void Scene::add(const std::shared_ptr<IObject>& object) {
-  _rootCollection.add(object);
+  rootCollection_.add(object);
 }
 
 void Scene::addLight(std::shared_ptr<ILight> light) {
-  _lights.push_back(std::move(light));
+  lights_.push_back(std::move(light));
 }
 
 void Scene::setCamera(std::shared_ptr<ICamera> camera) {
-  _camera = std::move(camera);
+  camera_ = std::move(camera);
 }
 
 bool Scene::hit(const raytracer::math::Ray& ray, double tMin, double tMax,
                 raytracer::math::HitRecord& rec) const {
-  return _rootCollection.hits(ray, tMin, tMax, rec);
+  return rootCollection_.hits(ray, tMin, tMax, rec);
 }
 
-std::shared_ptr<ICamera> Scene::getCamera() const { return _camera; }
+std::shared_ptr<ICamera> Scene::getCamera() const { return camera_; }
 
 const std::vector<std::shared_ptr<ILight>>& Scene::getLights() const {
-  return _lights;
+  return lights_;
 }
 
-std::shared_ptr<raytracer::scene::background::IBackground> Scene::getBackground() const {
-  return _background;
+std::shared_ptr<raytracer::scene::background::IBackground>
+Scene::getBackground() const {
+  return background_;
 }
 
-void Scene::setBackground(std::shared_ptr<raytracer::scene::background::IBackground> background) {
-  _background = std::move(background);
+void Scene::setBackground(
+    std::shared_ptr<raytracer::scene::background::IBackground> background) {
+  background_ = std::move(background);
 }
+
+const World& Scene::getWorld() const { return world_; }
+
+World& Scene::getWorld() { return world_; }
 
 Scene::Scene()
-  : _background(std::make_shared<raytracer::scene::background::SolidBackground>(
-      raytracer::math::Color{0, 0, 0})) {}
+    : background_(
+          std::make_shared<raytracer::scene::background::SolidBackground>(
+              raytracer::math::Color{0, 0, 0})) {}
 
 }  // namespace raytracer::scene

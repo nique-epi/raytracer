@@ -286,3 +286,42 @@ double computeReflectance(const Vector3D& incomingDirection,
 int computeHitCount();
 void initConfiguration();
 ```
+
+### R7 — Underscore en suffixe pour les membres privés
+
+**Règle :** les variables membres **privées** d'une classe doivent porter
+un underscore **en suffixe** (`name_`, `position_`, `mode_`), jamais en
+préfixe (`_name`, `_position`). Les membres publics n'ont pas
+d'underscore du tout.
+
+**Pourquoi :** le préfixe `_identifier` est réservé par le standard C++ à
+certains contextes (au niveau global) et reste ambigu avec les
+conventions C (`__internal`, `_t`). Le suffixe `name_` est la convention
+historiquement utilisée par Google C++ Style et adoptée dans ce projet
+(`topColor_`, `bottomColor_`, `color_`, `triangles_`, etc.). Mélanger les
+deux casse la lecture et trahit un code « collé » d'un autre projet.
+
+**À appliquer :** toute nouvelle déclaration de membre privé, et toute
+déclaration existante touchée lors d'un refactoring. Les membres publics
+de types « POD-like » (ex. `Vector3D::x`, `Color::r`, `PointLight::position`)
+restent sans underscore puisqu'ils font partie de l'API publique.
+
+**Exemple interdit :**
+
+```cpp
+class MonoThreadRenderer : public IRenderer {
+ private:
+    std::function<void(double)> _progressCallback;   // préfixe : INTERDIT
+    bool _environmentLighting{false};                // INTERDIT
+};
+```
+
+**Exemple correct :**
+
+```cpp
+class MonoThreadRenderer : public IRenderer {
+ private:
+    std::function<void(double)> progressCallback_;
+    LightingMode lightingMode_{LightingMode::Whitted};
+};
+```

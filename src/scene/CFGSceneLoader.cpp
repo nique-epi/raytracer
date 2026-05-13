@@ -7,9 +7,11 @@
 
 #include "CFGSceneLoader.hpp"
 #include <libconfig.h++>
+#include <string>
 #include "SceneBuilder.hpp"
 #include "SceneFileNotFoundException.hpp"
 #include "SceneParseException.hpp"
+#include "World.hpp"
 #include "background/Gradient/GradientBackground.hpp"  // NOLINT(misc-include-cleaner)
 #include "background/Solid/SolidBackground.hpp"  // NOLINT(misc-include-cleaner)
 #include "factory/material/MaterialFactory.hpp"
@@ -60,6 +62,7 @@ bool CFGSceneLoader::load(const std::string& path, SceneBuilder& builder,
   parseCamera(root, builder);
   parseSettings(root, settings);
   parseBackground(root, builder);
+  parseWorld(root, builder);
   return true;
 }
 
@@ -141,6 +144,23 @@ void CFGSceneLoader::parseSettings(const libconfig::Setting& root,
   s.lookupValue("numThreads", settings.numThreads);
   s.lookupValue("samplesPerPixel", settings.samplesPerPixel);
   s.lookupValue("maxDepth", settings.maxDepth);
+}
+
+void CFGSceneLoader::parseWorld(const libconfig::Setting& root,
+                                SceneBuilder& builder) {
+  if (!root.exists("world")) {
+    return;
+  }
+  const auto& w = root["world"];
+  std::string mode = "rendered";
+  w.lookupValue("mode", mode);
+  if (mode == "wireframe") {
+    builder.setViewportMode(ViewportMode::Wireframe);
+  } else if (mode == "materialPreview") {
+    builder.setViewportMode(ViewportMode::MaterialPreview);
+  } else {
+    builder.setViewportMode(ViewportMode::Rendered);
+  }
 }
 
 }  // namespace raytracer::scene
