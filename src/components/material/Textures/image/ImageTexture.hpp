@@ -16,12 +16,17 @@
 namespace raytracer::materials::textures {
 
 /**
- * @brief Bitmap image texture loaded from a PPM file.
+ * @brief Bitmap image texture mapped onto surfaces via UV coordinates.
  *
  * Samples are looked up by clamping (u, v) coordinates to [0, 1] and
  * mapping them to pixel indices: x = u*(width-1), y = (1-v)*(height-1).
  * If no image has been successfully loaded, @c sample() returns magenta
  * (1, 0, 1) as a visible debug indicator.
+ *
+ * @note Image loading requires the project to be compiled with
+ *       @c BUILD_BONUS=ON. Without it, @c loadFromFile() always returns
+ *       @c false. With @c BUILD_BONUS=ON, supported formats are JPEG, PNG,
+ *       BMP, TGA and PPM (binary P6) via stb_image.
  */
 class ImageTexture : public raytracer::materials::ITexture {
  public:
@@ -34,11 +39,14 @@ class ImageTexture : public raytracer::materials::ITexture {
   ImageTexture& operator=(ImageTexture&&) = delete;
 
   /**
-   * @brief Load a bitmap from a PPM file (P3 ASCII format).
+   * @brief Load a bitmap image from disk.
    *
-   * @param [in] path Filesystem path to the PPM file.
-   * @returns @c true if the file was opened and parsed successfully.
-   * @returns @c false if the file could not be opened or its format is invalid.
+   * Requires @c BUILD_BONUS=ON (stb_image). Supported formats: JPEG, PNG,
+   * BMP, TGA, PPM (binary P6). Always returns @c false without the bonus.
+   *
+   * @param [in] path Filesystem path to the image file.
+   * @returns @c true if the file was loaded successfully.
+   * @returns @c false if loading failed or @c BUILD_BONUS is not enabled.
    */
   bool loadFromFile(const std::string& path);
 
