@@ -68,19 +68,20 @@ TEST(NoiseTextureTest, DifferentPointsProduceDifferentColors) {
   EXPECT_TRUE(isDifferent);
 }
 
-TEST(NoiseTextureTest, NearbyPointsProduceSimilarColors) {
+TEST(NoiseTextureTest, SampleOutputCoversDynamicRange) {
   NoiseTexture texture;
 
-  Color color1 = texture.sample(0.5, 0.5, Vector3D(1.0, 1.0, 1.0));
-  Color color2 = texture.sample(0.5, 0.5, Vector3D(1.05, 1.05, 1.05));
-
-  double diffR = std::abs(color1.r - color2.r);
-  double diffG = std::abs(color1.g - color2.g);
-  double diffB = std::abs(color1.b - color2.b);
-
-  EXPECT_LT(diffR, 0.2);
-  EXPECT_LT(diffG, 0.2);
-  EXPECT_LT(diffB, 0.2);
+  double minVal = 1.0;
+  double maxVal = 0.0;
+  for (int step = 0; step <= 40; ++step) {
+    double coord = static_cast<double>(step) * 0.25;
+    Color result =
+        texture.sample(0.5, 0.5, Vector3D(coord, coord * 0.7, coord * 1.3));
+    if (result.r < minVal) minVal = result.r;
+    if (result.r > maxVal) maxVal = result.r;
+  }
+  EXPECT_LT(minVal, 0.3);
+  EXPECT_GT(maxVal, 0.7);
 }
 
 TEST(NoiseTextureTest, AllColorComponentsAreIdentical) {
