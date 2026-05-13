@@ -1,14 +1,3 @@
-add_library(bonus_stb_image STATIC
-    stb_image/stb_image_impl.cpp
-)
-
-target_include_directories(bonus_stb_image
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/stb_image
-)
-
-target_compile_options(bonus_stb_image PRIVATE -w)
-
 add_library(bonus_assimp_loader
     Assimp/SceneLoader/AssimpLoader.cpp
     Assimp/SceneLoader/AssimpLoaderRegistration.cpp
