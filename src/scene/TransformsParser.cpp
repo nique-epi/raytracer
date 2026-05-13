@@ -29,10 +29,7 @@ std::shared_ptr<IObject> wrapWithTransforms(
       throw SceneBuildException("TransformsParser: transform entry #" +
                                 std::to_string(i) + " has " + detail);
     }
-    auto transform = factory.createTransformation(transformType, entry);
-    if (transform) {
-      wrapper->addTransform(transform);
-    }
+    wrapper->addTransform(factory.createTransformation(transformType, entry));
   }
   return wrapper;
 }
