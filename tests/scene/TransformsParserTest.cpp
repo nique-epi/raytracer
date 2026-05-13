@@ -130,7 +130,8 @@ TEST_F(TransformsParserFixture, EmptyListReturnsWrapperWithoutTransforms) {
 
 // Given: a transform entry without a 'type' field.
 // When:  wrapWithTransforms is called.
-// Then:  SceneBuildException is thrown.
+// Then:  SceneBuildException is thrown and the message points at the missing
+//        field on the failing entry's index.
 TEST_F(TransformsParserFixture, EntryWithoutTypeThrowsSceneBuildException) {
   libconfig::Config config;
   auto& transforms =
@@ -138,10 +139,37 @@ TEST_F(TransformsParserFixture, EntryWithoutTypeThrowsSceneBuildException) {
   auto& entry = transforms.add(libconfig::Setting::TypeGroup);
   addVec3Group(entry, "offset", 1.0, 0.0, 0.0);
 
-  EXPECT_THROW(
-      static_cast<void>(
-          wrapWithTransforms(makeUnitSphereAtOrigin(), transforms, factory_)),
-      raytracer::scene::SceneBuildException);
+  try {
+    static_cast<void>(
+        wrapWithTransforms(makeUnitSphereAtOrigin(), transforms, factory_));
+    FAIL() << "expected SceneBuildException";
+  } catch (const raytracer::scene::SceneBuildException& e) {
+    const std::string message = e.what();
+    EXPECT_NE(message.find("missing 'type' field"), std::string::npos);
+    EXPECT_NE(message.find("#0"), std::string::npos);
+  }
+}
+
+// Given: a transform entry whose 'type' field exists but is not a string.
+// When:  wrapWithTransforms is called.
+// Then:  SceneBuildException is thrown and the message flags a non-string
+//        'type' field rather than a missing one.
+TEST_F(TransformsParserFixture, EntryWithNonStringTypeThrowsSceneBuildException) {
+  libconfig::Config config;
+  auto& transforms =
+      config.getRoot().add("transforms", libconfig::Setting::TypeList);
+  auto& entry = transforms.add(libconfig::Setting::TypeGroup);
+  entry.add("type", libconfig::Setting::TypeInt) = 42;
+
+  try {
+    static_cast<void>(
+        wrapWithTransforms(makeUnitSphereAtOrigin(), transforms, factory_));
+    FAIL() << "expected SceneBuildException";
+  } catch (const raytracer::scene::SceneBuildException& e) {
+    const std::string message = e.what();
+    EXPECT_NE(message.find("non-string 'type' field"), std::string::npos);
+    EXPECT_NE(message.find("#0"), std::string::npos);
+  }
 }
 
 // Given: a transform entry referencing an unregistered type.

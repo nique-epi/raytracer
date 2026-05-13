@@ -23,8 +23,11 @@ std::shared_ptr<IObject> wrapWithTransforms(
     const auto& entry = transformsCfg[i];
     std::string transformType;
     if (!entry.lookupValue("type", transformType)) {
-      throw SceneBuildException(
-          "TransformsParser: transform entry missing 'type' field");
+      const std::string detail = entry.exists("type")
+                                     ? "non-string 'type' field"
+                                     : "missing 'type' field";
+      throw SceneBuildException("TransformsParser: transform entry #" +
+                                std::to_string(i) + " has " + detail);
     }
     auto transform = factory.createTransformation(transformType, entry);
     if (transform) {

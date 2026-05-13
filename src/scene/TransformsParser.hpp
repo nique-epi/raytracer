@@ -32,7 +32,8 @@ namespace raytracer::scene {
  *          transformation. If @p transformsCfg is empty, the returned wrapper
  *          carries the primitive with no transformation attached.
  *
- * @throws SceneBuildException If an entry is missing the `type` field.
+ * @throws SceneBuildException If an entry's `type` field is absent or not a
+ *         string. The thrown message reports the failing entry's index.
  * @throws raytracer::core::RaytracerException If a transformation type is
  *         unknown (propagated from the factory).
  */
