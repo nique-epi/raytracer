@@ -9,9 +9,11 @@
 #include <memory>
 #include "fixtures/SceneBuilderFixture.hpp"
 #include "scene/CFGSceneLoader.hpp"
+#include "scene/Scene.hpp"
 #include "scene/SceneBuilder.hpp"
 #include "scene/SceneFileNotFoundException.hpp"
 #include "scene/SceneParseException.hpp"
+#include "scene/World.hpp"
 #include "scene/background/Gradient/GradientBackground.hpp"
 #include "utils/math/RenderSettings.hpp"
 
@@ -29,6 +31,12 @@ static const std::string NoCameraCfg = SCENE_FIXTURES_DIR "/no_camera.cfg";
 static const std::string MalformedCfg = SCENE_FIXTURES_DIR "/malformed.cfg";
 static const std::string GradientBackgroundCfg =
     SCENE_FIXTURES_DIR "/gradient_background.cfg";
+static const std::string WorldWireframeCfg =
+    SCENE_FIXTURES_DIR "/world_wireframe.cfg";
+static const std::string WorldMaterialPreviewCfg =
+    SCENE_FIXTURES_DIR "/world_material_preview.cfg";
+static const std::string WorldUnknownModeCfg =
+    SCENE_FIXTURES_DIR "/world_unknown_mode.cfg";
 
 class CFGSceneLoaderTest : public SceneBuilderFixture {
  protected:
@@ -217,4 +225,68 @@ TEST_F(CFGSceneLoaderTest, LoadGradientBackgroundCreatesGradientBackground) {
   EXPECT_DOUBLE_EQ(bottomColor.r, 0.0);
   EXPECT_DOUBLE_EQ(bottomColor.g, 0.0);
   EXPECT_DOUBLE_EQ(bottomColor.b, 0.0);
+}
+
+// Given: a .cfg file with no `world` block (no_settings.cfg, which has a
+//        camera and an ambient light but no world configuration).
+// When:  load() is called and the scene is built.
+// Then:  the scene's World defaults to ViewportMode::Rendered, matching
+//        the World default-constructor and the final-image path.
+TEST_F(CFGSceneLoaderTest, LoadWithoutWorldBlockDefaultsToRendered) {
+  SceneBuilder builder(factory_);
+  raytracer::math::RenderSettings settings;
+
+  EXPECT_TRUE(loader.load(NoSettingsCfg, builder, settings));
+
+  const auto scene = builder.build();
+  EXPECT_EQ(scene->getWorld().viewportMode(),
+            raytracer::scene::ViewportMode::Rendered);
+}
+
+// Given: a .cfg file whose world block declares mode = "wireframe".
+// When:  load() is called and the scene is built.
+// Then:  the scene's World reports ViewportMode::Wireframe. The scene
+//        builds successfully even without any ILight because Wireframe
+//        does not require explicit lighting.
+TEST_F(CFGSceneLoaderTest, LoadWireframeModeSetsViewportToWireframe) {
+  SceneBuilder builder(factory_);
+  raytracer::math::RenderSettings settings;
+
+  EXPECT_TRUE(loader.load(WorldWireframeCfg, builder, settings));
+
+  const auto scene = builder.build();
+  EXPECT_EQ(scene->getWorld().viewportMode(),
+            raytracer::scene::ViewportMode::Wireframe);
+}
+
+// Given: a .cfg file whose world block declares mode = "materialPreview".
+// When:  load() is called and the scene is built.
+// Then:  the scene's World reports ViewportMode::MaterialPreview. Like
+//        Wireframe, this mode does not require explicit ILight sources.
+TEST_F(CFGSceneLoaderTest, LoadMaterialPreviewModeSetsViewportToMaterialPreview) {
+  SceneBuilder builder(factory_);
+  raytracer::math::RenderSettings settings;
+
+  EXPECT_TRUE(loader.load(WorldMaterialPreviewCfg, builder, settings));
+
+  const auto scene = builder.build();
+  EXPECT_EQ(scene->getWorld().viewportMode(),
+            raytracer::scene::ViewportMode::MaterialPreview);
+}
+
+// Given: a .cfg file whose world block declares an unrecognised mode
+//        string ("definitelyNotARealMode").
+// When:  load() is called and the scene is built.
+// Then:  parseWorld() silently falls back to ViewportMode::Rendered
+//        rather than throwing. The fixture includes an ambient light so
+//        the Rendered-mode lights-required check passes at build time.
+TEST_F(CFGSceneLoaderTest, LoadUnknownModeFallsBackToRendered) {
+  SceneBuilder builder(factory_);
+  raytracer::math::RenderSettings settings;
+
+  EXPECT_TRUE(loader.load(WorldUnknownModeCfg, builder, settings));
+
+  const auto scene = builder.build();
+  EXPECT_EQ(scene->getWorld().viewportMode(),
+            raytracer::scene::ViewportMode::Rendered);
 }

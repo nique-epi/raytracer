@@ -5,6 +5,7 @@ add_library(raytracer_scene STATIC
   SceneFileNotFoundException.cpp
   SceneParseException.cpp
   Scene.cpp
+  World.cpp
   background/Solid/SolidBackground.cpp
   background/Gradient/GradientBackground.cpp
 )

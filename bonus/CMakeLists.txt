@@ -1,4 +1,3 @@
-
 add_library(bonus_assimp_loader
     Assimp/SceneLoader/AssimpLoader.cpp
     Assimp/SceneLoader/AssimpLoaderRegistration.cpp

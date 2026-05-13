@@ -14,7 +14,7 @@
 namespace raytracer::components::material {
 
 DiffuseMaterial::DiffuseMaterial(const raytracer::math::Color& albedo)
-    : albedo(albedo) {}
+    : albedo_(albedo) {}
 
 bool DiffuseMaterial::scatter(const raytracer::math::Ray& /*in*/,
                               const raytracer::math::HitRecord& rec,
@@ -26,8 +26,12 @@ bool DiffuseMaterial::scatter(const raytracer::math::Ray& /*in*/,
     scatterDir = rec.normal;
   }
   scattered = raytracer::math::Ray(rec.point, scatterDir);
-  attenuation = albedo;
+  attenuation = albedo_;
   return true;
+}
+
+raytracer::math::Color DiffuseMaterial::diffuseAlbedo() const {
+  return albedo_;
 }
 
 }  // namespace raytracer::components::material

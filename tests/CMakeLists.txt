@@ -93,6 +93,7 @@ add_executable(raytracer_tests
   scene/background/GradientBackgroundTest.cpp
   exceptions/ExceptionsTest.cpp
   renderer/BasicRendererTest.cpp
+  renderer/RendererViewportModeTest.cpp
   config/ConfigExceptionTest.cpp
   components/image/ImageTest.cpp
   components/image/ImageExceptionTest.cpp
@@ -114,6 +115,7 @@ add_executable(raytracer_tests
   components/material/TexturedMaterialTest.cpp
   components/material/textures/PerlinNoiseTest.cpp
   components/material/textures/NoiseTextureTest.cpp
+  components/material/textures/ImageTextureTest.cpp
   fixtures/SphereFixture.cpp
   fixtures/OrthoCameraFixture.cpp
   fixtures/ComponentFactoryFixture.cpp
