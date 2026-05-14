@@ -6,9 +6,15 @@
 */
 
 #include "Application.hpp"
+
+#include <unistd.h>
+
+#include <cstdio>
+#include <iomanip>
+#include <iostream>
 #include <memory>
 #include <mutex>
-#include "common/helper/Logger.hpp"
+
 #include "components/image/Image.hpp"
 #include "exceptions/Exceptions.hpp"
 #include "integrator/pathIntegrator/PathIntegrator.hpp"
@@ -59,20 +65,29 @@ int Application::run(const std::string& scenePath, bool useBVH) {
   scene->getCamera()->setResolution(settings.imageWidth, settings.imageHeight);
 
   RaytracerRenderer renderer;
-  const raytracer::common::Logger progressLogger("Progress");
   std::mutex progressMutex;
-  int lastReportedPercent = -1;
-  renderer.setProgressCallback([progressLogger, &progressMutex,
-                                &lastReportedPercent](double progress) {
-    constexpr int reportInterval = 10;
-    const int percent = static_cast<int>(progress * 100.0);
-    const int bucket = (percent / reportInterval) * reportInterval;
-    const std::lock_guard<std::mutex> lock(progressMutex);
-    if (bucket > lastReportedPercent) {
-      lastReportedPercent = bucket;
-      progressLogger.info("rendering ", bucket, "%");
-    }
-  });
+  int lastDrawnPercent = -1;
+  if (::isatty(::fileno(stderr)) != 0) {
+    static constexpr int progressBarWidth = 30;
+    renderer.setProgressCallback([&progressMutex, &lastDrawnPercent](
+                                     double progress) {
+      const int percent = static_cast<int>(progress * 100.0);
+      const std::lock_guard<std::mutex> lock(progressMutex);
+      if (percent <= lastDrawnPercent) {
+        return;
+      }
+      lastDrawnPercent = percent;
+      const int filled = (percent * progressBarWidth) / 100;
+      std::cerr << "\rRendering [";
+      for (int i = 0; i < progressBarWidth; ++i) {
+        std::cerr << (i < filled ? "█" : "░");
+      }
+      std::cerr << "] " << std::setw(3) << percent << "%" << std::flush;
+      if (progress >= 1.0) {
+        std::cerr << '\n';
+      }
+    });
+  }
 
   const RendererConfig config{.scene = scene,
                               .settings = settings,
