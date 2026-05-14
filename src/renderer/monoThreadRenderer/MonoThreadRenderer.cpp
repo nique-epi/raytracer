@@ -25,7 +25,7 @@ namespace {
 
 constexpr double primaryRayTMin = 0.001;
 constexpr double normalDebugHalf = 0.5;
-constexpr double GAMMA = 2.2;
+constexpr double GAMMA = 1.0;
 
 /**
  * @brief Return a unit-length shading normal for @p rec.
