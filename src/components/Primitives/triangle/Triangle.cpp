@@ -9,7 +9,6 @@
 #include <algorithm>
 #include <cmath>
 #include <memory>
-#include "components/Primitives/IObject.hpp"
 #include "utils/math/Constants.hpp"
 
 namespace gsl {

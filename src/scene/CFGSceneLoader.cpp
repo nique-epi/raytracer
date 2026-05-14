@@ -76,6 +76,8 @@ void CFGSceneLoader::parsePrimitives(const libconfig::Setting& root,
   addList(p, "planes", "plane", builder, &SceneBuilder::addObject);
   addList(p, "cylinders", "cylinder", builder, &SceneBuilder::addObject);
   addList(p, "cones", "cone", builder, &SceneBuilder::addObject);
+  addList(p, "triangles", "triangle", builder, &SceneBuilder::addObject);
+  addList(p, "meshes", "mesh", builder, &SceneBuilder::addObject);
 }
 
 void CFGSceneLoader::parseLights(const libconfig::Setting& root,

@@ -12,8 +12,10 @@
 #include <utility>
 #include "components/Primitives/cone/Cone.hpp"
 #include "components/Primitives/cylinder/Cylinder.hpp"
+#include "components/Primitives/mesh/mesh.hpp"
 #include "components/Primitives/plane/Plane.hpp"
 #include "components/Primitives/sphere/Sphere.hpp"
+#include "components/Primitives/triangle/Triangle.hpp"
 #include "exceptions/Exceptions.hpp"
 #include "factory/material/MaterialFactory.hpp"
 #include "utils/math/Vector3D.hpp"
@@ -74,7 +76,8 @@ std::shared_ptr<IObject> createSphereFromCfg(const libconfig::Setting& cfg) {
   double radius = 1.0;
   overrideVec3IfPresent(cfg, "center", center);
   cfg.lookupValue("radius", radius);
-  return PrimitiveFactory::createSphere(center, radius, parseMaterialFromCfg(cfg));
+  return PrimitiveFactory::createSphere(center, radius,
+                                        parseMaterialFromCfg(cfg));
 }
 
 std::shared_ptr<IObject> createConeFromCfg(const libconfig::Setting& cfg) {
@@ -117,7 +120,41 @@ std::shared_ptr<IObject> createPlaneFromCfg(const libconfig::Setting& cfg) {
     point = axisVec * position;
     normal = axisVec;
   }
-  return PrimitiveFactory::createPlane(point, normal, parseMaterialFromCfg(cfg));
+  return PrimitiveFactory::createPlane(point, normal,
+                                       parseMaterialFromCfg(cfg));
+}
+
+std::shared_ptr<IObject> createTriangleFromCfg(const libconfig::Setting& cfg) {
+  Vector3D v0{0.0, 0.0, 0.0};
+  Vector3D v1{1.0, 0.0, 0.0};
+  Vector3D v2{0.0, 1.0, 0.0};
+  overrideVec3IfPresent(cfg, "vertex0", v0);
+  overrideVec3IfPresent(cfg, "vertex1", v1);
+  overrideVec3IfPresent(cfg, "vertex2", v2);
+  return PrimitiveFactory::createTriangle(v0, v1, v2,
+                                          parseMaterialFromCfg(cfg));
+}
+
+std::shared_ptr<IObject> createMeshFromCfg(const libconfig::Setting& cfg) {
+  std::vector<std::shared_ptr<raytracer::components::primitives::Triangle>>
+      triangles;
+  if (cfg.exists("triangles")) {
+    const auto& list = cfg["triangles"];
+    for (int i = 0; i < list.getLength(); ++i) {
+      const auto& t = list[i];
+      Vector3D v0{0.0, 0.0, 0.0};
+      Vector3D v1{1.0, 0.0, 0.0};
+      Vector3D v2{0.0, 1.0, 0.0};
+      overrideVec3IfPresent(t, "vertex0", v0);
+      overrideVec3IfPresent(t, "vertex1", v1);
+      overrideVec3IfPresent(t, "vertex2", v2);
+      std::shared_ptr<IMaterial> mat = parseMaterialFromCfg(t);
+      triangles.push_back(
+          std::make_shared<raytracer::components::primitives::Triangle>(
+              v0, v1, v2, mat));
+    }
+  }
+  return PrimitiveFactory::createMesh(std::move(triangles));
 }
 
 }  // namespace
@@ -131,8 +168,7 @@ std::shared_ptr<IObject> PrimitiveFactory::createSphere(
 std::shared_ptr<IObject> PrimitiveFactory::createCone(
     const math::Vector3D& apex, const math::Vector3D& axis, double angle,
     double height, std::shared_ptr<IMaterial> material) {
-  return std::make_shared<Cone>(apex, axis, angle, height,
-                                std::move(material));
+  return std::make_shared<Cone>(apex, axis, angle, height, std::move(material));
 }
 
 std::shared_ptr<IObject> PrimitiveFactory::createCylinder(
@@ -146,6 +182,22 @@ std::shared_ptr<IObject> PrimitiveFactory::createPlane(
     const math::Vector3D& point, const math::Vector3D& normal,
     std::shared_ptr<IMaterial> material) {
   return std::make_shared<Plane>(point, normal, std::move(material));
+}
+
+std::shared_ptr<IObject> PrimitiveFactory::createTriangle(
+    const math::Vector3D& vertex0, const math::Vector3D& vertex1,
+    const math::Vector3D& vertex2, std::shared_ptr<IMaterial> material) {
+  return std::static_pointer_cast<IObject>(
+      std::make_shared<raytracer::components::primitives::Triangle>(
+          vertex0, vertex1, vertex2, std::move(material)));
+}
+
+std::shared_ptr<IObject> PrimitiveFactory::createMesh(
+    std::vector<std::shared_ptr<raytracer::components::primitives::Triangle>>
+        triangles) {
+  return std::static_pointer_cast<IObject>(
+      std::make_shared<raytracer::components::primitives::Mesh>(
+          std::move(triangles)));
 }
 
 std::shared_ptr<IObject> PrimitiveFactory::create(
@@ -162,8 +214,14 @@ std::shared_ptr<IObject> PrimitiveFactory::create(
   if (type == "plane") {
     return createPlaneFromCfg(cfg);
   }
-  throw RaytracerException(
-      "PrimitiveFactory: unknown primitive type '" + type + "'");
+  if (type == "triangle") {
+    return createTriangleFromCfg(cfg);
+  }
+  if (type == "mesh") {
+    return createMeshFromCfg(cfg);
+  }
+  throw RaytracerException("PrimitiveFactory: unknown primitive type '" + type +
+                           "'");
 }
 
 }  // namespace raytracer::core::factory

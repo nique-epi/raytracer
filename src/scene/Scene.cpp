@@ -40,6 +40,12 @@ void Scene::buildBVH() {
     accelerator_ = nullptr;
     return;
   }
+
+  for (const auto& obj : objects) {
+    if (obj) {
+      obj->buildAccelerationStructure();
+    }
+  }
   accelerator_ = std::make_shared<raytracer::components::BVHNode>(objects);
 }
 

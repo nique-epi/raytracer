@@ -10,6 +10,7 @@
 #include <memory>
 #include <numbers>
 #include <string>
+#include <vector>
 #include "components/Primitives/IObject.hpp"
 #include "utils/math/Vector3D.hpp"
 
@@ -18,6 +19,10 @@ class IMaterial;
 namespace libconfig {
 class Setting;
 }  // namespace libconfig
+
+namespace raytracer::components::primitives {
+class Triangle;
+}  // namespace raytracer::components::primitives
 
 namespace raytracer::core::factory {
 
@@ -103,12 +108,29 @@ class PrimitiveFactory {
       std::shared_ptr<IMaterial> material = nullptr);
 
   /**
+   * @brief Create a `Triangle` primitive from typed parameters.
+   */
+  [[nodiscard]] static std::shared_ptr<IObject> createTriangle(
+      const math::Vector3D& vertex0 = {0.0, 0.0, 0.0},
+      const math::Vector3D& vertex1 = {1.0, 0.0, 0.0},
+      const math::Vector3D& vertex2 = {0.0, 1.0, 0.0},
+      std::shared_ptr<IMaterial> material = nullptr);
+
+  /**
+   * @brief Create a `Mesh` primitive from a list of triangles.
+   */
+  [[nodiscard]] static std::shared_ptr<IObject> createMesh(
+      std::vector<std::shared_ptr<raytracer::components::primitives::Triangle>>
+          triangles = {});
+
+  /**
    * @brief Dispatch by type name and parse @p cfg into typed arguments.
    *
    * Supported type names: `"sphere"`, `"cone"`, `"cylinder"`, `"plane"`.
    *
    * @param [in] type Type discriminant (one of the supported names above).
-   * @param [in] cfg  libconfig setting; absent fields keep their typed defaults.
+   * @param [in] cfg  libconfig setting; absent fields keep their typed
+   * defaults.
    * @returns Shared pointer to the freshly constructed primitive.
    *
    * @throws raytracer::core::RaytracerException If @p type is unknown.

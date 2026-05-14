@@ -191,7 +191,7 @@ math::Color MonoThreadRenderer::shade(const math::Ray& inRay,
     case scene::ViewportMode::Rendered:
       return shadeRendered(inRay, rec, scene, depth);
   }
-  return {0, 0, 0};
+  return shadeRendered(inRay, rec, scene, depth);
 }
 
 math::Color MonoThreadRenderer::shadeWireframe(const math::HitRecord& rec) {
@@ -244,9 +244,12 @@ math::Color MonoThreadRenderer::shadeRendered(const math::Ray& inRay,
   math::Ray scattered(math::Vector3D(0, 0, 0), math::Vector3D(0, 0, 1));
   if (rec.material->scatter(inRay, rec, attenuation, scattered)) {
     const math::Color indirect = castRay(scattered, scene, depth - 1, false);
-    return rec.material->emitted() + directLighting + (attenuation * indirect);
+    const math::Color result =
+        rec.material->emitted() + directLighting + (attenuation * indirect);
+    return result;
   }
-  return rec.material->emitted() + directLighting;
+  const math::Color result = rec.material->emitted() + directLighting;
+  return result;
 }
 
 }  // namespace raytracer::core

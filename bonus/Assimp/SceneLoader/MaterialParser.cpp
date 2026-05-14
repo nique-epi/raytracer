@@ -16,6 +16,22 @@ namespace {
 constexpr float opacityThreshold = 0.9F;
 constexpr float shininessThreshold = 32.0F;
 constexpr float maxShininessValue = 128.0F;
+constexpr float metallicThreshold = 0.5F;
+
+raytracer::math::Color readMaterialColor(aiMaterial* mat, bool& hasBaseColor) {
+  aiColor4D baseColor(1.0F, 1.0F, 1.0F, 1.0F);
+  if (mat->Get(AI_MATKEY_BASE_COLOR, baseColor) == AI_SUCCESS) {
+    hasBaseColor = true;
+    return {baseColor.r, baseColor.g, baseColor.b};
+  }
+
+  aiColor3D diffuseColor(1.0F, 1.0F, 1.0F);
+  if (mat->Get(AI_MATKEY_COLOR_DIFFUSE, diffuseColor) == AI_SUCCESS) {
+    return {diffuseColor.r, diffuseColor.g, diffuseColor.b};
+  }
+
+  return {1.0, 1.0, 1.0};
+}
 
 }  // namespace
 
@@ -33,15 +49,17 @@ std::vector<std::shared_ptr<IMaterial>> MaterialParser::loadMaterials(
 }
 
 std::shared_ptr<IMaterial> MaterialParser::parseMaterial(aiMaterial* mat) {
-  aiColor3D diffuseColor(1.0F, 1.0F, 1.0F);
-  mat->Get(AI_MATKEY_COLOR_DIFFUSE, diffuseColor);
-  math::Color albedo(diffuseColor.r, diffuseColor.g, diffuseColor.b);
+  bool hasBaseColor = false;
+  const math::Color albedo = readMaterialColor(mat, hasBaseColor);
 
   float opacity = 1.0F;
   mat->Get(AI_MATKEY_OPACITY, opacity);
 
   float shininess = 0.0F;
   mat->Get(AI_MATKEY_SHININESS, shininess);
+
+  float metallicFactor = 0.0F;
+  mat->Get(AI_MATKEY_METALLIC_FACTOR, metallicFactor);
 
   float refractionIndex = 1.0F;
   mat->Get(AI_MATKEY_REFRACTI, refractionIndex);
@@ -52,7 +70,8 @@ std::shared_ptr<IMaterial> MaterialParser::parseMaterial(aiMaterial* mat) {
     const math::Color glassTint(opacity, opacity, opacity);
     material =
         core::factory::MaterialFactory::createGlass(refractionIndex, glassTint);
-  } else if (shininess > shininessThreshold) {
+  } else if ((!hasBaseColor && shininess > shininessThreshold) ||
+             metallicFactor > metallicThreshold) {
     double fuzz = std::log(1.0 + shininess) / std::log(1.0 + maxShininessValue);
     fuzz = 1.0 - fuzz;
     fuzz = std::clamp(fuzz, 0.0, 1.0);
