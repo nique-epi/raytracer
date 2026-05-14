@@ -3,7 +3,6 @@ add_library(raytracer_renderer STATIC)
 target_sources(raytracer_renderer
   PRIVATE
     Tile.cpp
-    monoThreadRenderer/MonoThreadRenderer.cpp
     raytracerRenderer/RaytracerRenderer.cpp
 )
 
