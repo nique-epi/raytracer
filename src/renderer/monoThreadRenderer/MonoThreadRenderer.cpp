@@ -188,8 +188,7 @@ math::Color MonoThreadRenderer::castRay(const math::Ray& ray,
   }
   const bool allowEnvironment =
       isPrimary ||
-      scene.getWorld().viewportMode() == scene::ViewportMode::MaterialPreview ||
-      scene.getWorld().viewportMode() == scene::ViewportMode::Rendered;
+      scene.getWorld().viewportMode() == scene::ViewportMode::MaterialPreview;
   if (allowEnvironment) {
     const auto background = scene.getBackground();
     if (background) {
