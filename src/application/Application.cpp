@@ -21,6 +21,7 @@
 
 #ifdef BUILD_BONUS
 #include "Assimp/SceneLoader/AssimpLoaderRegistration.hpp"
+#include "postprocess/denoise/OIDDenoiser.hpp"
 #endif
 
 namespace raytracer::core {
@@ -33,7 +34,7 @@ Application::Application() {
 #endif
 }
 
-int Application::run(const std::string& scenePath) {
+int Application::run(const std::string& scenePath, bool useBVH) {
   const auto loader = _factory.getLoader(scenePath);
   if (!loader) {
     throw RaytracerException("No loader available for: " + scenePath);
@@ -50,6 +51,9 @@ int Application::run(const std::string& scenePath) {
   }
 
   auto scene = builder.build();
+  if (useBVH) {
+    scene->buildBVH();
+  }
   scene->getCamera()->setResolution(settings.imageWidth, settings.imageHeight);
 
   MonoThreadRenderer renderer;
@@ -64,9 +68,12 @@ int Application::run(const std::string& scenePath) {
   const RendererConfig config{
       .scene = scene, .settings = settings, .integrator = nullptr};
   const Frame frame{.camera = scene->getCamera()};
-  const components::Image image = renderer.render(config, frame);
+  components::Image image = renderer.render(config, frame);
 
   output::ppm writer;
+#ifdef BUILD_BONUS
+  OIDDenoiser::denoise(image);
+#endif
   writer.write(image, "out.ppm");
   return 0;
 }

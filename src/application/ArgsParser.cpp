@@ -15,10 +15,13 @@ std::optional<AppConfig> ArgsParser::parse(int argc, const char** argv) {
                     std::string_view(argv[1]) == "--help")) {
     return HelpRequest{};
   }
-  if (argc != 2) {
-    return std::nullopt;
+  if (argc == 2) {
+    return SceneRequest{.scenePath = argv[1], .useBVH = true};
   }
-  return SceneRequest{argv[1]};
+  if (argc == 3 && std::string_view(argv[2]) == "--no-bvh") {
+    return SceneRequest{.scenePath = argv[1], .useBVH = false};
+  }
+  return std::nullopt;
 }
 
 }  // namespace raytracer::core

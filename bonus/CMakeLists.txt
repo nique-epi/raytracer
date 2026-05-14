@@ -28,3 +28,24 @@ target_link_libraries(bonus_assimp_loader
 
 
 raytracer_enable_target_warnings(bonus_assimp_loader)
+
+add_library(bonus_OID_denoiser
+    postprocess/denoise/OIDDenoiser.cpp
+)
+
+target_include_directories(bonus_OID_denoiser
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/OID/OpenImageDenoise/include
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/src
+    ${CMAKE_SOURCE_DIR}/include
+)
+
+target_link_libraries(bonus_OID_denoiser
+    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/OID/lib/libOpenImageDenoise.dylib
+    raytracer_components
+
+)
+
+raytracer_enable_target_warnings(bonus_OID_denoiser)

@@ -16,6 +16,7 @@ struct HelpRequest {};
 
 struct SceneRequest {
   std::string scenePath;
+  bool useBVH{false};
 };
 
 using AppConfig = std::variant<HelpRequest, SceneRequest>;

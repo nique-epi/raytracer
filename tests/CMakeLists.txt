@@ -98,6 +98,7 @@ add_executable(raytracer_tests
   config/ConfigExceptionTest.cpp
   components/image/ImageTest.cpp
   components/image/ImageExceptionTest.cpp
+  components/Primitives/BVHTest.cpp
   components/Primitives/CollectionTest.cpp
 	components/Primitives/TransformedObjectTest.cpp
   components/light/PointLightTest.cpp

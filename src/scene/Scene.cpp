@@ -7,7 +7,9 @@
 
 #include "Scene.hpp"
 #include <utility>
+#include <vector>
 #include "background/Solid/SolidBackground.hpp"
+#include "components/Primitives/BVH/BVHNode.hpp"
 
 namespace raytracer::scene {
 
@@ -25,7 +27,20 @@ void Scene::setCamera(std::shared_ptr<ICamera> camera) {
 
 bool Scene::hit(const raytracer::math::Ray& ray, double tMin, double tMax,
                 raytracer::math::HitRecord& rec) const {
+  if (accelerator_) {
+    return accelerator_->hits(ray, tMin, tMax, rec);
+  }
   return rootCollection_.hits(ray, tMin, tMax, rec);
+}
+
+void Scene::buildBVH() {
+  const std::vector<std::shared_ptr<IObject>>& objects =
+      rootCollection_.getObjects();
+  if (objects.empty()) {
+    accelerator_ = nullptr;
+    return;
+  }
+  accelerator_ = std::make_shared<raytracer::components::BVHNode>(objects);
 }
 
 std::shared_ptr<ICamera> Scene::getCamera() const { return camera_; }
