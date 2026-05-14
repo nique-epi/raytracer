@@ -14,9 +14,7 @@
 namespace {
 
 constexpr float opacityThreshold = 0.9F;
-constexpr float shininessThreshold = 32.0F;
-constexpr float maxShininessValue = 128.0F;
-constexpr float metallicThreshold = 0.5F;
+constexpr float maxShininessValue = 1000.0F;
 
 raytracer::math::Color readMaterialColor(aiMaterial* mat, bool& hasBaseColor) {
   aiColor4D baseColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -48,39 +46,53 @@ std::vector<std::shared_ptr<IMaterial>> MaterialParser::loadMaterials(
   return materials;
 }
 
-std::shared_ptr<IMaterial> MaterialParser::parseMaterial(aiMaterial* mat) {
+MaterialParser::MaterialProperties MaterialParser::extractMaterialProperties(
+    aiMaterial* mat) {
+  MaterialProperties properties;
+
   bool hasBaseColor = false;
-  const math::Color albedo = readMaterialColor(mat, hasBaseColor);
+  properties.albedo = readMaterialColor(mat, hasBaseColor);
 
-  float opacity = 1.0F;
-  mat->Get(AI_MATKEY_OPACITY, opacity);
+  properties.opacity = 1.0F;
+  mat->Get(AI_MATKEY_OPACITY, properties.opacity);
 
-  float shininess = 0.0F;
-  mat->Get(AI_MATKEY_SHININESS, shininess);
+  properties.shininess = 0.0F;
+  mat->Get(AI_MATKEY_SHININESS, properties.shininess);
 
-  float metallicFactor = 0.0F;
-  mat->Get(AI_MATKEY_METALLIC_FACTOR, metallicFactor);
+  properties.metallicFactor = 0.0F;
+  mat->Get(AI_MATKEY_METALLIC_FACTOR, properties.metallicFactor);
 
-  float refractionIndex = 1.0F;
-  mat->Get(AI_MATKEY_REFRACTI, refractionIndex);
+  properties.refractionIndex = 1.0F;
+  mat->Get(AI_MATKEY_REFRACTI, properties.refractionIndex);
 
-  std::shared_ptr<IMaterial> material;
+  return properties;
+}
 
-  if (opacity < opacityThreshold && refractionIndex > 1.0F) {
-    const math::Color glassTint(opacity, opacity, opacity);
-    material =
-        core::factory::MaterialFactory::createGlass(refractionIndex, glassTint);
-  } else if ((!hasBaseColor && shininess > shininessThreshold) ||
-             metallicFactor > metallicThreshold) {
-    double fuzz = std::log(1.0 + shininess) / std::log(1.0 + maxShininessValue);
-    fuzz = 1.0 - fuzz;
-    fuzz = std::clamp(fuzz, 0.0, 1.0);
-    material = core::factory::MaterialFactory::createGlossy(fuzz, albedo);
-  } else {
-    material = core::factory::MaterialFactory::createDiffuse(albedo);
+std::shared_ptr<IMaterial> MaterialParser::createMaterialFromProperties(
+    const MaterialProperties& properties) {
+  if (properties.opacity < opacityThreshold &&
+      properties.refractionIndex > 1.0F) {
+    const math::Color glassTint(properties.opacity, properties.opacity,
+                                properties.opacity);
+    return core::factory::MaterialFactory::createGlass(
+        properties.refractionIndex, glassTint);
   }
 
-  return material;
+  double roughness = 0.5;
+  if (properties.shininess > 0) {
+    roughness = 1.0 - std::log(1.0 + properties.shininess) /
+                          std::log(1.0 + maxShininessValue);
+  }
+  roughness = std::clamp(roughness, 0.0, 1.0);
+
+  return core::factory::MaterialFactory::createPrincipled(
+      properties.albedo, static_cast<double>(properties.metallicFactor),
+      roughness, static_cast<double>(properties.refractionIndex));
+}
+
+std::shared_ptr<IMaterial> MaterialParser::parseMaterial(aiMaterial* mat) {
+  const MaterialProperties properties = extractMaterialProperties(mat);
+  return createMaterialFromProperties(properties);
 }
 
 }  // namespace raytracer::scene

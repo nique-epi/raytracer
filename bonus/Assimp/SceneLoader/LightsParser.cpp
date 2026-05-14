@@ -7,6 +7,7 @@
 
 #include "LightsParser.hpp"
 #include <assimp/matrix3x3.h>
+#include <iostream>
 #include <memory>
 #include <stack>
 #include "components/light/ambient/AmbientLight.hpp"
@@ -31,14 +32,16 @@ void LightParser::parse(const aiScene* scene, SceneBuilder& builder) {
   for (unsigned int i = 0; i < scene->mNumLights; ++i) {
     const aiLight* light = scene->mLights[i];
     const math::Color color = toColor(light->mColorDiffuse);
-    const float intensity = extractIntensity(scene, light->mName);
+    float intensity = extractIntensity(scene, light->mName);
     const aiMatrix4x4 worldTransform = findWorldTransform(scene, light->mName);
-
     switch (light->mType) {
       case aiLightSource_DIRECTIONAL:
         addDirectional(builder, light, worldTransform, intensity);
         break;
       case aiLightSource_POINT:
+        addPoint(builder, worldTransform, color, intensity);
+        break;
+      case aiLightSource_SPOT:
         addPoint(builder, worldTransform, color, intensity);
         break;
       case aiLightSource_AMBIENT:

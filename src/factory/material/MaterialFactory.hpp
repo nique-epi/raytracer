@@ -71,6 +71,19 @@ class MaterialFactory {
       const math::Color& tint = math::Color(1.0, 1.0, 1.0));
 
   /**
+   * @brief Create a principled BSDF material.
+   *
+   * @param [in] baseColor Base color (default: white).
+   * @param [in] metallic  Metallic factor in [0, 1] (default: 0.0).
+   * @param [in] roughness Roughness in [0, 1] (default: 0.5).
+   * @param [in] ior       Index of refraction (default: 1.45).
+   * @returns Shared pointer to the freshly constructed material.
+   */
+  [[nodiscard]] static std::shared_ptr<IMaterial> createPrincipled(
+      const math::Color& baseColor = math::Color(1.0, 1.0, 1.0),
+      double metallic = 0.0, double roughness = 0.5, double ior = 1.45);
+
+  /**
    * @brief Create a textured Lambertian material.
    *
    * @param [in] texture Texture used to modulate the surface color.

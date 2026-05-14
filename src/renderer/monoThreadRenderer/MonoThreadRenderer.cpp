@@ -25,6 +25,7 @@ namespace {
 
 constexpr double primaryRayTMin = 0.001;
 constexpr double normalDebugHalf = 0.5;
+constexpr double GAMMA = 2.2;
 
 /**
  * @brief Return a unit-length shading normal for @p rec.
@@ -99,6 +100,23 @@ raytracer::math::Color lambertContributionFromLight(
   }
   return albedo * radiance * cosTheta;
 }
+raytracer::math::Color computeFinalColor(
+    const raytracer::math::Color& accumulated, int samplesPerPixel) {
+  raytracer::math::Color finalColor =
+      accumulated / static_cast<double>(samplesPerPixel);
+  auto acesMap = [](double x) {
+    const double a = 2.51;
+    const double b = 0.03;
+    const double c = 2.43;
+    const double d = 0.59;
+    const double e = 0.14;
+    return std::clamp((x * (a * x + b)) / (x * (c * x + d) + e), 0.0, 1.0);
+  };
+  finalColor.r = acesMap(finalColor.r);
+  finalColor.g = acesMap(finalColor.g);
+  finalColor.b = acesMap(finalColor.b);
+  return finalColor.gammaCorrect(GAMMA);
+}
 
 }  // namespace
 
@@ -140,8 +158,9 @@ components::Image MonoThreadRenderer::render(const RendererConfig& config,
         accumulated =
             accumulated + castRay(ray, scene, settings.maxDepth, true);
       }
-      image.setPixel(
-          x, y, accumulated / static_cast<double>(settings.samplesPerPixel));
+      math::Color finalColor =
+          computeFinalColor(accumulated, settings.samplesPerPixel);
+      image.setPixel(x, y, finalColor);
     }
   }
   if (progressCallback_) {
@@ -169,7 +188,8 @@ math::Color MonoThreadRenderer::castRay(const math::Ray& ray,
   }
   const bool allowEnvironment =
       isPrimary ||
-      scene.getWorld().viewportMode() == scene::ViewportMode::MaterialPreview;
+      scene.getWorld().viewportMode() == scene::ViewportMode::MaterialPreview ||
+      scene.getWorld().viewportMode() == scene::ViewportMode::Rendered;
   if (allowEnvironment) {
     const auto background = scene.getBackground();
     if (background) {

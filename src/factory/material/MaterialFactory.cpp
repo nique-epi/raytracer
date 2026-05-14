@@ -17,6 +17,7 @@
 #include "components/material/diffuse/DiffuseMaterial.hpp"
 #include "components/material/glass/Glass.hpp"
 #include "components/material/glossy/Glossy.hpp"
+#include "components/material/principled/PrincipledMaterial.hpp"
 #include "components/material/textured/TexturedMaterial.hpp"
 #include "exceptions/Exceptions.hpp"
 #include "utils/math/Color.hpp"
@@ -28,6 +29,7 @@ namespace {
 using raytracer::components::material::DiffuseMaterial;
 using raytracer::components::material::Glass;
 using raytracer::components::material::Glossy;
+using raytracer::components::material::PrincipledMaterial;
 using raytracer::components::material::TexturedMaterial;
 using raytracer::materials::ITexture;
 using raytracer::materials::textures::CheckerTexture;
@@ -67,6 +69,20 @@ std::shared_ptr<IMaterial> createGlassFromCfg(const libconfig::Setting& cfg) {
   return MaterialFactory::createGlass(refractionIndex, tint);
 }
 
+std::shared_ptr<IMaterial> createPrincipledFromCfg(
+    const libconfig::Setting& cfg) {
+  Color baseColor(1.0, 1.0, 1.0);
+  double metallic = 0.0;
+  double roughness = 0.5;
+  double ior = 1.45;
+  overrideColorIfPresent(cfg, "baseColor", baseColor);
+  overrideColorIfPresent(cfg, "color", baseColor);
+  cfg.lookupValue("metallic", metallic);
+  cfg.lookupValue("roughness", roughness);
+  cfg.lookupValue("ior", ior);
+  return MaterialFactory::createPrincipled(baseColor, metallic, roughness, ior);
+}
+
 }  // namespace
 
 std::shared_ptr<IMaterial> MaterialFactory::createDiffuse(
@@ -82,6 +98,13 @@ std::shared_ptr<IMaterial> MaterialFactory::createGlossy(
 std::shared_ptr<IMaterial> MaterialFactory::createGlass(
     double refractionIndex, const math::Color& tint) {
   return std::make_shared<Glass>(refractionIndex, tint);
+}
+
+std::shared_ptr<IMaterial> MaterialFactory::createPrincipled(
+    const math::Color& baseColor, double metallic, double roughness,
+    double ior) {
+  return std::make_shared<PrincipledMaterial>(baseColor, metallic, roughness,
+                                              ior);
 }
 
 // NOLINTNEXTLINE(misc-use-internal-linkage)
@@ -158,6 +181,9 @@ std::shared_ptr<IMaterial> MaterialFactory::create(
   }
   if (type == "glass") {
     return createGlassFromCfg(cfg);
+  }
+  if (type == "principled") {
+    return createPrincipledFromCfg(cfg);
   }
   if (type == "textured") {
     Color albedo(1.0, 1.0, 1.0);
