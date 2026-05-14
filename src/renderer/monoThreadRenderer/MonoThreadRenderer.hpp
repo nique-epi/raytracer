@@ -7,33 +7,30 @@
 
 /**
  * @file MonoThreadRenderer.hpp
- * @brief Basic single-threaded renderer implementation.
+ * @brief Single-threaded renderer. Shading is delegated to the
+ *        `IIntegrator` carried by `RendererConfig`; this class only
+ *        owns the per-pixel sampling loop.
  */
 
 #pragma once
 
 #include <functional>
 #include "../IRenderer.hpp"
-#include "utils/math/Ray.hpp"
-
-namespace raytracer::math {
-class HitRecord;
-class Vector3D;
-}  // namespace raytracer::math
-
-namespace raytracer::scene {
-class Scene;
-}  // namespace raytracer::scene
 
 namespace raytracer::core {
 
 /**
  * @brief Single-threaded reference renderer.
  *
- * Dispatches shading per pixel to one of three viewport modes carried by
- * the scene's `World` (Wireframe / MaterialPreview / Rendered). Each mode
- * is implemented as a small helper to keep the recursion logic narrow
- * and the per-mode behaviour obvious.
+ * Walks every pixel in row-major order and asks
+ * `config.integrator->computeRadiance(...)` for the radiance carried by
+ * the primary ray. All shading, viewport-mode dispatch, and recursive
+ * bouncing live in the integrator — the renderer is intentionally a
+ * thin driver over the camera + integrator pair.
+ *
+ * Precondition: `config.integrator != nullptr`. Renderers throw if it
+ * is missing rather than silently falling back to a built-in shading
+ * path: shading lives in the integrator, never duplicated here.
  */
 class MonoThreadRenderer : public IRenderer {
  public:
@@ -51,21 +48,6 @@ class MonoThreadRenderer : public IRenderer {
   void setProgressCallback(std::function<void(double)> fn) override;
 
  private:
-  static raytracer::math::Color castRay(const raytracer::math::Ray& ray,
-                                        const scene::Scene& scene, int depth,
-                                        bool isPrimary);
-  static raytracer::math::Color shade(const raytracer::math::Ray& inRay,
-                                      const raytracer::math::HitRecord& rec,
-                                      const scene::Scene& scene, int depth);
-  static raytracer::math::Color shadeWireframe(
-      const raytracer::math::HitRecord& rec);
-  static raytracer::math::Color shadeMaterialPreview(
-      const raytracer::math::Ray& inRay, const raytracer::math::HitRecord& rec,
-      const scene::Scene& scene, int depth);
-  static raytracer::math::Color shadeRendered(
-      const raytracer::math::Ray& inRay, const raytracer::math::HitRecord& rec,
-      const scene::Scene& scene, int depth);
-
   std::function<void(double)> progressCallback_;
 };
 

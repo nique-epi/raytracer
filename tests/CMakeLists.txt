@@ -95,6 +95,8 @@ add_executable(raytracer_tests
   exceptions/ExceptionsTest.cpp
   renderer/BasicRendererTest.cpp
   renderer/RendererViewportModeTest.cpp
+  renderer/TileTest.cpp
+  renderer/RaytracerRendererTest.cpp
   config/ConfigExceptionTest.cpp
   components/image/ImageTest.cpp
   components/image/ImageExceptionTest.cpp

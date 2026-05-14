@@ -12,6 +12,7 @@
 #include "components/Primitives/sphere/Sphere.hpp"
 #include "components/light/point/Point.hpp"
 #include "components/material/diffuse/DiffuseMaterial.hpp"
+#include "integrator/pathIntegrator/PathIntegrator.hpp"
 #include "renderer/Frame.hpp"
 #include "renderer/RendererConfig.hpp"
 #include "renderer/monoThreadRenderer/MonoThreadRenderer.hpp"
@@ -71,7 +72,9 @@ raytracer::components::Image renderScene(const std::shared_ptr<Scene>& scene,
   auto camera = std::make_shared<OrthoCameraFixture>();
   MonoThreadRenderer renderer;
   const RendererConfig config{
-      .scene = scene, .settings = settings, .integrator = nullptr};
+      .scene = scene,
+      .settings = settings,
+      .integrator = std::make_shared<raytracer::core::PathIntegrator>()};
   const Frame frame{.camera = camera};
   return renderer.render(config, frame);
 }

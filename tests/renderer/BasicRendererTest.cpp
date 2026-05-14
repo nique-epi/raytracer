@@ -12,6 +12,7 @@
 #include "../fixtures/SphereFixture.hpp"
 #include "renderer/Frame.hpp"
 #include "renderer/IRenderer.hpp"
+#include "integrator/pathIntegrator/PathIntegrator.hpp"
 #include "renderer/RendererConfig.hpp"
 #include "renderer/monoThreadRenderer/MonoThreadRenderer.hpp"
 #include "scene/Scene.hpp"
@@ -38,7 +39,9 @@ TEST(MonoThreadRendererTest, RendersOneSphereAndHashStable) {
   renderer.setProgressCallback([&](double) { progressCalls++; });
 
   const raytracer::core::RendererConfig config{
-      .scene = scene, .settings = settings, .integrator = nullptr};
+      .scene = scene,
+      .settings = settings,
+      .integrator = std::make_shared<raytracer::core::PathIntegrator>()};
   const raytracer::core::Frame frame{.camera = camera};
   raytracer::components::Image img = renderer.render(config, frame);
 
