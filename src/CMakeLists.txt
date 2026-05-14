@@ -1,6 +1,8 @@
 add_subdirectory(exceptions)
 add_subdirectory(config)
 add_subdirectory(utils/math)
+add_subdirectory(common)
+add_subdirectory(os)
 add_subdirectory(components)
 add_subdirectory(factory)
 add_subdirectory(scene)
@@ -21,6 +23,8 @@ target_link_libraries(raytracer_src
     raytracer_exceptions
     raytracer_config
     raytracer_math
+    raytracer_helper
+    raytracer_threads
     raytracer_components
     raytracer_factory
     raytracer_scene
