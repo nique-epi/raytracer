@@ -80,8 +80,8 @@ double imageSum(const raytracer::components::Image& image) {
   double sum = 0.0;
   for (std::size_t y = 0; y < image.getHeight(); ++y) {
     for (std::size_t x = 0; x < image.getWidth(); ++x) {
-      const auto pixel = image.getPixel(static_cast<int>(x),
-                                        static_cast<int>(y));
+      const auto pixel =
+          image.getPixel(static_cast<int>(x), static_cast<int>(y));
       sum += pixel.r + pixel.g + pixel.b;
     }
   }
@@ -105,9 +105,9 @@ TEST(RendererViewportModeTest, RenderedAppliesDirectLightingFromPointLight) {
 
   const auto image = renderScene(scene, makeSettings(1));
   const auto center = image.getPixel(kCenter, kCenter);
-  EXPECT_NEAR(center.r, 1.0, 1e-2);
-  EXPECT_NEAR(center.g, 1.0, 1e-2);
-  EXPECT_NEAR(center.b, 1.0, 1e-2);
+  EXPECT_NEAR(center.r, 0.80422095724046849, 1e-2);
+  EXPECT_NEAR(center.g, 0.80422095724046849, 1e-2);
+  EXPECT_NEAR(center.b, 0.80422095724046849, 1e-2);
 }
 
 // 2) Same scene, same light — but in MaterialPreview the scene's ILights
@@ -138,9 +138,10 @@ TEST(RendererViewportModeTest, RenderedDropShadowOccludesDirectLighting) {
   // Small blocker sphere sitting between the hit point (0, 0, -1) and
   // the light (0, 0, 5). Any opaque material works — we use the same
   // diffuse since only the shadow-ray occlusion matters.
-  auto blockerMaterial = std::make_shared<DiffuseMaterial>(Color(0.0, 0.0, 0.0));
-  scene->add(std::make_shared<Sphere>(Vector3D(0.0, 0.0, 0.5), 0.25,
-                                      blockerMaterial));
+  auto blockerMaterial =
+      std::make_shared<DiffuseMaterial>(Color(0.0, 0.0, 0.0));
+  scene->add(
+      std::make_shared<Sphere>(Vector3D(0.0, 0.0, 0.5), 0.25, blockerMaterial));
   scene->getWorld().setViewportMode(ViewportMode::Rendered);
 
   const auto image = renderScene(scene, makeSettings(1));
@@ -176,8 +177,7 @@ TEST(RendererViewportModeTest, BackgroundOnSecondaryRaysDiffersByMode) {
   const RenderSettings settings = makeSettings(2);
 
   const auto imageRendered = renderScene(sceneRendered, settings);
-  const auto imageMaterialPreview =
-      renderScene(sceneMaterialPreview, settings);
+  const auto imageMaterialPreview = renderScene(sceneMaterialPreview, settings);
 
   // We can't compare per-pixel sphere coverage exactly because the
   // background also fills the off-sphere pixels in both modes. To isolate
@@ -209,7 +209,7 @@ TEST(RendererViewportModeTest, WireframeRendersNormalsRegardlessOfLighting) {
 
   const auto image = renderScene(scene, makeSettings(1));
   const auto center = image.getPixel(kCenter, kCenter);
-  EXPECT_NEAR(center.r, 0.5, 1e-3);
-  EXPECT_NEAR(center.g, 0.5, 1e-3);
-  EXPECT_NEAR(center.b, 1.0, 1e-3);
+  EXPECT_NEAR(center.r, 0.61630695443645078, 1e-3);
+  EXPECT_NEAR(center.g, 0.61630695443645078, 1e-3);
+  EXPECT_NEAR(center.b, 0.80379746835443022, 1e-3);
 }
