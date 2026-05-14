@@ -113,6 +113,7 @@ add_executable(raytracer_tests
   factory/CameraFactoryTest.cpp
   factory/TransformationFactoryTest.cpp
   common/helper/QueueTest.cpp
+  common/helper/LoggerTest.cpp
   os/threads/ThreadPoolTest.cpp
   components/material/textures/SolidColorTest.cpp
   components/material/textures/CheckerTextureTest.cpp

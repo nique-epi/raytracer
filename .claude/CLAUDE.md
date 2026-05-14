@@ -325,3 +325,81 @@ class MonoThreadRenderer : public IRenderer {
     LightingMode lightingMode_{LightingMode::Whitted};
 };
 ```
+
+### R8 — Logger : instance par module, pas de macros, pas de debug-only
+
+**Règle :** toute classe qui veut logger doit posséder son propre membre
+`raytracer::common::Logger logger_{"NomDuModule"};` et appeler les
+méthodes d'instance (`logger_.info(...)`, `.warn`, `.error`, `.debug`,
+`.trace`, `.scope`). Les anciennes macros `RT_LOG_*` et l'API
+statique `Logger::log(...)` sont **interdites** et n'existent plus.
+Le filtrage compile-time se fait **uniquement** via la variable CMake
+`LOG_LEVEL` (traduite en `RT_LOG_BUILD_LEVEL`) ; on n'utilise plus
+`#ifdef NDEBUG` pour décider si un log existe ou pas.
+
+**Pourquoi :** le Logger est une *facility applicative*, pas un outil
+de debug. Il doit fonctionner en release et produire les logs utiles à
+toute application (démarrage, fin, erreurs, durée). Le nom de module
+appartient à la classe et est paié une seule fois à la construction :
+le passer en string à chaque appel est redondant et fragile (typo,
+oubli). Les méthodes (vs macros) gagnent typage, auto-complete, et un
+debugger qui voit les appels — le filtrage compile-time est obtenu via
+`if constexpr (isCompiledIn(...))`, qui supprime le code aussi
+proprement qu'un `#ifdef`. Enfin, le défaut runtime `Info` garantit
+qu'une exécution normale n'affiche aucun bruit `Debug`.
+
+**À appliquer :** toute nouvelle classe qui log, et toute classe
+existante touchée lors d'un refactoring. Pour un module qui logge
+ponctuellement depuis une fonction libre, on accepte un
+`Logger("ModuleName")` local — mais le pattern par défaut reste le
+membre d'instance. Pour mesurer une durée : `auto timer =
+logger_.scope("label");` (RAII, niveau `Info` par défaut).
+
+**Exemple interdit :**
+
+```cpp
+// API statique disparue : INTERDIT
+raytracer::common::Logger::log(LogLevel::Info, "Renderer", "hello");
+
+// Macros disparues : INTERDIT
+RT_LOG_INFO("Renderer", "starting render " << w << 'x' << h);
+
+// #ifdef NDEBUG pour conditionner un log : INTERDIT
+#ifndef NDEBUG
+  std::cerr << "[debug] pool=" << n << '\n';
+#endif
+
+// Logger statique recréé à chaque appel : INTERDIT
+void Foo::run() {
+    raytracer::common::Logger("Foo").info("local instance throwaway");
+}
+```
+
+**Exemple correct :**
+
+```cpp
+class RaytracerRenderer : public IRenderer {
+ private:
+    raytracer::common::Logger logger_{"Renderer"};
+
+ public:
+    components::Image render(...) {
+        auto timer = logger_.scope("render()");
+        logger_.info("starting render ", w, 'x', h,
+                     ", samples=", samples);
+        if (tiles.empty()) {
+            logger_.warn("no tiles produced");
+            return image;
+        }
+        logger_.debug("ThreadPool spawned ", n, " worker(s)");
+        // …
+    }
+};
+```
+
+**Configuration de niveau :**
+
+- Compile-time : `cmake -B build -DLOG_LEVEL=info` strippe `debug` et
+  `trace` du binaire. Défaut : `info` en `Release`, `trace` ailleurs.
+- Runtime : `RT_LOG_LEVEL=debug ./raytracer …` ou
+  `Logger::setLevel(LogLevel::Debug)`. Défaut : `Info`.
