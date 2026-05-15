@@ -19,10 +19,10 @@
 #include "rendering/renderer/IRenderer.hpp"
 #include "rendering/renderer/RendererConfig.hpp"
 #include "rendering/renderer/raytracerRenderer/RaytracerRenderer.hpp"
-#include "scene/Scene.hpp"
 #include "rendering/shading/IShadingMode.hpp"
 #include "rendering/shading/ShadingContext.hpp"
 #include "rendering/shading/rendered/RenderedShader.hpp"
+#include "scene/Scene.hpp"
 #include "utils/math/RenderSettings.hpp"
 #include "utils/math/Vector3D.hpp"
 
@@ -57,8 +57,8 @@ raytracer::components::Image renderWith(
   std::shared_ptr<raytracer::shading::IShadingMode> strategy =
       std::make_shared<raytracer::shading::RenderedShader>(
           std::make_shared<raytracer::core::WhittedIntegrator>());
-  auto context = std::make_shared<raytracer::shading::ShadingContext>(
-      std::move(strategy));
+  auto context =
+      std::make_shared<raytracer::shading::ShadingContext>(std::move(strategy));
   const raytracer::core::RendererConfig config{
       .scene = scene, .settings = settings, .shadingContext = context};
   const raytracer::core::Frame frame{.camera = camera};
