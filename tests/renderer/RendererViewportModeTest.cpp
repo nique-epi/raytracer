@@ -12,13 +12,18 @@
 #include "components/Primitives/sphere/Sphere.hpp"
 #include "components/light/point/Point.hpp"
 #include "components/material/diffuse/DiffuseMaterial.hpp"
-#include "integrator/pathIntegrator/PathIntegrator.hpp"
+#include "integrator/whittedIntegrator/WhittedIntegrator.hpp"
 #include "renderer/Frame.hpp"
 #include "renderer/RendererConfig.hpp"
 #include "renderer/raytracerRenderer/RaytracerRenderer.hpp"
 #include "scene/Scene.hpp"
 #include "scene/World.hpp"
 #include "scene/background/Solid/SolidBackground.hpp"
+#include "shading/IShadingMode.hpp"
+#include "shading/ShadingContext.hpp"
+#include "shading/materialPreview/MaterialPreviewShader.hpp"
+#include "shading/rendered/RenderedShader.hpp"
+#include "shading/wireframe/WireframeShader.hpp"
 #include "utils/math/Color.hpp"
 #include "utils/math/RenderSettings.hpp"
 #include "utils/math/Vector3D.hpp"
@@ -71,10 +76,23 @@ raytracer::components::Image renderScene(const std::shared_ptr<Scene>& scene,
                                          const RenderSettings& settings) {
   auto camera = std::make_shared<OrthoCameraFixture>();
   raytracer::core::RaytracerRenderer renderer;
+  std::shared_ptr<raytracer::shading::IShadingMode> shader;
+  switch (scene->getWorld().viewportMode()) {
+    case ViewportMode::Wireframe:
+      shader = std::make_shared<raytracer::shading::WireframeShader>();
+      break;
+    case ViewportMode::MaterialPreview:
+      shader = std::make_shared<raytracer::shading::MaterialPreviewShader>();
+      break;
+    case ViewportMode::Rendered:
+    default:
+      shader = std::make_shared<raytracer::shading::RenderedShader>(
+          std::make_shared<raytracer::core::WhittedIntegrator>());
+      break;
+  }
+  auto context = std::make_shared<raytracer::shading::ShadingContext>(shader);
   const RendererConfig config{
-      .scene = scene,
-      .settings = settings,
-      .integrator = std::make_shared<raytracer::core::PathIntegrator>()};
+      .scene = scene, .settings = settings, .shadingContext = context};
   const Frame frame{.camera = camera};
   return renderer.render(config, frame);
 }

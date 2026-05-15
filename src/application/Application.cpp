@@ -6,18 +6,15 @@
 */
 
 #include "Application.hpp"
-
 #include <unistd.h>
-
 #include <cstdio>
 #include <iomanip>
 #include <iostream>
 #include <memory>
 #include <mutex>
-
 #include "components/image/Image.hpp"
 #include "exceptions/Exceptions.hpp"
-#include "integrator/pathIntegrator/PathIntegrator.hpp"
+#include "integrator/whittedIntegrator/WhittedIntegrator.hpp"
 #include "output/ppm/ppm.hpp"
 #include "renderer/Frame.hpp"
 #include "renderer/RendererConfig.hpp"
@@ -25,6 +22,12 @@
 #include "scene/CFGSceneLoader.hpp"
 #include "scene/Scene.hpp"
 #include "scene/SceneBuilder.hpp"
+#include "scene/World.hpp"
+#include "shading/IShadingMode.hpp"
+#include "shading/ShadingContext.hpp"
+#include "shading/materialPreview/MaterialPreviewShader.hpp"
+#include "shading/rendered/RenderedShader.hpp"
+#include "shading/wireframe/WireframeShader.hpp"
 #include "utils/math/RenderSettings.hpp"
 
 #ifdef BUILD_BONUS
@@ -34,12 +37,66 @@
 
 namespace raytracer::core {
 
+namespace {
+struct ProgressBarState {
+  std::mutex mutex;
+  int lastDrawnPercent{-1};
+};
+
+std::shared_ptr<shading::ShadingContext> createShadingContext(
+    const scene::Scene& scene) {
+  auto wireframe = std::make_shared<shading::WireframeShader>();
+  auto materialPreview = std::make_shared<shading::MaterialPreviewShader>();
+  auto rendered = std::make_shared<shading::RenderedShader>(
+      std::make_shared<WhittedIntegrator>());
+
+  std::shared_ptr<shading::IShadingMode> initialStrategy;
+  switch (scene.getWorld().viewportMode()) {
+    case scene::ViewportMode::Wireframe:
+      initialStrategy = wireframe;
+      break;
+    case scene::ViewportMode::MaterialPreview:
+      initialStrategy = materialPreview;
+      break;
+    case scene::ViewportMode::Rendered:
+      initialStrategy = rendered;
+      break;
+  }
+
+  return std::make_shared<shading::ShadingContext>(std::move(initialStrategy));
+}
+}  // namespace
+
 Application::Application() {
   _factory.registerLoader(std::make_shared<scene::CFGSceneLoader>());
 
 #ifdef BUILD_BONUS
   raytracer::bonus::registerAssimpLoader(_factory);
 #endif
+}
+
+static void displayProgressBar(RaytracerRenderer& renderer) {
+  if (::isatty(::fileno(stderr)) != 0) {
+    static constexpr int progressBarWidth = 30;
+    const auto progressState = std::make_shared<ProgressBarState>();
+    renderer.setProgressCallback([progressState](double progress) {
+      const int percent = static_cast<int>(progress * 100.0);
+      const std::lock_guard<std::mutex> lock(progressState->mutex);
+      if (percent <= progressState->lastDrawnPercent) {
+        return;
+      }
+      progressState->lastDrawnPercent = percent;
+      const int filled = (percent * progressBarWidth) / 100;
+      std::cerr << "\rRendering [";
+      for (int i = 0; i < progressBarWidth; ++i) {
+        std::cerr << (i < filled ? "█" : "░");
+      }
+      std::cerr << "] " << std::setw(3) << percent << "%" << std::flush;
+      if (progress >= 1.0) {
+        std::cerr << '\n';
+      }
+    });
+  }
 }
 
 int Application::run(const std::string& scenePath, bool useBVH) {
@@ -57,7 +114,6 @@ int Application::run(const std::string& scenePath, bool useBVH) {
     throw RaytracerException("Invalid render settings loaded from: " +
                              scenePath);
   }
-
   auto scene = builder.build();
   if (useBVH) {
     scene->buildBVH();
@@ -65,34 +121,11 @@ int Application::run(const std::string& scenePath, bool useBVH) {
   scene->getCamera()->setResolution(settings.imageWidth, settings.imageHeight);
 
   RaytracerRenderer renderer;
-  std::mutex progressMutex;
-  int lastDrawnPercent = -1;
-  if (::isatty(::fileno(stderr)) != 0) {
-    static constexpr int progressBarWidth = 30;
-    renderer.setProgressCallback([&progressMutex, &lastDrawnPercent](
-                                     double progress) {
-      const int percent = static_cast<int>(progress * 100.0);
-      const std::lock_guard<std::mutex> lock(progressMutex);
-      if (percent <= lastDrawnPercent) {
-        return;
-      }
-      lastDrawnPercent = percent;
-      const int filled = (percent * progressBarWidth) / 100;
-      std::cerr << "\rRendering [";
-      for (int i = 0; i < progressBarWidth; ++i) {
-        std::cerr << (i < filled ? "█" : "░");
-      }
-      std::cerr << "] " << std::setw(3) << percent << "%" << std::flush;
-      if (progress >= 1.0) {
-        std::cerr << '\n';
-      }
-    });
-  }
+  displayProgressBar(renderer);
+  auto shadingContext = createShadingContext(*scene);
 
-  const RendererConfig config{.scene = scene,
-                              .settings = settings,
-                              .integrator =
-                                  std::make_shared<PathIntegrator>()};
+  const RendererConfig config{
+      .scene = scene, .settings = settings, .shadingContext = shadingContext};
   const Frame frame{.camera = scene->getCamera()};
   components::Image image = renderer.render(config, frame);
 

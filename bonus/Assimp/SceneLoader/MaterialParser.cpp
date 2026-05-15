@@ -35,16 +35,16 @@ std::vector<std::shared_ptr<IMaterial>> MaterialParser::loadMaterials(
 std::shared_ptr<IMaterial> MaterialParser::parseMaterial(aiMaterial* mat) {
   aiColor3D diffuseColor(1.0F, 1.0F, 1.0F);
   mat->Get(AI_MATKEY_COLOR_DIFFUSE, diffuseColor);
-  math::Color albedo(diffuseColor.r, diffuseColor.g, diffuseColor.b);
+  const math::Color albedo(diffuseColor.r, diffuseColor.g, diffuseColor.b);
 
   float opacity = 1.0F;
   mat->Get(AI_MATKEY_OPACITY, opacity);
 
-  float shininess = 0.0F;
-  mat->Get(AI_MATKEY_SHININESS, shininess);
-
   float refractionIndex = 1.0F;
   mat->Get(AI_MATKEY_REFRACTI, refractionIndex);
+
+  float shininess = 0.0F;
+  mat->Get(AI_MATKEY_SHININESS, shininess);
 
   std::shared_ptr<IMaterial> material;
 

@@ -2,17 +2,18 @@
 ** EPITECH PROJECT, 2026
 ** raytracer
 ** File description:
-** PathIntegrator
+** WhittedIntegrator
 */
 
-#include "integrator/pathIntegrator/PathIntegrator.hpp"
+#include "integrator/whittedIntegrator/WhittedIntegrator.hpp"
+
 #include <algorithm>
-#include <cmath>
 #include <limits>
+
 #include "components/light/ILight.hpp"
 #include "components/material/IMaterial.hpp"
 #include "scene/Scene.hpp"
-#include "scene/World.hpp"
+#include "shading_common/ShadingHelpers.hpp"
 #include "utils/math/Color.hpp"
 #include "utils/math/Constants.hpp"
 #include "utils/math/HitRecord.hpp"
@@ -26,24 +27,10 @@ using raytracer::math::HitRecord;
 using raytracer::math::Ray;
 using raytracer::math::Vector3D;
 using raytracer::scene::Scene;
-using raytracer::scene::ViewportMode;
-
-constexpr double primaryRayTMin = 0.001;
-constexpr double normalDebugHalf = 0.5;
-
-Vector3D unitShadingNormal(const HitRecord& record) {
-  const double lengthSquared = record.normal.lengthSquared();
-  if (lengthSquared <= 0.0) {
-    return record.normal;
-  }
-  return record.normal / std::sqrt(lengthSquared);
-}
-
-Color normalAsColor(const Vector3D& normal) {
-  return {(normal.x * normalDebugHalf) + normalDebugHalf,
-          (normal.y * normalDebugHalf) + normalDebugHalf,
-          (normal.z * normalDebugHalf) + normalDebugHalf};
-}
+using raytracer::shading::common::normalAsColor;
+using raytracer::shading::common::unitShadingNormal;
+namespace mathConstants = raytracer::math::constants;
+namespace shadingCommon = raytracer::shading::common;
 
 Color lambertContributionFromLight(const ILight& light,
                                    const Vector3D& shadingPoint,
@@ -66,29 +53,9 @@ Color lambertContributionFromLight(const ILight& light,
 
 Color castRay(const Ray& ray, const Scene& scene, int depth, bool isPrimary);
 
-Color shadeWireframe(const HitRecord& record) {
-  return normalAsColor(unitShadingNormal(record));
-}
-
 // NOLINTNEXTLINE(misc-no-recursion)
-Color shadeMaterialPreview(const Ray& inRay, const HitRecord& record,
-                           const Scene& scene, int depth) {
-  if (!record.material) {
-    return normalAsColor(unitShadingNormal(record));
-  }
-  Color attenuation(0, 0, 0);
-  Ray scattered(Vector3D(0, 0, 0), Vector3D(0, 0, 1));
-  if (record.material->scatter(inRay, record, attenuation, scattered)) {
-    const Color indirect =
-        castRay(scattered, scene, depth - 1, false);
-    return record.material->emitted() + (attenuation * indirect);
-  }
-  return record.material->emitted();
-}
-
-// NOLINTNEXTLINE(misc-no-recursion)
-Color shadeRendered(const Ray& inRay, const HitRecord& record,
-                    const Scene& scene, int depth) {
+Color shade(const Ray& inRay, const HitRecord& record, const Scene& scene,
+            int depth) {
   if (!record.material) {
     return normalAsColor(unitShadingNormal(record));
   }
@@ -96,7 +63,7 @@ Color shadeRendered(const Ray& inRay, const HitRecord& record,
   const Vector3D unitNormal = unitShadingNormal(record);
   const Vector3D shadingPoint =
       record.point +
-      (unitNormal * raytracer::math::constants::shadowRayEpsilon);
+      (unitNormal * mathConstants::shadowRayEpsilon);
 
   Color directLighting(0, 0, 0);
   const Color albedo = record.material->diffuseAlbedo();
@@ -113,26 +80,11 @@ Color shadeRendered(const Ray& inRay, const HitRecord& record,
   Color attenuation(0, 0, 0);
   Ray scattered(Vector3D(0, 0, 0), Vector3D(0, 0, 1));
   if (record.material->scatter(inRay, record, attenuation, scattered)) {
-    const Color indirect =
-        castRay(scattered, scene, depth - 1, false);
+    const Color indirect = castRay(scattered, scene, depth - 1, false);
     return record.material->emitted() + directLighting +
            (attenuation * indirect);
   }
   return record.material->emitted() + directLighting;
-}
-
-// NOLINTNEXTLINE(misc-no-recursion)
-Color shade(const Ray& inRay, const HitRecord& record, const Scene& scene,
-            int depth) {
-  switch (scene.getWorld().viewportMode()) {
-    case ViewportMode::Wireframe:
-      return shadeWireframe(record);
-    case ViewportMode::MaterialPreview:
-      return shadeMaterialPreview(inRay, record, scene, depth);
-    case ViewportMode::Rendered:
-      return shadeRendered(inRay, record, scene, depth);
-  }
-  return {0, 0, 0};
 }
 
 // NOLINTNEXTLINE(misc-no-recursion)
@@ -142,13 +94,11 @@ Color castRay(const Ray& ray, const Scene& scene, int depth, bool isPrimary) {
   }
   // NOLINTNEXTLINE(misc-const-correctness)
   HitRecord record;
-  if (scene.hit(ray, primaryRayTMin, std::numeric_limits<double>::infinity(),
-                record)) {
+  if (scene.hit(ray, shadingCommon::primaryRayTMin,
+                std::numeric_limits<double>::infinity(), record)) {
     return shade(ray, record, scene, depth);
   }
-  const bool allowEnvironment = isPrimary || scene.getWorld().viewportMode() ==
-                                                 ViewportMode::MaterialPreview;
-  if (allowEnvironment) {
+  if (isPrimary) {
     const auto background = scene.getBackground();
     if (background) {
       return background->getColor(ray);
@@ -161,9 +111,9 @@ Color castRay(const Ray& ray, const Scene& scene, int depth, bool isPrimary) {
 
 namespace raytracer::core {
 
-math::Color PathIntegrator::computeRadiance(const math::Ray& ray,
-                                            const scene::Scene& scene,
-                                            int depth) {
+math::Color WhittedIntegrator::computeRadiance(const math::Ray& ray,
+                                               const scene::Scene& scene,
+                                               int depth) {
   return castRay(ray, scene, depth, true);
 }
 

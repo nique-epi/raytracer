@@ -7,11 +7,11 @@
 
 #pragma once
 #include <string>
+#include "common/helper/Logger.hpp"
 #include "factory/ComponentFactory.hpp"
+#include "renderer/raytracerRenderer/RaytracerRenderer.hpp"
 #include "scene/SceneLoaderFactory.hpp"
-
 namespace raytracer::core {
-
 class Application {
  public:
   Application();
@@ -25,6 +25,7 @@ class Application {
   int run(const std::string& scenePath, bool useBVH = true);
 
  private:
+  raytracer::common::Logger logger_{"Application"};
   scene::SceneLoaderFactory _factory;
   factory::ComponentFactory _componentFactory;
 };
