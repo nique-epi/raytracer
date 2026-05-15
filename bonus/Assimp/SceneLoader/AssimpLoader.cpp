@@ -56,7 +56,7 @@ bool AssimpLoader::load(const std::string& path, SceneBuilder& builder,
   CameraParser::parse(scene, builder, settings);
   builder.setBackground(
       std::make_shared<raytracer::scene::background::SolidBackground>(
-          math::Color{0.2, 0.2, 0.2}));
+          math::Color{0.1, 0.1, 0.1}));
   return true;
 }
 
