@@ -46,10 +46,10 @@ bool AssimpLoader::load(const std::string& path, SceneBuilder& builder,
     return false;
   }
 
-  std::cerr << "Loaded GLTF: " << scene->mNumMeshes << " meshes, "
-            << scene->mNumMaterials << " materials, " << scene->mNumCameras
-            << " cameras, " << scene->mNumLights << " lights, "
-            << countTriangles(scene) << " triangles" << '\n';
+  std::cerr << "[AssimpLoader] Loaded GLTF: " << scene->mNumMeshes
+            << " meshes, " << scene->mNumMaterials << " materials, "
+            << scene->mNumCameras << " cameras, " << scene->mNumLights
+            << " lights, " << countTriangles(scene) << " triangles" << '\n';
 
   NodeParser::parse(scene->mRootNode, scene, builder, aiMatrix4x4());
   LightParser::parse(scene, builder);

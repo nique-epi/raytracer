@@ -8,6 +8,7 @@
 #include "MaterialParser.hpp"
 #include <algorithm>
 #include <cmath>
+#include <iostream>
 #include "factory/material/MaterialFactory.hpp"
 #include "utils/math/Color.hpp"
 
@@ -27,6 +28,8 @@ std::vector<std::shared_ptr<IMaterial>> MaterialParser::loadMaterials(
 
   for (unsigned int i = 0; i < scene->mNumMaterials; ++i) {
     aiMaterial* mat = scene->mMaterials[i];
+    std::cerr << "[AssimpMaterialParser] Parsing Assimp material #" << i
+              << " / " << scene->mNumMaterials << '\n';
     materials.push_back(parseMaterial(mat));
   }
   return materials;
@@ -50,14 +53,28 @@ std::shared_ptr<IMaterial> MaterialParser::parseMaterial(aiMaterial* mat) {
 
   if (opacity < opacityThreshold && refractionIndex > 1.0F) {
     const math::Color glassTint(opacity, opacity, opacity);
+    std::cerr << "[AssimpMaterialParser] Created Assimp glass material with"
+              << " opacity=" << opacity
+              << ", refractionIndex=" << refractionIndex << ", tint=("
+              << glassTint.r << ", " << glassTint.g << ", " << glassTint.b
+              << ")" << '\n';
     material =
         core::factory::MaterialFactory::createGlass(refractionIndex, glassTint);
   } else if (shininess > shininessThreshold) {
     double fuzz = std::log(1.0 + shininess) / std::log(1.0 + maxShininessValue);
     fuzz = 1.0 - fuzz;
     fuzz = std::clamp(fuzz, 0.0, 1.0);
+    std::cerr << "[AssimpMaterialParser] Created Assimp glossy material with"
+              << " albedo=(" << albedo.r << ", " << albedo.g << ", " << albedo.b
+              << ")"
+              << ", shininess=" << shininess << ", fuzz=" << fuzz << '\n';
     material = core::factory::MaterialFactory::createGlossy(fuzz, albedo);
   } else {
+    std::cerr << "[AssimpMaterialParser] Created Assimp diffuse material with"
+              << " albedo=(" << albedo.r << ", " << albedo.g << ", " << albedo.b
+              << ")"
+              << ", opacity=" << opacity << ", shininess=" << shininess
+              << ", refractionIndex=" << refractionIndex << '\n';
     material = core::factory::MaterialFactory::createDiffuse(albedo);
   }
 
