@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include "integrator/IIntegrator.hpp"
+#include "rendering/integrator/IIntegrator.hpp"
 
 namespace raytracer::core {
 

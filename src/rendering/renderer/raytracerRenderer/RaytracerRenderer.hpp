@@ -32,10 +32,10 @@
 #include <functional>
 #include "common/helper/Logger.hpp"
 #include "components/image/Image.hpp"
-#include "renderer/Frame.hpp"
-#include "renderer/IRenderer.hpp"
-#include "renderer/RendererConfig.hpp"
-#include "renderer/Tile.hpp"
+#include "rendering/renderer/Frame.hpp"
+#include "rendering/renderer/IRenderer.hpp"
+#include "rendering/renderer/RendererConfig.hpp"
+#include "rendering/renderer/Tile.hpp"
 
 namespace raytracer::shading {
 class IShadingMode;

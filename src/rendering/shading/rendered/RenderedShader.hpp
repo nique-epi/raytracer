@@ -26,7 +26,7 @@
 
 #include <memory>
 
-#include "shading/IShadingMode.hpp"
+#include "rendering/shading/IShadingMode.hpp"
 
 namespace raytracer::core {
 class IIntegrator;

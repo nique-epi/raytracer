@@ -17,7 +17,7 @@ target_link_libraries(raytracer_shading
   PUBLIC
     raytracer_math
     raytracer_scene
-    raytracer_shading_common
+    raytracer_rendering_helper
     raytracer_integrator
     raytracer_exceptions
 )

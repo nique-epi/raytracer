@@ -9,8 +9,8 @@
 
 #include <functional>
 #include "components/image/Image.hpp"
-#include "renderer/Frame.hpp"
-#include "renderer/RendererConfig.hpp"
+#include "rendering/renderer/Frame.hpp"
+#include "rendering/renderer/RendererConfig.hpp"
 
 namespace raytracer::core {
 

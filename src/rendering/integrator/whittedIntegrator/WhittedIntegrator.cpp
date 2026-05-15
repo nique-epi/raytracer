@@ -5,7 +5,7 @@
 ** WhittedIntegrator
 */
 
-#include "integrator/whittedIntegrator/WhittedIntegrator.hpp"
+#include "rendering/integrator/whittedIntegrator/WhittedIntegrator.hpp"
 
 #include <algorithm>
 #include <limits>
@@ -13,7 +13,7 @@
 #include "components/light/ILight.hpp"
 #include "components/material/IMaterial.hpp"
 #include "scene/Scene.hpp"
-#include "shading_common/ShadingHelpers.hpp"
+#include "rendering/helper/RenderingHelpers.hpp"
 #include "utils/math/Color.hpp"
 #include "utils/math/Constants.hpp"
 #include "utils/math/HitRecord.hpp"
@@ -27,10 +27,10 @@ using raytracer::math::HitRecord;
 using raytracer::math::Ray;
 using raytracer::math::Vector3D;
 using raytracer::scene::Scene;
-using raytracer::shading::common::normalAsColor;
-using raytracer::shading::common::unitShadingNormal;
+using raytracer::rendering::helper::normalAsColor;
+using raytracer::rendering::helper::unitShadingNormal;
 namespace mathConstants = raytracer::math::constants;
-namespace shadingCommon = raytracer::shading::common;
+namespace shadingCommon = raytracer::rendering::helper;
 
 Color lambertContributionFromLight(const ILight& light,
                                    const Vector3D& shadingPoint,

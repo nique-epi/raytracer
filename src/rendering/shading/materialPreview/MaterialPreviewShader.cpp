@@ -5,13 +5,13 @@
 ** MaterialPreviewShader
 */
 
-#include "shading/materialPreview/MaterialPreviewShader.hpp"
+#include "rendering/shading/materialPreview/MaterialPreviewShader.hpp"
 
 #include <limits>
 
 #include "components/material/IMaterial.hpp"
 #include "scene/Scene.hpp"
-#include "shading_common/ShadingHelpers.hpp"
+#include "rendering/helper/RenderingHelpers.hpp"
 #include "utils/math/Color.hpp"
 #include "utils/math/HitRecord.hpp"
 #include "utils/math/Ray.hpp"
@@ -24,9 +24,9 @@ using raytracer::math::HitRecord;
 using raytracer::math::Ray;
 using raytracer::math::Vector3D;
 using raytracer::scene::Scene;
-using raytracer::shading::common::normalAsColor;
-using raytracer::shading::common::unitShadingNormal;
-namespace shadingCommon = raytracer::shading::common;
+using raytracer::rendering::helper::normalAsColor;
+using raytracer::rendering::helper::unitShadingNormal;
+namespace shadingCommon = raytracer::rendering::helper;
 
 // NOLINTNEXTLINE(misc-no-recursion)
 Color shade(const Ray& ray, const Scene& scene, int depth);

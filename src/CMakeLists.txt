@@ -6,10 +6,7 @@ add_subdirectory(os)
 add_subdirectory(components)
 add_subdirectory(factory)
 add_subdirectory(scene)
-add_subdirectory(shading_common)
-add_subdirectory(integrator)
-add_subdirectory(shading)
-add_subdirectory(renderer)
+add_subdirectory(rendering)
 add_subdirectory(application)
 add_subdirectory(output)
 
@@ -30,7 +27,7 @@ target_link_libraries(raytracer_src
     raytracer_components
     raytracer_factory
     raytracer_scene
-    raytracer_shading_common
+    raytracer_rendering_helper
     raytracer_integrator
     raytracer_shading
     raytracer_renderer

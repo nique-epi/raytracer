@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "shading/IShadingMode.hpp"
+#include "rendering/shading/IShadingMode.hpp"
 
 namespace raytracer::shading {
 

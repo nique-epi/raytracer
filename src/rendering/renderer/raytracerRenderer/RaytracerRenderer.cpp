@@ -15,10 +15,10 @@
 
 #include "components/camera/ICamera.hpp"
 #include "os/threads/ThreadPool.hpp"
-#include "renderer/RendererException.hpp"
+#include "rendering/renderer/RendererException.hpp"
 #include "scene/Scene.hpp"
-#include "shading/IShadingMode.hpp"
-#include "shading/ShadingContext.hpp"
+#include "rendering/shading/IShadingMode.hpp"
+#include "rendering/shading/ShadingContext.hpp"
 #include "utils/math/Color.hpp"
 #include "utils/math/Ray.hpp"
 

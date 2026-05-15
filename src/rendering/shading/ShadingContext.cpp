@@ -5,12 +5,12 @@
 ** ShadingContext
 */
 
-#include "shading/ShadingContext.hpp"
+#include "rendering/shading/ShadingContext.hpp"
 
 #include <utility>
 
-#include "shading/IShadingMode.hpp"
-#include "shading/ShadingException.hpp"
+#include "rendering/shading/IShadingMode.hpp"
+#include "rendering/shading/ShadingException.hpp"
 
 namespace raytracer::shading {
 

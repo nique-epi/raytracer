@@ -14,7 +14,7 @@ target_link_libraries(raytracer_integrator
   PUBLIC
     raytracer_math
     raytracer_scene
-    raytracer_shading_common
+    raytracer_rendering_helper
 )
 
 raytracer_enable_target_warnings(raytracer_integrator)

@@ -2,16 +2,16 @@
 ** EPITECH PROJECT, 2026
 ** raytracer
 ** File description:
-** Helpers shared between every integrator and every viewport shader
+** Helpers shared between every integrator, shader, and renderer
 */
 
-#include "shading_common/ShadingHelpers.hpp"
+#include "rendering/helper/RenderingHelpers.hpp"
 
 #include <cmath>
 
 #include "utils/math/Constants.hpp"
 
-namespace raytracer::shading::common {
+namespace raytracer::rendering::helper {
 
 math::Vector3D unitShadingNormal(const math::HitRecord& record) {
   const double lengthSquared = record.normal.lengthSquared();
@@ -27,4 +27,4 @@ math::Color normalAsColor(const math::Vector3D& normal) {
           (normal.z * math::constants::HALF) + math::constants::HALF};
 }
 
-}  // namespace raytracer::shading::common
+}  // namespace raytracer::rendering::helper

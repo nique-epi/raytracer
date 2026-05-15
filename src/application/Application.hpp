@@ -9,7 +9,7 @@
 #include <string>
 #include "common/helper/Logger.hpp"
 #include "factory/ComponentFactory.hpp"
-#include "renderer/raytracerRenderer/RaytracerRenderer.hpp"
+#include "rendering/renderer/raytracerRenderer/RaytracerRenderer.hpp"
 #include "scene/SceneLoaderFactory.hpp"
 namespace raytracer::core {
 class Application {

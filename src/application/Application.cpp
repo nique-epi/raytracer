@@ -14,20 +14,20 @@
 #include <mutex>
 #include "components/image/Image.hpp"
 #include "exceptions/Exceptions.hpp"
-#include "integrator/whittedIntegrator/WhittedIntegrator.hpp"
 #include "output/ppm/ppm.hpp"
-#include "renderer/Frame.hpp"
-#include "renderer/RendererConfig.hpp"
-#include "renderer/raytracerRenderer/RaytracerRenderer.hpp"
+#include "rendering/integrator/whittedIntegrator/WhittedIntegrator.hpp"
+#include "rendering/renderer/Frame.hpp"
+#include "rendering/renderer/RendererConfig.hpp"
+#include "rendering/renderer/raytracerRenderer/RaytracerRenderer.hpp"
+#include "rendering/shading/IShadingMode.hpp"
+#include "rendering/shading/ShadingContext.hpp"
+#include "rendering/shading/materialPreview/MaterialPreviewShader.hpp"
+#include "rendering/shading/rendered/RenderedShader.hpp"
+#include "rendering/shading/wireframe/WireframeShader.hpp"
 #include "scene/CFGSceneLoader.hpp"
 #include "scene/Scene.hpp"
 #include "scene/SceneBuilder.hpp"
 #include "scene/World.hpp"
-#include "shading/IShadingMode.hpp"
-#include "shading/ShadingContext.hpp"
-#include "shading/materialPreview/MaterialPreviewShader.hpp"
-#include "shading/rendered/RenderedShader.hpp"
-#include "shading/wireframe/WireframeShader.hpp"
 #include "utils/math/RenderSettings.hpp"
 
 #ifdef BUILD_BONUS
@@ -65,17 +65,8 @@ std::shared_ptr<shading::ShadingContext> createShadingContext(
 
   return std::make_shared<shading::ShadingContext>(std::move(initialStrategy));
 }
-}  // namespace
 
-Application::Application() {
-  _factory.registerLoader(std::make_shared<scene::CFGSceneLoader>());
-
-#ifdef BUILD_BONUS
-  raytracer::bonus::registerAssimpLoader(_factory);
-#endif
-}
-
-static void displayProgressBar(RaytracerRenderer& renderer) {
+void displayProgressBar(RaytracerRenderer& renderer) {
   if (::isatty(::fileno(stderr)) != 0) {
     static constexpr int progressBarWidth = 30;
     const auto progressState = std::make_shared<ProgressBarState>();
@@ -97,6 +88,15 @@ static void displayProgressBar(RaytracerRenderer& renderer) {
       }
     });
   }
+}
+}  // namespace
+
+Application::Application() {
+  _factory.registerLoader(std::make_shared<scene::CFGSceneLoader>());
+
+#ifdef BUILD_BONUS
+  raytracer::bonus::registerAssimpLoader(_factory);
+#endif
 }
 
 int Application::run(const std::string& scenePath, bool useBVH) {

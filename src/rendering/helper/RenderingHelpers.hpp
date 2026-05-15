@@ -2,28 +2,29 @@
 ** EPITECH PROJECT, 2026
 ** raytracer
 ** File description:
-** Helpers shared between every integrator and every viewport shader
+** Helpers shared between every integrator, shader, and renderer
 */
 
 /**
- * @file ShadingHelpers.hpp
- * @brief Small kernel of helpers used by every concrete `IIntegrator`
- *        and every concrete `IShadingMode`.
+ * @file RenderingHelpers.hpp
+ * @brief Small kernel of helpers used by every concrete `IIntegrator`,
+ *        `IShadingMode`, and `IRenderer` in `src/rendering/`.
  *
- * Lives outside both `integrator/` and `shading/` so it can be linked
- * by both without creating a cycle. Depends only on `raytracer_math`
- * for the geometric types it operates on; no knowledge of the
- * integrator or shading interfaces themselves.
+ * Lives in `src/rendering/helper/` and depends only on
+ * `raytracer_math` for the geometric types it operates on. No
+ * knowledge of the integrator, shading, or renderer interfaces
+ * themselves — anything in `src/rendering/` may link it without
+ * creating a cycle.
  */
 
-#ifndef SHADING_COMMON_SHADINGHELPERS_HPP_
-#define SHADING_COMMON_SHADINGHELPERS_HPP_
+#ifndef RENDERING_HELPER_RENDERINGHELPERS_HPP_
+#define RENDERING_HELPER_RENDERINGHELPERS_HPP_
 
 #include "utils/math/Color.hpp"
 #include "utils/math/HitRecord.hpp"
 #include "utils/math/Vector3D.hpp"
 
-namespace raytracer::shading::common {
+namespace raytracer::rendering::helper {
 
 /**
  * @brief Minimum @c t value used when intersecting primary or secondary
@@ -57,6 +58,6 @@ math::Vector3D unitShadingNormal(const math::HitRecord& record);
  */
 math::Color normalAsColor(const math::Vector3D& normal);
 
-}  // namespace raytracer::shading::common
+}  // namespace raytracer::rendering::helper
 
-#endif  // SHADING_COMMON_SHADINGHELPERS_HPP_
+#endif  // RENDERING_HELPER_RENDERINGHELPERS_HPP_

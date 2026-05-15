@@ -5,12 +5,12 @@
 ** RenderedShader
 */
 
-#include "shading/rendered/RenderedShader.hpp"
+#include "rendering/shading/rendered/RenderedShader.hpp"
 
 #include <utility>
 
-#include "integrator/IIntegrator.hpp"
-#include "shading/ShadingException.hpp"
+#include "rendering/integrator/IIntegrator.hpp"
+#include "rendering/shading/ShadingException.hpp"
 
 namespace raytracer::shading {
 
