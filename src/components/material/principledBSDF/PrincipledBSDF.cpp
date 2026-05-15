@@ -16,6 +16,7 @@
 
 namespace {
 constexpr double transparencyRayEpsilon = 1e-4;
+constexpr double maximumSpecularBoost = 0.25;
 
 double generateRandomDouble() {
   thread_local std::mt19937 generator(std::random_device{}());
@@ -62,8 +63,12 @@ bool PrincipledMaterial::scatter(const raytracer::math::Ray& in,
   const double refractiveIndexRatio = rec.frontFace ? (1.0 / ior_) : ior_;
   const double fresnelReflectance = math::Optics::schlick(
       cosineBetweenIncomingAndNormal, refractiveIndexRatio);
+  const double specularBoost =
+      maximumSpecularBoost * (1.0 - roughness_) * (1.0 - metallic_);
+  const double specularProbability =
+      std::clamp(fresnelReflectance + specularBoost, 0.0, 1.0);
 
-  if (generateRandomDouble() < fresnelReflectance) {
+  if (generateRandomDouble() < specularProbability) {
     return scatterSpecularReflection(in, rec, attenuation, scattered);
   }
 
