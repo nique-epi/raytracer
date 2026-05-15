@@ -6,31 +6,47 @@
 */
 
 #include "Application.hpp"
+#include <unistd.h>
 #include <algorithm>
 #include <chrono>
 #include <cstdint>
+#include <cstdio>
 #include <iomanip>
 #include <iostream>
 #include <memory>
+#include <mutex>
 #include <sstream>
+#include "common/helper/Logger.hpp"
 #include "components/image/Image.hpp"
 #include "exceptions/Exceptions.hpp"
 #include "output/ppm/ppm.hpp"
-#include "renderer/Frame.hpp"
-#include "renderer/RendererConfig.hpp"
-#include "renderer/monoThreadRenderer/MonoThreadRenderer.hpp"
+#include "rendering/integrator/whittedIntegrator/WhittedIntegrator.hpp"
+#include "rendering/renderer/Frame.hpp"
+#include "rendering/renderer/RendererConfig.hpp"
+#include "rendering/renderer/raytracerRenderer/RaytracerRenderer.hpp"
+#include "rendering/shading/IShadingMode.hpp"
+#include "rendering/shading/ShadingContext.hpp"
+#include "rendering/shading/materialPreview/MaterialPreviewShader.hpp"
+#include "rendering/shading/rendered/RenderedShader.hpp"
+#include "rendering/shading/wireframe/WireframeShader.hpp"
 #include "scene/CFGSceneLoader.hpp"
 #include "scene/Scene.hpp"
 #include "scene/SceneBuilder.hpp"
+#include "scene/World.hpp"
 #include "utils/math/RenderSettings.hpp"
 
 #ifdef BUILD_BONUS
 #include "Assimp/SceneLoader/AssimpLoaderRegistration.hpp"
+#include "postprocess/denoise/OIDDenoiser.hpp"
 #endif
 
 namespace raytracer::core {
 
 namespace {
+struct ProgressBarState {
+  std::mutex mutex;
+  int lastDrawnPercent{-1};
+};
 
 std::string formatRemainingTime(std::int64_t remainingSeconds) {
   const auto hours = remainingSeconds / 3600;
@@ -46,28 +62,72 @@ std::string formatRemainingTime(std::int64_t remainingSeconds) {
   return stream.str();
 }
 
-void printRenderProgress(
-    double progress, const std::chrono::steady_clock::time_point& renderStart) {
-  const int percent = static_cast<int>(progress * 100);
-  std::string remainingTime;
+std::shared_ptr<shading::ShadingContext> createShadingContext(
+    const scene::Scene& scene) {
+  auto wireframe = std::make_shared<shading::WireframeShader>();
+  auto materialPreview = std::make_shared<shading::MaterialPreviewShader>();
+  auto rendered = std::make_shared<shading::RenderedShader>(
+      std::make_shared<WhittedIntegrator>());
 
-  if (progress > 0.0 && progress < 1.0) {
-    const auto elapsedSeconds =
-        std::chrono::duration<double>(std::chrono::steady_clock::now() -
-                                      renderStart)
-            .count();
-    const auto estimatedTotalSeconds = elapsedSeconds / progress;
-    const auto remainingSeconds = std::max<std::int64_t>(
-        0, static_cast<std::int64_t>(estimatedTotalSeconds - elapsedSeconds));
-    remainingTime = " ETA " + formatRemainingTime(remainingSeconds);
+  std::shared_ptr<shading::IShadingMode> initialStrategy;
+  switch (scene.getWorld().viewportMode()) {
+    case scene::ViewportMode::Wireframe:
+      initialStrategy = wireframe;
+      break;
+    case scene::ViewportMode::MaterialPreview:
+      initialStrategy = materialPreview;
+      break;
+    case scene::ViewportMode::Rendered:
+      initialStrategy = rendered;
+      break;
   }
 
-  std::cerr << "\rRendering: " << percent << "%" << remainingTime << std::flush;
-  if (progress >= 1.0) {
-    std::cerr << "\n";
-  }
+  return std::make_shared<shading::ShadingContext>(std::move(initialStrategy));
 }
 
+void displayProgressBar(RaytracerRenderer& renderer) {
+  static raytracer::common::Logger logger{"RendererProgress"};
+  static constexpr int progressBarWidth = 30;
+
+  const auto progressState = std::make_shared<ProgressBarState>();
+  const auto startTime = std::chrono::steady_clock::now();
+
+  renderer.setProgressCallback([progressState, startTime](double progress) {
+    const int percent = static_cast<int>(progress * 100.0);
+    const std::lock_guard<std::mutex> lock(progressState->mutex);
+    if (percent <= progressState->lastDrawnPercent) {
+      return;
+    }
+    progressState->lastDrawnPercent = percent;
+
+    const auto now = std::chrono::steady_clock::now();
+    const auto elapsed =
+        std::chrono::duration_cast<std::chrono::seconds>(now - startTime)
+            .count();
+
+    std::int64_t remainingSeconds = 0;
+    if (progress > 0.0 && progress < 1.0) {
+      remainingSeconds = static_cast<std::int64_t>(
+          static_cast<double>(elapsed) * (1.0 - progress) / progress);
+    }
+
+    const int filled = (percent * progressBarWidth) / 100;
+    std::ostringstream bar;
+    bar << "[";
+    for (int i = 0; i < progressBarWidth; ++i) {
+      bar << (i < filled ? "█" : "░");
+    }
+    bar << "] " << std::setw(3) << percent << "%";
+
+    if (progress >= 1.0) {
+      logger.info("Rendering complete. Duration=",
+                  formatRemainingTime(elapsed));
+    } else {
+      logger.info("Rendering ", bar.str(),
+                  " remaining=", formatRemainingTime(remainingSeconds));
+    }
+  });
+}
 }  // namespace
 
 Application::Application() {
@@ -78,7 +138,7 @@ Application::Application() {
 #endif
 }
 
-int Application::run(const std::string& scenePath) {
+int Application::run(const std::string& scenePath, bool useBVH) {
   const auto loader = _factory.getLoader(scenePath);
   if (!loader) {
     throw RaytracerException("No loader available for: " + scenePath);
@@ -93,22 +153,25 @@ int Application::run(const std::string& scenePath) {
     throw RaytracerException("Invalid render settings loaded from: " +
                              scenePath);
   }
-
   auto scene = builder.build();
+  if (useBVH) {
+    scene->buildBVH();
+  }
   scene->getCamera()->setResolution(settings.imageWidth, settings.imageHeight);
 
-  MonoThreadRenderer renderer;
-  const auto renderStart = std::chrono::steady_clock::now();
-  renderer.setProgressCallback([renderStart](double progress) {
-    printRenderProgress(progress, renderStart);
-  });
+  RaytracerRenderer renderer;
+  displayProgressBar(renderer);
+  auto shadingContext = createShadingContext(*scene);
 
   const RendererConfig config{
-      .scene = scene, .settings = settings, .integrator = nullptr};
+      .scene = scene, .settings = settings, .shadingContext = shadingContext};
   const Frame frame{.camera = scene->getCamera()};
-  const components::Image image = renderer.render(config, frame);
+  components::Image image = renderer.render(config, frame);
 
   output::ppm writer;
+#ifdef BUILD_BONUS
+  OIDDenoiser::denoise(image);
+#endif
   writer.write(image, "out.ppm");
   return 0;
 }

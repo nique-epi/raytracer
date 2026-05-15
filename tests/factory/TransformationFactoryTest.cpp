@@ -48,6 +48,26 @@ TEST(TransformationFactoryTest, CreateRotationFromCfgReturnsNonNull) {
 TEST(TransformationFactoryTest, CreateUnknownTypeThrows) {
   CfgFromString cfg("entry = { };");
   EXPECT_THROW(static_cast<void>(
-                   TransformationFactory::create("scale", cfg.at("entry"))),
+                   TransformationFactory::create("shear", cfg.at("entry"))),
                raytracer::core::RaytracerException);
+}
+
+TEST(TransformationFactoryTest, DefaultScaleIsIdentity) {
+  auto scaleTransform = TransformationFactory::createScale();
+  ASSERT_NE(scaleTransform, nullptr);
+  const Vector3D point{2.0, 3.0, 4.0};
+  const auto applied = scaleTransform->apply(point);
+  EXPECT_DOUBLE_EQ(applied.x, point.x);
+  EXPECT_DOUBLE_EQ(applied.y, point.y);
+  EXPECT_DOUBLE_EQ(applied.z, point.z);
+}
+
+TEST(TransformationFactoryTest, CreateScaleFromCfgAppliesFactor) {
+  CfgFromString cfg("scale = { factor = { x = 2.0; y = 3.0; z = 4.0; }; };");
+  auto scaleTransform = TransformationFactory::create("scale", cfg.at("scale"));
+  ASSERT_NE(scaleTransform, nullptr);
+  const auto applied = scaleTransform->apply({1.0, 1.0, 1.0});
+  EXPECT_DOUBLE_EQ(applied.x, 2.0);
+  EXPECT_DOUBLE_EQ(applied.y, 3.0);
+  EXPECT_DOUBLE_EQ(applied.z, 4.0);
 }

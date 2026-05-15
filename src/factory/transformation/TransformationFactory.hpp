@@ -55,12 +55,22 @@ class TransformationFactory {
       const math::Vector3D& axis = {0.0, 0.0, 1.0}, double angle = 0.0);
 
   /**
+   * @brief Create a scale transformation.
+   *
+   * @param [in] factor Per-axis scale factors (default: identity (1, 1, 1)).
+   * @returns Shared pointer to the freshly constructed transformation.
+   */
+  [[nodiscard]] static std::shared_ptr<ITransformation> createScale(
+      const math::Vector3D& factor = {1.0, 1.0, 1.0});
+
+  /**
    * @brief Dispatch by type name and parse @p cfg into typed arguments.
    *
-   * Supported type names: `"translation"`, `"rotation"`.
+   * Supported type names: `"translation"`, `"rotation"`, `"scale"`.
    *
    * @param [in] type Type discriminant (one of the supported names above).
-   * @param [in] cfg  libconfig setting; absent fields keep their typed defaults.
+   * @param [in] cfg  libconfig setting; absent fields keep their typed
+   * defaults.
    * @returns Shared pointer to the freshly constructed transformation.
    *
    * @throws raytracer::core::RaytracerException If @p type is unknown.

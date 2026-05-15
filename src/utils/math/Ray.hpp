@@ -24,11 +24,13 @@ class Ray {
 
   [[nodiscard]] const Vector3D& getOrigin() const;
   [[nodiscard]] const Vector3D& getDirection() const;
+  [[nodiscard]] const Vector3D& getInverseDirection() const;
   [[nodiscard]] Vector3D at(double t) const;
 
  private:
   Vector3D _origin;
   Vector3D _direction;
+  Vector3D _inverseDirection;
 };
 
 }  // namespace raytracer::math

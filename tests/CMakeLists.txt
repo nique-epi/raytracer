@@ -87,16 +87,19 @@ add_executable(raytracer_tests
   utils/math/OpticsTest.cpp
   scene/CFGSceneLoaderTest.cpp
   scene/SceneBuilderTest.cpp
+  scene/TransformsParserTest.cpp
   scene/SceneExceptionTest.cpp
   scene/SceneTest.cpp
   scene/background/SolidBackgroundTest.cpp
   scene/background/GradientBackgroundTest.cpp
   exceptions/ExceptionsTest.cpp
-  renderer/BasicRendererTest.cpp
   renderer/RendererViewportModeTest.cpp
+  renderer/TileTest.cpp
+  renderer/RaytracerRendererTest.cpp
   config/ConfigExceptionTest.cpp
   components/image/ImageTest.cpp
   components/image/ImageExceptionTest.cpp
+  components/Primitives/BVHTest.cpp
   components/Primitives/CollectionTest.cpp
 	components/Primitives/TransformedObjectTest.cpp
   components/light/PointLightTest.cpp
@@ -110,6 +113,9 @@ add_executable(raytracer_tests
   factory/MaterialFactoryTest.cpp
   factory/CameraFactoryTest.cpp
   factory/TransformationFactoryTest.cpp
+  common/helper/QueueTest.cpp
+  common/helper/LoggerTest.cpp
+  os/threads/ThreadPoolTest.cpp
   components/material/textures/SolidColorTest.cpp
   components/material/textures/CheckerTextureTest.cpp
   components/material/TexturedMaterialTest.cpp
@@ -121,12 +127,13 @@ add_executable(raytracer_tests
   fixtures/ComponentFactoryFixture.cpp
   scene/fixtures/NullLightFixture.cpp
   scene/fixtures/SceneBuilderFixture.cpp
+  scene/fixtures/TransformsBuilderFixture.cpp
 )
 
 target_include_directories(raytracer_tests
 	PRIVATE
 		${CMAKE_SOURCE_DIR}/src
-
+		${CMAKE_SOURCE_DIR}/tests
 )
 
 target_compile_definitions(raytracer_tests
@@ -139,6 +146,7 @@ target_link_libraries(raytracer_tests
   PRIVATE
     raytracer_src
 	raytracer_translation
+	raytracer_scale
     raytracer_tests_helpers
     GTest::gtest_main
 )

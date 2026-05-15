@@ -325,3 +325,284 @@ class MonoThreadRenderer : public IRenderer {
     LightingMode lightingMode_{LightingMode::Whitted};
 };
 ```
+
+### R8 — Logger : instance par module, pas de macros, pas de debug-only
+
+**Règle :** toute classe qui veut logger doit posséder son propre membre
+`raytracer::common::Logger logger_{"NomDuModule"};` et appeler les
+méthodes d'instance (`logger_.info(...)`, `.warn`, `.error`, `.debug`,
+`.trace`, `.scope`). Les anciennes macros `RT_LOG_*` et l'API
+statique `Logger::log(...)` sont **interdites** et n'existent plus.
+Le filtrage compile-time se fait **uniquement** via la variable CMake
+`LOG_LEVEL` (traduite en `RT_LOG_BUILD_LEVEL`) ; on n'utilise plus
+`#ifdef NDEBUG` pour décider si un log existe ou pas.
+
+**Pourquoi :** le Logger est une *facility applicative*, pas un outil
+de debug. Il doit fonctionner en release et produire les logs utiles à
+toute application (démarrage, fin, erreurs, durée). Le nom de module
+appartient à la classe et est paié une seule fois à la construction :
+le passer en string à chaque appel est redondant et fragile (typo,
+oubli). Les méthodes (vs macros) gagnent typage, auto-complete, et un
+debugger qui voit les appels — le filtrage compile-time est obtenu via
+`if constexpr (isCompiledIn(...))`, qui supprime le code aussi
+proprement qu'un `#ifdef`. Enfin, le défaut runtime `Info` garantit
+qu'une exécution normale n'affiche aucun bruit `Debug`.
+
+**À appliquer :** toute nouvelle classe qui log, et toute classe
+existante touchée lors d'un refactoring. Pour un module qui logge
+ponctuellement depuis une fonction libre, on accepte un
+`Logger("ModuleName")` local — mais le pattern par défaut reste le
+membre d'instance. Pour mesurer une durée : `auto timer =
+logger_.scope("label");` (RAII, niveau `Info` par défaut).
+
+**Exemple interdit :**
+
+```cpp
+// API statique disparue : INTERDIT
+raytracer::common::Logger::log(LogLevel::Info, "Renderer", "hello");
+
+// Macros disparues : INTERDIT
+RT_LOG_INFO("Renderer", "starting render " << w << 'x' << h);
+
+// #ifdef NDEBUG pour conditionner un log : INTERDIT
+#ifndef NDEBUG
+  std::cerr << "[debug] pool=" << n << '\n';
+#endif
+
+// Logger statique recréé à chaque appel : INTERDIT
+void Foo::run() {
+    raytracer::common::Logger("Foo").info("local instance throwaway");
+}
+```
+
+**Exemple correct :**
+
+```cpp
+class RaytracerRenderer : public IRenderer {
+ private:
+    raytracer::common::Logger logger_{"Renderer"};
+
+ public:
+    components::Image render(...) {
+        auto timer = logger_.scope("render()");
+        logger_.info("starting render ", w, 'x', h,
+                     ", samples=", samples);
+        if (tiles.empty()) {
+            logger_.warn("no tiles produced");
+            return image;
+        }
+        logger_.debug("ThreadPool spawned ", n, " worker(s)");
+        // …
+    }
+};
+```
+
+**Configuration de niveau :**
+
+- Compile-time : `cmake -B build -DLOG_LEVEL=info` strippe `debug` et
+  `trace` du binaire. Défaut : `info` en `Release`, `trace` ailleurs.
+- Runtime : `RT_LOG_LEVEL=debug ./raytracer …` ou
+  `Logger::setLevel(LogLevel::Debug)`. Défaut : `Info`.
+
+### R9 — Le shading vit dans l'intégrateur, jamais dans le renderer
+
+**Règle :** toute la logique de shading (intersection → couleur) doit
+vivre dans une classe implémentant `IIntegrator` (typiquement
+`PathIntegrator`). Un renderer (`MonoThreadRenderer`,
+`RaytracerRenderer`, futurs ports GPU) n'a qu'**une seule** raison de
+toucher au shading : appeler
+`config.integrator->computeRadiance(ray, scene, settings.maxDepth)`
+pour chaque rayon primaire qu'il génère. **Aucun** `castRay`,
+`shade`, `shadeWireframe`, `shadeMaterialPreview`, `shadeRendered`,
+helper Lambert, ni dispatch de `ViewportMode` ne doit apparaître dans
+un fichier de renderer.
+
+Si `config.integrator == nullptr`, le renderer doit **lever une
+exception** au début de `render()` — surtout pas se rabattre sur une
+implémentation locale du shading, ce qui rouvrirait la porte à la
+divergence.
+
+**Pourquoi :** le shading est la seule logique métier *partagée* entre
+le mono-thread et le multi-thread. Le dupliquer entre deux renderers
+(comme c'était le cas avant) garantit la dérive : un fix appliqué d'un
+côté ne suit pas de l'autre, le rendu multi-thread sort des couleurs
+légèrement différentes du mono-thread, et la régression est invisible
+jusqu'à comparaison pixel-à-pixel. En centralisant côté `IIntegrator`,
+les deux renderers partagent **exactement** la même chaîne et le test
+`RaytracerRendererTest.ProducesSameImageAsMonoThread` peut être
+strictement `EXPECT_TRUE(pixelsEqual(...))`. Bonus : ajouter un futur
+intégrateur (BDPT, MLT, GPU compute) revient à écrire une seule classe,
+pas à modifier deux renderers.
+
+**À appliquer :** toute nouvelle implémentation de renderer, toute
+modification de renderer existant. Quand on touche un renderer et que
+l'IDE complète vers une fonction `shade*` ou `castRay`, c'est le signe
+qu'on est dans la mauvaise classe — passer côté `IIntegrator`.
+
+**Exemple interdit :**
+
+```cpp
+// dans RaytracerRenderer.cpp — INTERDIT
+namespace {
+math::Color castRay(const math::Ray& ray,
+                    const scene::Scene& scene, int depth,
+                    bool isPrimary) {
+    // … logique de shading dupliquée …
+}
+}
+
+components::Image RaytracerRenderer::render(...) {
+    for (const Tile& tile : tiles) {
+        // …
+        const math::Color color =
+            castRay(ray, scene, settings.maxDepth, true);  // INTERDIT
+        image.setPixel(x, y, color);
+    }
+}
+```
+
+```cpp
+// dans MonoThreadRenderer.cpp — fallback silencieux INTERDIT
+components::Image MonoThreadRenderer::render(const RendererConfig& config,
+                                              const Frame& frame) {
+    auto integrator = config.integrator
+        ? config.integrator
+        : std::make_shared<PathIntegrator>();  // INTERDIT (fallback silencieux)
+    // …
+}
+```
+
+**Exemple correct :**
+
+```cpp
+// PathIntegrator.cpp — TOUTE la logique de shading vit ici
+math::Color PathIntegrator::computeRadiance(const math::Ray& ray,
+                                            const scene::Scene& scene,
+                                            int depth) {
+    return castRay(ray, scene, depth, /*isPrimary=*/true);
+}
+
+// Renderer — appel unique, pas de logique métier
+components::Image RaytracerRenderer::render(const RendererConfig& config,
+                                             const Frame& frame) {
+    if (!config.integrator) {
+        throw std::invalid_argument(
+            "RaytracerRenderer::render requires RendererConfig.integrator");
+    }
+    IIntegrator& integrator = *config.integrator;
+    // … boucle pixels …
+    const math::Color color =
+        integrator.computeRadiance(ray, scene, settings.maxDepth);
+    image.setPixel(x, y, color);
+}
+
+// Application — wiring explicite
+const RendererConfig config{
+    .scene = scene,
+    .settings = settings,
+    .integrator = std::make_shared<PathIntegrator>()};
+```
+
+### R10 — Aucun commentaire dans le corps des fonctions
+
+**Règle :** le corps d'une fonction, méthode, ou lambda **ne doit
+contenir aucun commentaire** (`//`, `/* … */`, ni paragraphe explicatif,
+ni hint type `/*paramName=*/`). La seule documentation autorisée vit
+**au-dessus** des déclarations dans les `.hpp`, sous forme **Doxygen**
+(`/** … */` avec `@brief`, `@param`, `@returns`).
+
+**Pourquoi :** un commentaire dans une fonction décrit *ce que fait* le
+code à côté — information que le code lui-même exprime déjà quand les
+identifiants sont bien nommés (cf. R6). Quand le code change, le
+commentaire pourrit silencieusement et finit par mentir. La doc Doxygen
+au-dessus des déclarations a deux avantages décisifs : (1) elle est
+extraite par l'outillage (clang-doc, Doxygen, IDE tooltips) et apparaît
+au point d'appel sans avoir à ouvrir le `.cpp` ; (2) elle décrit le
+**contrat** (entrées, sorties, invariants) qui change beaucoup moins
+souvent que l'implémentation.
+
+**À appliquer :** toute nouvelle fonction et toute fonction touchée
+lors d'un refactoring. Si on ressent le besoin d'expliquer une portion
+de logique dans le corps, c'est le signe qu'il faut soit (a) extraire
+une fonction nommée, soit (b) renommer une variable. Le commentaire
+n'est jamais la bonne réponse.
+
+**Exceptions techniques limitées :**
+
+- **Directives de tooling** (`// NOLINTNEXTLINE(rule)`,
+  `// clang-format off`, `// NOLINTBEGIN/END`) — ce ne sont pas des
+  commentaires narratifs, c'est de la configuration adressée à un outil.
+- **Bannière d'en-tête de fichier** (le bloc `EPITECH PROJECT, 2026 …`)
+  imposée par la norme Epitech.
+- **Doxygen au-dessus d'une déclaration interne** (helper privé, free
+  function locale en namespace anonyme) — autorisé si le helper est
+  réutilisé dans le fichier et que sa sémantique mérite un contrat
+  explicite. À éviter pour les helpers utilisés une seule fois.
+
+**Exemple interdit :**
+
+```cpp
+math::Color shadeRendered(const math::Ray& inRay, const HitRecord& record,
+                          const scene::Scene& scene, int depth) {
+    // Compute the unit normal first so the cosine factor is correct.
+    const Vector3D unitNormal = unitShadingNormal(record);
+    // Offset the shading point along the normal to avoid self-shadowing.
+    const Vector3D shadingPoint =
+        record.point + (unitNormal * shadowRayEpsilon);
+    // Iterate over the lights and sum the Lambert contribution.
+    Color directLighting(0, 0, 0);
+    for (const auto& light : scene.getLights()) {
+        directLighting = directLighting +
+                         lambertContributionFromLight(*light, shadingPoint,
+                                                      unitNormal,
+                                                      record.material->diffuseAlbedo(),
+                                                      scene);
+    }
+    return directLighting;
+}
+
+// hint paramètre — INTERDIT
+castRay(scattered, scene, depth - 1, /*isPrimary=*/false);
+```
+
+**Exemple correct :**
+
+```cpp
+/**
+ * @brief Whitted-style direct lighting + indirect bounce for the
+ *        `Rendered` viewport mode.
+ *
+ * @param[in] inRay   The incoming ray hitting @p record.
+ * @param[in] record  Hit record produced by the scene intersection.
+ * @param[in] scene   Scene queried for lights, occlusion, and background.
+ * @param[in] depth   Remaining bounce budget for the indirect scatter.
+ * @returns Linear-space radiance carried back along @p inRay.
+ */
+math::Color shadeRendered(const math::Ray& inRay,
+                          const math::HitRecord& record,
+                          const scene::Scene& scene,
+                          int depth);
+```
+
+```cpp
+math::Color shadeRendered(const math::Ray& inRay,
+                          const math::HitRecord& record,
+                          const scene::Scene& scene,
+                          int depth) {
+    const Vector3D unitNormal = unitShadingNormal(record);
+    const Vector3D shadingPoint =
+        record.point + (unitNormal * shadowRayEpsilon);
+
+    Color directLighting(0, 0, 0);
+    for (const auto& light : scene.getLights()) {
+        directLighting =
+            directLighting +
+            lambertContributionFromLight(*light, shadingPoint, unitNormal,
+                                         record.material->diffuseAlbedo(),
+                                         scene);
+    }
+    return directLighting;
+}
+
+castRay(scattered, scene, depth - 1, false);
+```

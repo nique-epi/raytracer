@@ -7,8 +7,10 @@
 
 #include <gtest/gtest.h>
 #include "exceptions/Exceptions.hpp"
-#include "../fixtures/ComponentFactoryFixture.hpp"
-#include "fixtures/SceneBuilderFixture.hpp"
+#include "fixtures/ComponentFactoryFixture.hpp"
+#include "fixtures/SphereFixture.hpp"
+#include "scene/fixtures/SceneBuilderFixture.hpp"
+#include "scene/fixtures/TransformsBuilderFixture.hpp"
 #include "scene/SceneBuilder.hpp"
 
 using raytracer::scene::SceneBuilder;
@@ -148,4 +150,45 @@ TEST_F(SceneBuilderFixture, CountReturnsZeroForUnseenType) {
   EXPECT_EQ(builder.count("sphere"), 0u);
   EXPECT_EQ(builder.count("camera"), 0u);
   EXPECT_EQ(builder.count("anything"), 0u);
+}
+
+// Given: a builder backed by a real sphere creator and translation factory.
+// When:  addObject parses a sphere(center=0,r=0.5) with translation(10,0,0).
+// Then:  the resulting scene hits identically to a sphere(center=10,0,0).
+TEST_F(TransformsBuilderFixture, AddObjectAppliesTransformsInScene) {
+  SceneBuilder builder(factory_);
+  libconfig::Config config;
+  auto& sphereCfg =
+      config.getRoot().add("sphere", libconfig::Setting::TypeGroup);
+  auto& transforms =
+      sphereCfg.add("transforms", libconfig::Setting::TypeList);
+  auto& entry = transforms.add(libconfig::Setting::TypeGroup);
+  entry.add("type", libconfig::Setting::TypeString) = "translation";
+  auto& offset = entry.add("offset", libconfig::Setting::TypeGroup);
+  offset.add("x", libconfig::Setting::TypeFloat) = 10.0;
+  offset.add("y", libconfig::Setting::TypeFloat) = 0.0;
+  offset.add("z", libconfig::Setting::TypeFloat) = 0.0;
+  auto& cameraCfg =
+      config.getRoot().add("camera", libconfig::Setting::TypeGroup);
+  auto& lightCfg =
+      config.getRoot().add("light", libconfig::Setting::TypeGroup);
+
+  builder.addObject("sphere", sphereCfg);
+  builder.addCamera(cameraCfg);
+  builder.addLight("ambient", lightCfg);
+  auto scene = builder.build();
+
+  const raytracer::math::Ray ray(raytracer::math::Vector3D(0.0, 0.0, 0.0),
+                                 raytracer::math::Vector3D(1.0, 0.0, 0.0));
+  raytracer::math::HitRecord transformedRec;
+  ASSERT_TRUE(scene->hit(ray, 0.001, 1000.0, transformedRec));
+
+  SphereFixture direct(raytracer::math::Vector3D(10.0, 0.0, 0.0), 0.5);
+  raytracer::math::HitRecord directRec;
+  ASSERT_TRUE(direct.hits(ray, 0.001, 1000.0, directRec));
+
+  EXPECT_NEAR(transformedRec.t, directRec.t, 1e-9);
+  EXPECT_NEAR(transformedRec.point.x, directRec.point.x, 1e-9);
+  EXPECT_NEAR(transformedRec.point.y, directRec.point.y, 1e-9);
+  EXPECT_NEAR(transformedRec.point.z, directRec.point.z, 1e-9);
 }

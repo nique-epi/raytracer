@@ -7,6 +7,7 @@
 
 #include "SceneBuilder.hpp"
 #include "SceneBuildException.hpp"
+#include "TransformsParser.hpp"
 #include "constants/Errors.hpp"
 #include "scene/Scene.hpp"
 
@@ -20,7 +21,12 @@ void SceneBuilder::addObject(const std::string& type,
   typeCounts_[type]++;
   try {
     auto obj = factory_.get().createPrimitive(type, cfg);
-    if (obj) {
+    if (!obj) {
+      return;
+    }
+    if (cfg.exists("transforms") && cfg["transforms"].getLength() > 0) {
+      scene_->add(wrapWithTransforms(obj, cfg["transforms"], factory_.get()));
+    } else {
       scene_->add(obj);
     }
   } catch (const raytracer::core::RaytracerException& e) {
