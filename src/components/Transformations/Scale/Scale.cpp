@@ -25,8 +25,20 @@ raytracer::math::Vector3D Scale::apply(
 
 raytracer::math::Vector3D Scale::applyToNormal(
     const raytracer::math::Vector3D& normal) const {
-  const raytracer::math::Vector3D scaled{
-      normal.x / factor_.x, normal.y / factor_.y, normal.z / factor_.z};
+  // NOLINTNEXTLINE(cppcoreguidelines-init-variables)
+  const double safeX = std::abs(factor_.x) < raytracer::math::constants::epsilon
+                           ? raytracer::math::constants::epsilon
+                           : factor_.x;
+  // NOLINTNEXTLINE(cppcoreguidelines-init-variables)
+  const double safeY = std::abs(factor_.y) < raytracer::math::constants::epsilon
+                           ? raytracer::math::constants::epsilon
+                           : factor_.y;
+  // NOLINTNEXTLINE(cppcoreguidelines-init-variables)
+  const double safeZ = std::abs(factor_.z) < raytracer::math::constants::epsilon
+                           ? raytracer::math::constants::epsilon
+                           : factor_.z;
+  const raytracer::math::Vector3D scaled{normal.x / safeX, normal.y / safeY,
+                                         normal.z / safeZ};
   return scaled.normalize();
 }
 
