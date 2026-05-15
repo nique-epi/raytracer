@@ -48,7 +48,7 @@ std::shared_ptr<IMaterial> MaterialParser::parseMaterial(aiMaterial* mat) {
   mat->Get(AI_MATKEY_OPACITY, opacity);
   const float alpha = std::clamp(std::min(baseColor4.a, opacity), 0.0F, 1.0F);
 
-  float refractionIndex = 1.0F;
+  float refractionIndex = 1.5F;
   mat->Get(AI_MATKEY_REFRACTI, refractionIndex);
 
   float roughness = -1.0F;
