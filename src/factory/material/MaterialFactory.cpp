@@ -73,13 +73,16 @@ std::shared_ptr<IMaterial> createPrincipledFromCfg(
     const libconfig::Setting& cfg) {
   Color baseColor(1.0, 1.0, 1.0);
   double metallic = 0.0;
-  double roughness = 0.5;
-  double ior = 1.45;
+  double roughness = defaultPrincipledRoughness;
+  double ior = defaultPrincipledRefractionIndex;
+  double alpha = 1.0;
   overrideColorIfPresent(cfg, "baseColor", baseColor);
   cfg.lookupValue("metallic", metallic);
   cfg.lookupValue("roughness", roughness);
   cfg.lookupValue("ior", ior);
-  return MaterialFactory::createPrincipled(baseColor, metallic, roughness, ior);
+  cfg.lookupValue("alpha", alpha);
+  return MaterialFactory::createPrincipled(baseColor, metallic, roughness, ior,
+                                           alpha);
 }
 
 }  // namespace
@@ -100,10 +103,10 @@ std::shared_ptr<IMaterial> MaterialFactory::createGlass(
 }
 
 std::shared_ptr<IMaterial> MaterialFactory::createPrincipled(
-    const math::Color& baseColor, double metallic, double roughness,
-    double ior) {
+    const math::Color& baseColor, double metallic, double roughness, double ior,
+    double alpha) {
   return std::make_shared<PrincipledMaterial>(baseColor, metallic, roughness,
-                                              ior);
+                                              ior, alpha);
 }
 
 // NOLINTNEXTLINE(misc-use-internal-linkage)

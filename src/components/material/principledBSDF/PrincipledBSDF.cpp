@@ -15,6 +15,8 @@
 #include "utils/math/Vector3D.hpp"
 
 namespace {
+constexpr double transparencyRayEpsilon = 1e-4;
+
 double generateRandomDouble() {
   thread_local std::mt19937 generator(std::random_device{}());
   thread_local std::uniform_real_distribution<double> distribution(0.0, 1.0);
@@ -26,16 +28,26 @@ namespace raytracer::components::material {
 
 PrincipledMaterial::PrincipledMaterial(const math::Color& baseColor,
                                        double metallic, double roughness,
-                                       double ior)
+                                       double ior, double alpha)
     : baseColor_(baseColor),
       metallic_(std::clamp(metallic, 0.0, 1.0)),
       roughness_(std::clamp(roughness, 0.0, 1.0)),
-      ior_(ior) {}
+      ior_(ior),
+      alpha_(std::clamp(alpha, 0.0, 1.0)) {}
 
 bool PrincipledMaterial::scatter(const raytracer::math::Ray& in,
                                  const raytracer::math::HitRecord& rec,
                                  raytracer::math::Color& attenuation,
                                  raytracer::math::Ray& scattered) const {
+  if (generateRandomDouble() > alpha_) {
+    const math::Vector3D transparentDirection = in.getDirection().normalize();
+    scattered =
+        math::Ray(rec.point + (transparentDirection * transparencyRayEpsilon),
+                  transparentDirection);
+    attenuation = math::Color(1.0, 1.0, 1.0);
+    return true;
+  }
+
   const double randomValue = generateRandomDouble();
 
   if (randomValue < metallic_) {
@@ -78,7 +90,7 @@ bool PrincipledMaterial::scatterMetallic(
   }
 
   scatteredRay = math::Ray(hitRecord.point, scatteredDirection);
-  attenuation = baseColor_;
+  attenuation = baseColor_ * alpha_;
   return true;
 }
 
@@ -102,7 +114,7 @@ bool PrincipledMaterial::scatterSpecularReflection(
   }
 
   scatteredRay = math::Ray(hitRecord.point, scatteredDirection);
-  attenuation = math::Color(1.0, 1.0, 1.0);
+  attenuation = math::Color(1.0, 1.0, 1.0) * alpha_;
   return true;
 }
 
@@ -118,12 +130,12 @@ bool PrincipledMaterial::scatterDiffuseReflection(
   }
 
   scatteredRay = math::Ray(hitRecord.point, scatteredDirection);
-  attenuation = baseColor_;
+  attenuation = baseColor_ * alpha_;
   return true;
 }
 
 math::Color PrincipledMaterial::diffuseAlbedo() const {
-  return baseColor_ * (1.0 - metallic_);
+  return baseColor_ * (1.0 - metallic_) * alpha_;
 }
 
 }  // namespace raytracer::components::material

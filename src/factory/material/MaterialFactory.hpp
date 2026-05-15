@@ -20,6 +20,8 @@ class Setting;
 namespace raytracer::core::factory {
 
 inline constexpr double defaultGlassRefractionIndex = 1.5;
+inline constexpr double defaultPrincipledRoughness = 0.5;
+inline constexpr double defaultPrincipledRefractionIndex = 1.45;
 
 /**
  * @brief Static, statically-linked factory for `IMaterial` materials.
@@ -79,11 +81,14 @@ class MaterialFactory {
    * @param [in] roughness Roughness factor in [0, 1] (0 = mirror-like, 1 =
    * diffuse).
    * @param [in] ior       Index of refraction for dielectrics (default: 1.45).
+   * @param [in] alpha     Opacity factor in [0, 1] (0 = fully transparent,
+   * 1 = fully opaque).
    * @returns Shared pointer to the freshly constructed material.
    */
   [[nodiscard]] static std::shared_ptr<IMaterial> createPrincipled(
       const math::Color& baseColor, double metallic = 0.0,
-      double roughness = 0.5, double ior = 1.45);
+      double roughness = defaultPrincipledRoughness,
+      double ior = defaultPrincipledRefractionIndex, double alpha = 1.0);
 
   /**
    * @brief Create a textured Lambertian material.

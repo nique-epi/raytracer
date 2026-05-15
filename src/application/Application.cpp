@@ -7,11 +7,11 @@
 
 #include "Application.hpp"
 #include <unistd.h>
+#include <cmath>
 #include <cstdio>
 #include <iomanip>
 #include <iostream>
 #include <memory>
-#include <cmath>
 #include <mutex>
 #include "components/image/Image.hpp"
 #include "exceptions/Exceptions.hpp"
@@ -156,7 +156,7 @@ int Application::run(const std::string& scenePath, bool useBVH) {
   components::Image image = renderer.render(config, frame);
 
   output::ppm writer;
-  // hdrToSdr(image);
+  hdrToSdr(image);
 #ifdef BUILD_BONUS
   OIDDenoiser::denoise(image);
 #endif

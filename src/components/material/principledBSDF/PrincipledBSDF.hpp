@@ -12,6 +12,8 @@
 
 namespace raytracer::components::material {
 
+inline constexpr double defaultPrincipledRefractionIndex = 1.45;
+
 /**
  * @brief Simplified Principled BSDF material.
  *
@@ -20,7 +22,9 @@ namespace raytracer::components::material {
 class PrincipledMaterial : public AMaterial {
  public:
   PrincipledMaterial(const math::Color& baseColor, double metallic,
-                     double roughness, double ior = 1.45);
+                     double roughness,
+                     double ior = defaultPrincipledRefractionIndex,
+                     double alpha = 1.0);
 
   PrincipledMaterial(const PrincipledMaterial&) = delete;
   PrincipledMaterial& operator=(const PrincipledMaterial&) = delete;
@@ -54,6 +58,7 @@ class PrincipledMaterial : public AMaterial {
   double metallic_;
   double roughness_;
   double ior_;
+  double alpha_;
 };
 
 }  // namespace raytracer::components::material

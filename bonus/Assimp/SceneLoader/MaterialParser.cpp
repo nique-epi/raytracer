@@ -15,7 +15,6 @@
 
 namespace {
 
-constexpr float opacityThreshold = 0.9F;
 constexpr float maxShininessValue = 128.0F;
 
 }  // namespace
@@ -47,6 +46,7 @@ std::shared_ptr<IMaterial> MaterialParser::parseMaterial(aiMaterial* mat) {
 
   float opacity = 1.0F;
   mat->Get(AI_MATKEY_OPACITY, opacity);
+  const float alpha = std::clamp(std::min(baseColor4.a, opacity), 0.0F, 1.0F);
 
   float refractionIndex = 1.0F;
   mat->Get(AI_MATKEY_REFRACTI, refractionIndex);
@@ -60,34 +60,23 @@ std::shared_ptr<IMaterial> MaterialParser::parseMaterial(aiMaterial* mat) {
   float shininess = 0.0F;
   mat->Get(AI_MATKEY_SHININESS, shininess);
 
-  std::shared_ptr<IMaterial> material;
-
-  if (opacity < opacityThreshold && refractionIndex > 1.0F) {
-    const math::Color glassTint(opacity, opacity, opacity);
-    std::cerr << "[AssimpMaterialParser] Created glass material with"
-              << " opacity=" << opacity
-              << ", refractionIndex=" << refractionIndex << ", tint=("
-              << glassTint.r << ", " << glassTint.g << ", " << glassTint.b
-              << ")" << '\n';
-    material =
-        core::factory::MaterialFactory::createGlass(refractionIndex, glassTint);
-  } else {
-    double finalMetallic = metallic;
-    double finalRoughness = roughness >= 0.0F ? roughness : 0.5;
-    if (roughness < 0.0F && shininess > 0.0F) {
-      finalRoughness =
-          std::log(1.0 + shininess) / std::log(1.0 + maxShininessValue);
-      finalRoughness = std::clamp(finalRoughness, 0.0, 1.0);
-    }
-    std::cerr << "[AssimpMaterialParser] Created principledBSDF material with"
-              << " baseColor=(" << baseColor.r << ", " << baseColor.g << ", "
-              << baseColor.b << ")"
-              << ", metallic=" << finalMetallic
-              << ", roughness=" << finalRoughness << ", ior=" << refractionIndex
-              << '\n';
-    material = core::factory::MaterialFactory::createPrincipled(
-        baseColor, finalMetallic, finalRoughness, refractionIndex);
+  double finalMetallic = metallic;
+  double finalRoughness =
+      roughness >= 0.0F ? roughness : core::factory::defaultPrincipledRoughness;
+  if (roughness < 0.0F && shininess > 0.0F) {
+    finalRoughness =
+        std::log(1.0 + shininess) / std::log(1.0 + maxShininessValue);
+    finalRoughness = std::clamp(finalRoughness, 0.0, 1.0);
   }
+  std::cerr << "[AssimpMaterialParser] Created principledBSDF material with"
+            << " baseColor=(" << baseColor.r << ", " << baseColor.g << ", "
+            << baseColor.b << ")"
+            << ", metallic=" << finalMetallic
+            << ", roughness=" << finalRoughness << ", ior=" << refractionIndex
+            << ", alpha=" << alpha << '\n';
+  std::shared_ptr<IMaterial> material =
+      core::factory::MaterialFactory::createPrincipled(
+          baseColor, finalMetallic, finalRoughness, refractionIndex, alpha);
 
   return material;
 }

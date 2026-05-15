@@ -7,8 +7,10 @@
 
 #include "LightsParser.hpp"
 #include <assimp/matrix3x3.h>
+#include <cmath>
 #include <iostream>
 #include <memory>
+#include <numbers>
 #include <stack>
 #include "components/light/ambient/AmbientLight.hpp"
 #include "components/light/directional/Directional.hpp"
@@ -30,14 +32,11 @@ void LightParser::parse(const aiScene* scene, SceneBuilder& builder) {
   for (unsigned int i = 0; i < scene->mNumLights; ++i) {
     const aiLight* light = scene->mLights[i];
     aiColor3D assimpColor = light->mColorDiffuse;
+    const double powerMultiplier = (4.0 * std::numbers::pi) / 683.0;
 
-    double exposure = 1.0;
-
-    double blenderMultiplier = ((683.0 / M_PI) * std::pow(2.0, exposure));
-
-    double r = assimpColor.r / blenderMultiplier;
-    double g = assimpColor.g / blenderMultiplier;
-    double b = assimpColor.b / blenderMultiplier;
+    double r = assimpColor.r * powerMultiplier;
+    double g = assimpColor.g * powerMultiplier;
+    double b = assimpColor.b * powerMultiplier;
 
     const math::Color color = {r, g, b};
     const float intensity = 1;
