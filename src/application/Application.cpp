@@ -16,7 +16,6 @@
 #include <memory>
 #include <mutex>
 #include <sstream>
-#include "common/helper/Logger.hpp"
 #include "components/image/Image.hpp"
 #include "exceptions/Exceptions.hpp"
 #include "output/ppm/ppm.hpp"
@@ -46,6 +45,7 @@ namespace {
 struct ProgressBarState {
   std::mutex mutex;
   int lastDrawnPercent{-1};
+  std::chrono::steady_clock::time_point lastDrawnAt;
 };
 
 std::string formatRemainingTime(std::int64_t remainingSeconds) {
@@ -86,47 +86,43 @@ std::shared_ptr<shading::ShadingContext> createShadingContext(
 }
 
 void displayProgressBar(RaytracerRenderer& renderer) {
-  static raytracer::common::Logger logger{"RendererProgress"};
-  static constexpr int progressBarWidth = 30;
-
-  const auto progressState = std::make_shared<ProgressBarState>();
-  const auto startTime = std::chrono::steady_clock::now();
-
-  renderer.setProgressCallback([progressState, startTime](double progress) {
-    const int percent = static_cast<int>(progress * 100.0);
-    const std::lock_guard<std::mutex> lock(progressState->mutex);
-    if (percent <= progressState->lastDrawnPercent) {
-      return;
-    }
-    progressState->lastDrawnPercent = percent;
-
-    const auto now = std::chrono::steady_clock::now();
-    const auto elapsed =
-        std::chrono::duration_cast<std::chrono::seconds>(now - startTime)
-            .count();
-
-    std::int64_t remainingSeconds = 0;
-    if (progress > 0.0 && progress < 1.0) {
-      remainingSeconds = static_cast<std::int64_t>(
-          static_cast<double>(elapsed) * (1.0 - progress) / progress);
-    }
-
-    const int filled = (percent * progressBarWidth) / 100;
-    std::ostringstream bar;
-    bar << "[";
-    for (int i = 0; i < progressBarWidth; ++i) {
-      bar << (i < filled ? "█" : "░");
-    }
-    bar << "] " << std::setw(3) << percent << "%";
-
-    if (progress >= 1.0) {
-      logger.info("Rendering complete. Duration=",
-                  formatRemainingTime(elapsed));
-    } else {
-      logger.info("Rendering ", bar.str(),
-                  " remaining=", formatRemainingTime(remainingSeconds));
-    }
-  });
+  if (::isatty(::fileno(stderr)) != 0) {
+    static constexpr int progressBarWidth = 30;
+    const auto progressState = std::make_shared<ProgressBarState>();
+    renderer.setProgressCallback([progressState](double progress) {
+      const int percent = static_cast<int>(progress * 100.0);
+      const std::lock_guard<std::mutex> lock(progressState->mutex);
+      if (percent <= progressState->lastDrawnPercent) {
+        return;
+      }
+      const auto now = std::chrono::steady_clock::now();
+      std::string remainingText = "--:--";
+      if (progressState->lastDrawnPercent >= 0 &&
+          percent > progressState->lastDrawnPercent) {
+        const auto elapsedSeconds =
+            std::chrono::duration_cast<std::chrono::seconds>(
+                now - progressState->lastDrawnAt)
+                .count();
+        const int percentDelta = percent - progressState->lastDrawnPercent;
+        const std::int64_t remainingSeconds =
+            static_cast<std::int64_t>(elapsedSeconds) * (100 - percent) /
+            percentDelta;
+        remainingText = formatRemainingTime(remainingSeconds);
+      }
+      progressState->lastDrawnPercent = percent;
+      progressState->lastDrawnAt = now;
+      const int filled = (percent * progressBarWidth) / 100;
+      std::cerr << "\rRendering [";
+      for (int i = 0; i < progressBarWidth; ++i) {
+        std::cerr << (i < filled ? "█" : "░");
+      }
+      std::cerr << "] " << std::setw(3) << percent
+                << "% remaining=" << remainingText << std::flush;
+      if (progress >= 1.0) {
+        std::cerr << '\n';
+      }
+    });
+  }
 }
 }  // namespace
 
