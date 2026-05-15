@@ -12,8 +12,8 @@
 
 #include "components/light/ILight.hpp"
 #include "components/material/IMaterial.hpp"
-#include "scene/Scene.hpp"
 #include "rendering/helper/RenderingHelpers.hpp"
+#include "scene/Scene.hpp"
 #include "utils/math/Color.hpp"
 #include "utils/math/Constants.hpp"
 #include "utils/math/HitRecord.hpp"
@@ -27,10 +27,8 @@ using raytracer::math::HitRecord;
 using raytracer::math::Ray;
 using raytracer::math::Vector3D;
 using raytracer::scene::Scene;
-using raytracer::rendering::helper::normalAsColor;
-using raytracer::rendering::helper::unitShadingNormal;
-namespace mathConstants = raytracer::math::constants;
-namespace shadingCommon = raytracer::rendering::helper;
+namespace constants = raytracer::math::constants;
+namespace helper = raytracer::rendering::helper;
 
 Color lambertContributionFromLight(const ILight& light,
                                    const Vector3D& shadingPoint,
@@ -51,19 +49,31 @@ Color lambertContributionFromLight(const ILight& light,
   return albedo * radiance * cosTheta;
 }
 
-Color castRay(const Ray& ray, const Scene& scene, int depth, bool isPrimary);
-
 // NOLINTNEXTLINE(misc-no-recursion)
-Color shade(const Ray& inRay, const HitRecord& record, const Scene& scene,
-            int depth) {
-  if (!record.material) {
-    return normalAsColor(unitShadingNormal(record));
+Color castRay(const Ray& ray, const Scene& scene, int depth, bool isPrimary) {
+  if (depth <= 0) {
+    return {0, 0, 0};
+  }
+  // NOLINTNEXTLINE(misc-const-correctness)
+  HitRecord record;
+  if (!scene.hit(ray, helper::primaryRayTMin,
+                 std::numeric_limits<double>::infinity(), record)) {
+    if (isPrimary) {
+      const auto background = scene.getBackground();
+      if (background) {
+        return background->getColor(ray);
+      }
+    }
+    return {0, 0, 0};
   }
 
-  const Vector3D unitNormal = unitShadingNormal(record);
+  if (!record.material) {
+    return helper::normalAsColor(helper::unitShadingNormal(record));
+  }
+
+  const Vector3D unitNormal = helper::unitShadingNormal(record);
   const Vector3D shadingPoint =
-      record.point +
-      (unitNormal * mathConstants::shadowRayEpsilon);
+      record.point + (unitNormal * constants::shadowRayEpsilon);
 
   Color directLighting(0, 0, 0);
   const Color albedo = record.material->diffuseAlbedo();
@@ -79,32 +89,12 @@ Color shade(const Ray& inRay, const HitRecord& record, const Scene& scene,
 
   Color attenuation(0, 0, 0);
   Ray scattered(Vector3D(0, 0, 0), Vector3D(0, 0, 1));
-  if (record.material->scatter(inRay, record, attenuation, scattered)) {
+  if (record.material->scatter(ray, record, attenuation, scattered)) {
     const Color indirect = castRay(scattered, scene, depth - 1, false);
     return record.material->emitted() + directLighting +
            (attenuation * indirect);
   }
   return record.material->emitted() + directLighting;
-}
-
-// NOLINTNEXTLINE(misc-no-recursion)
-Color castRay(const Ray& ray, const Scene& scene, int depth, bool isPrimary) {
-  if (depth <= 0) {
-    return {0, 0, 0};
-  }
-  // NOLINTNEXTLINE(misc-const-correctness)
-  HitRecord record;
-  if (scene.hit(ray, shadingCommon::primaryRayTMin,
-                std::numeric_limits<double>::infinity(), record)) {
-    return shade(ray, record, scene, depth);
-  }
-  if (isPrimary) {
-    const auto background = scene.getBackground();
-    if (background) {
-      return background->getColor(ray);
-    }
-  }
-  return {0, 0, 0};
 }
 
 }  // namespace
