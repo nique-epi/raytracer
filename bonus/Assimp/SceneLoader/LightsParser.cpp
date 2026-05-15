@@ -17,11 +17,9 @@
 #include "utils/math/Vector3D.hpp"
 
 namespace {
-namespace math = raytracer::math;
 
 constexpr float fallbackDir = 0.5F;
 
-math::Color toColor(const aiColor3D& c) { return {c.r, c.g, c.b}; }
 }  // namespace
 
 namespace raytracer::scene {
@@ -31,9 +29,20 @@ void LightParser::parse(const aiScene* scene, SceneBuilder& builder) {
 
   for (unsigned int i = 0; i < scene->mNumLights; ++i) {
     const aiLight* light = scene->mLights[i];
-    const math::Color color = toColor(light->mColorDiffuse);
-    const float intensity = extractIntensity(scene, light->mName);
+    aiColor3D assimpColor = light->mColorDiffuse;
+
+    double exposure = 1.0;
+
+    double blenderMultiplier = ((683.0 / M_PI) * std::pow(2.0, exposure));
+
+    double r = assimpColor.r / blenderMultiplier;
+    double g = assimpColor.g / blenderMultiplier;
+    double b = assimpColor.b / blenderMultiplier;
+
+    const math::Color color = {r, g, b};
+    const float intensity = 1;
     const aiMatrix4x4 worldTransform = findWorldTransform(scene, light->mName);
+
     std::cerr << "[AssimpLightParser] Parsing Assimp light '"
               << light->mName.C_Str() << "' (type=" << light->mType
               << ", intensity=" << intensity << ")" << '\n';
@@ -60,37 +69,6 @@ void LightParser::parse(const aiScene* scene, SceneBuilder& builder) {
     builder.addLight(std::make_shared<components::light::ambient::Ambient>(
         math::Color(1.0, 1.0, 1.0), 1.0));
   }
-}
-
-float LightParser::extractIntensity(const aiScene* scene,
-                                    const aiString& name) {
-  struct Entry {
-    aiNode* node;
-  };
-  std::stack<Entry> stack;
-  stack.push({scene->mRootNode});
-
-  while (!stack.empty()) {
-    aiNode* node = stack.top().node;
-    stack.pop();
-
-    if (node->mName == name && node->mMetaData != nullptr) {
-      float intensity = 1.0F;
-      if (node->mMetaData->Get("intensity", intensity)) {
-        return intensity;
-      }
-
-      double intensityD = 1.0;
-      if (node->mMetaData->Get("intensity", intensityD)) {
-        return static_cast<float>(intensityD);
-      }
-    }
-
-    for (unsigned int i = 0; i < node->mNumChildren; ++i) {
-      stack.push({node->mChildren[i]});
-    }
-  }
-  return 1.0F;
 }
 
 aiMatrix4x4 LightParser::findWorldTransform(const aiScene* scene,
@@ -135,7 +113,7 @@ void LightParser::addDirectional(SceneBuilder& builder, const aiLight* light,
   builder.addLight(
       std::make_shared<components::light::directional::Directional>(
           math::Vector3D(worldDir.x, worldDir.y, worldDir.z),
-          toColor(light->mColorDiffuse), static_cast<double>(intensity)));
+          math::Color(1, 1, 1), static_cast<double>(intensity)));
 }
 
 void LightParser::addPoint(SceneBuilder& builder,
@@ -161,7 +139,7 @@ void LightParser::addAmbient(SceneBuilder& builder, const aiLight* light) {
             << ", " << light->mColorAmbient.g << ", " << light->mColorAmbient.b
             << ")" << '\n';
   builder.addLight(std::make_shared<components::light::ambient::Ambient>(
-      toColor(light->mColorAmbient), 1.0));
+      math::Color(1, 1, 1), 1.0));
 }
 
 void LightParser::addFallback(SceneBuilder& builder) {

@@ -6,10 +6,8 @@
 */
 
 #include "rendering/integrator/whittedIntegrator/WhittedIntegrator.hpp"
-
 #include <algorithm>
 #include <limits>
-
 #include "components/light/ILight.hpp"
 #include "components/material/IMaterial.hpp"
 #include "rendering/helper/RenderingHelpers.hpp"
@@ -36,33 +34,36 @@ Color lambertContributionFromLight(const ILight& light,
                                    const Color& albedo, const Scene& scene) {
   const Vector3D lightDir = light.getDirection(shadingPoint);
   double cosTheta = 1.0;
+  double brdfFactor = 1.0;
+
   if (lightDir.lengthSquared() > 0.0) {
     cosTheta = std::max(0.0, unitNormal.dot(-lightDir));
     if (cosTheta == 0.0) {
       return {0, 0, 0};
     }
+    brdfFactor = 1.0 / constants::pi;
   }
   const Color radiance = light.illuminate(shadingPoint, scene);
   if (radiance.r == 0.0 && radiance.g == 0.0 && radiance.b == 0.0) {
     return {0, 0, 0};
   }
-  return albedo * radiance * cosTheta;
+  return albedo * radiance * cosTheta * brdfFactor;
 }
 
 // NOLINTNEXTLINE(misc-no-recursion)
-Color castRay(const Ray& ray, const Scene& scene, int depth, bool isPrimary) {
+Color castRay(const Ray& ray, const Scene& scene, int depth) {
   if (depth <= 0) {
     return {0, 0, 0};
   }
+
   // NOLINTNEXTLINE(misc-const-correctness)
   HitRecord record;
+
   if (!scene.hit(ray, helper::primaryRayTMin,
                  std::numeric_limits<double>::infinity(), record)) {
-    if (isPrimary) {
-      const auto background = scene.getBackground();
-      if (background) {
-        return background->getColor(ray);
-      }
+    const auto background = scene.getBackground();
+    if (background) {
+      return background->getColor(ray);
     }
     return {0, 0, 0};
   }
@@ -86,15 +87,14 @@ Color castRay(const Ray& ray, const Scene& scene, int depth, bool isPrimary) {
                                *light, shadingPoint, unitNormal, albedo, scene);
     }
   }
-
+  Color indirectLighting(0, 0, 0);
   Color attenuation(0, 0, 0);
   Ray scattered(Vector3D(0, 0, 0), Vector3D(0, 0, 1));
+
   if (record.material->scatter(ray, record, attenuation, scattered)) {
-    const Color indirect = castRay(scattered, scene, depth - 1, false);
-    return record.material->emitted() + directLighting +
-           (attenuation * indirect);
+    indirectLighting = attenuation * castRay(scattered, scene, depth - 1);
   }
-  return record.material->emitted() + directLighting;
+  return record.material->emitted() + directLighting + indirectLighting;
 }
 
 }  // namespace
@@ -104,7 +104,7 @@ namespace raytracer::core {
 math::Color WhittedIntegrator::computeRadiance(const math::Ray& ray,
                                                const scene::Scene& scene,
                                                int depth) {
-  return castRay(ray, scene, depth, true);
+  return castRay(ray, scene, depth);
 }
 
 }  // namespace raytracer::core

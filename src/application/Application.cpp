@@ -91,9 +91,15 @@ void displayProgressBar(RaytracerRenderer& renderer) {
 }
 
 void hdrToSdr(components::Image& image) {
+  const double exposure = 1;
+
   for (std::size_t y = 0; y < image.getHeight(); ++y) {
     for (std::size_t x = 0; x < image.getWidth(); ++x) {
       auto c = image.getPixel(x, y);
+
+      c.r *= exposure;
+      c.g *= exposure;
+      c.b *= exposure;
 
       c.r = c.r / (c.r + 1.0);
       c.g = c.g / (c.g + 1.0);
@@ -149,7 +155,7 @@ int Application::run(const std::string& scenePath, bool useBVH) {
   components::Image image = renderer.render(config, frame);
 
   output::ppm writer;
-  hdrToSdr(image);
+  // hdrToSdr(image);
 #ifdef BUILD_BONUS
   OIDDenoiser::denoise(image);
 #endif

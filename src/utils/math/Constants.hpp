@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <numbers>
+
 namespace raytracer::math::constants {
 
 /**
@@ -25,5 +27,10 @@ constexpr double shadowRayEpsilon = 1e-3;
 constexpr double HALF = 0.5;
 
 constexpr double DOUBLE = 2.0;
+
+/**
+ * @brief Mathematical constant PI.
+ */
+constexpr double pi = std::numbers::pi;
 
 }  // namespace raytracer::math::constants

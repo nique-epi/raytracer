@@ -71,10 +71,26 @@ class MaterialFactory {
       const math::Color& tint = math::Color(1.0, 1.0, 1.0));
 
   /**
+   * @brief Create a Principled BSDF material (metallic/roughness PBR).
+   *
+   * @param [in] baseColor Base color albedo.
+   * @param [in] metallic  Metallic factor in [0, 1] (0 = dielectric, 1 =
+   * metal).
+   * @param [in] roughness Roughness factor in [0, 1] (0 = mirror-like, 1 =
+   * diffuse).
+   * @param [in] ior       Index of refraction for dielectrics (default: 1.45).
+   * @returns Shared pointer to the freshly constructed material.
+   */
+  [[nodiscard]] static std::shared_ptr<IMaterial> createPrincipled(
+      const math::Color& baseColor, double metallic = 0.0,
+      double roughness = 0.5, double ior = 1.45);
+
+  /**
    * @brief Create a textured Lambertian material.
    *
    * @param [in] texture Texture used to modulate the surface color.
-   * @param [in] albedo  Base color multiplied by the texture sample (default: white).
+   * @param [in] albedo  Base color multiplied by the texture sample (default:
+   * white).
    * @returns Shared pointer to the freshly constructed material.
    */
   [[nodiscard]] static std::shared_ptr<IMaterial> createTextured(
@@ -86,13 +102,14 @@ class MaterialFactory {
    *
    * Supported type names: `"solid"`, `"checker"`, `"noise"`, `"bitmap"`.
    *
-   * @param [in] cfg libconfig setting containing `type` and texture-specific fields.
+   * @param [in] cfg libconfig setting containing `type` and texture-specific
+   * fields.
    * @returns Shared pointer to the constructed texture.
    *
    * @throws raytracer::core::RaytracerException If the type is unknown.
    */
-  [[nodiscard]] static std::shared_ptr<raytracer::materials::ITexture> parseTexture(
-      const libconfig::Setting& cfg);
+  [[nodiscard]] static std::shared_ptr<raytracer::materials::ITexture>
+  parseTexture(const libconfig::Setting& cfg);
 
   /**
    * @brief Dispatch by type name and parse @p cfg into typed arguments.
