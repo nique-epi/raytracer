@@ -51,7 +51,7 @@ Color lambertContributionFromLight(const ILight& light,
 }
 
 // NOLINTNEXTLINE(misc-no-recursion)
-Color castRay(const Ray& ray, const Scene& scene, int depth) {
+Color castRay(const Ray& ray, const Scene& scene, int depth, bool isPrimary) {
   if (depth <= 0) {
     return {0, 0, 0};
   }
@@ -62,6 +62,12 @@ Color castRay(const Ray& ray, const Scene& scene, int depth) {
   if (!scene.hit(ray, helper::primaryRayTMin,
                  std::numeric_limits<double>::infinity(), record)) {
     const auto background = scene.getBackground();
+    if (isPrimary) {
+      if (background) {
+        return background->getColor(ray);
+      }
+      return {0, 0, 0};
+    }
     if (background) {
       return background->getColor(ray);
     }
@@ -92,7 +98,8 @@ Color castRay(const Ray& ray, const Scene& scene, int depth) {
   Ray scattered(Vector3D(0, 0, 0), Vector3D(0, 0, 1));
 
   if (record.material->scatter(ray, record, attenuation, scattered)) {
-    indirectLighting = attenuation * castRay(scattered, scene, depth - 1);
+    indirectLighting =
+        attenuation * castRay(scattered, scene, depth - 1, false);
   }
   return record.material->emitted() + directLighting + indirectLighting;
 }
@@ -104,7 +111,7 @@ namespace raytracer::core {
 math::Color WhittedIntegrator::computeRadiance(const math::Ray& ray,
                                                const scene::Scene& scene,
                                                int depth) {
-  return castRay(ray, scene, depth);
+  return castRay(ray, scene, depth, true);
 }
 
 }  // namespace raytracer::core
