@@ -46,6 +46,11 @@ class IObject {
    * @brief Apply a transformation to this object in-place.
    */
   virtual void applyTransformation(const ITransformation& transform) = 0;
+  /**
+   * @brief Optional hook for objects to build internal acceleration
+   * structures (e.g. per-mesh BVH). Default implementation does nothing.
+   */
+  virtual void buildAccelerationStructure() {}
 };
 
 #endif  // PRIMITIVE_IOBJECT_HPP_

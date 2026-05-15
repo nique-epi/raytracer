@@ -8,6 +8,7 @@
 #include "components/Primitives/mesh/mesh.hpp"
 #include <memory>
 #include <utility>
+#include "components/Primitives/BVH/BVHNode.hpp"
 #include "components/Primitives/IObject.hpp"
 
 namespace gsl {
@@ -30,6 +31,11 @@ bool Mesh::hits(const raytracer::math::Ray& ray, double tMin, double tMax,
   if (!getBoundingBox().hit(ray, tMin, tMax)) {
     return false;
   }
+
+  if (internalBVH_) {
+    return internalBVH_->hits(ray, tMin, tMax, rec);
+  }
+
   bool hitAnything = false;
   double closestSoFar = tMax;
 
@@ -67,5 +73,24 @@ void Mesh::applyTransformation(const ITransformation& transform) {
     triangle->applyTransformation(transform);
   }
   bboxDirty_ = true;
+
+  internalBVH_.reset();
+}
+
+void Mesh::buildAccelerationStructure() {
+  if (triangles_.empty()) {
+    internalBVH_.reset();
+    return;
+  }
+
+  if (internalBVH_) {
+    return;
+  }
+  std::vector<std::shared_ptr<IObject>> objects;
+  objects.reserve(triangles_.size());
+  for (const auto& t : triangles_) {
+    objects.push_back(std::static_pointer_cast<IObject>(t));
+  }
+  internalBVH_ = std::make_shared<raytracer::components::BVHNode>(objects);
 }
 }  // namespace raytracer::components::primitives

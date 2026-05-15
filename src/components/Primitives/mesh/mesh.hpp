@@ -12,6 +12,10 @@
 #include "components/Primitives/IObject.hpp"
 #include "components/Primitives/triangle/Triangle.hpp"
 
+namespace raytracer::components {
+class BVHNode;
+}  // namespace raytracer::components
+
 namespace raytracer::components::primitives {
 class Mesh : public IObject {
  public:
@@ -31,6 +35,8 @@ class Mesh : public IObject {
 
   void applyTransformation(const ITransformation& transform) override;
 
+  void buildAccelerationStructure() override;
+
   void addTriangle(std::shared_ptr<Triangle> triangle);
 
  private:
@@ -38,5 +44,6 @@ class Mesh : public IObject {
       triangles_;
   mutable bool bboxDirty_ = true;
   mutable raytracer::math::AABB cachedBox_;
+  std::shared_ptr<raytracer::components::BVHNode> internalBVH_;
 };
 }  // namespace raytracer::components::primitives
