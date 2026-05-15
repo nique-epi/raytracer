@@ -114,10 +114,12 @@ double imageSum(const raytracer::components::Image& image) {
 // 1) Rendered mode must drive direct lighting from ILight sources. With
 //    the camera shooting straight at the sphere and a light placed where
 //    the rays originate, the Lambert cosine is 1, the geometric distance
-//    to the light is 1, and the centre pixel should be very close to the
-//    sphere's albedo. The tolerance accounts for the shadowRayEpsilon
-//    normal offset (~1e-3), which slightly shrinks the light distance and
-//    inflates the inverse-square falloff to ~1.002.
+//    to the light is 1. The photometric model applies:
+//    - Point light inverse-square falloff: 1/(4πr²) = 1/(4π) at r=1
+//    - Lambertian BRDF: albedo/π
+//    - Combined: (1/(4π)) × (1/π) = 1/(4π²) for unit albedo.
+//    The tolerance accounts for shadowRayEpsilon (~1e-3) reducing distance
+//    and inflating the inverse-square factor by ~0.2%.
 TEST(RendererViewportModeTest, RenderedAppliesDirectLightingFromPointLight) {
   auto scene = buildSphereScene(Color(1.0, 1.0, 1.0));
   scene->addLight(std::make_shared<PointLight>(Vector3D(0.0, 0.0, 0.0),
