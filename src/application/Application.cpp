@@ -6,14 +6,22 @@
 */
 
 #include "Application.hpp"
+
+#include <unistd.h>
+
+#include <cstdio>
+#include <iomanip>
 #include <iostream>
 #include <memory>
+#include <mutex>
+
 #include "components/image/Image.hpp"
 #include "exceptions/Exceptions.hpp"
+#include "integrator/pathIntegrator/PathIntegrator.hpp"
 #include "output/ppm/ppm.hpp"
 #include "renderer/Frame.hpp"
 #include "renderer/RendererConfig.hpp"
-#include "renderer/monoThreadRenderer/MonoThreadRenderer.hpp"
+#include "renderer/raytracerRenderer/RaytracerRenderer.hpp"
 #include "scene/CFGSceneLoader.hpp"
 #include "scene/Scene.hpp"
 #include "scene/SceneBuilder.hpp"
@@ -56,17 +64,35 @@ int Application::run(const std::string& scenePath, bool useBVH) {
   }
   scene->getCamera()->setResolution(settings.imageWidth, settings.imageHeight);
 
-  MonoThreadRenderer renderer;
-  renderer.setProgressCallback([](double progress) {
-    const int percent = static_cast<int>(progress * 100);
-    std::cerr << "\rRendering: " << percent << "%" << std::flush;
-    if (progress >= 1.0) {
-      std::cerr << "\n";
-    }
-  });
+  RaytracerRenderer renderer;
+  std::mutex progressMutex;
+  int lastDrawnPercent = -1;
+  if (::isatty(::fileno(stderr)) != 0) {
+    static constexpr int progressBarWidth = 30;
+    renderer.setProgressCallback([&progressMutex, &lastDrawnPercent](
+                                     double progress) {
+      const int percent = static_cast<int>(progress * 100.0);
+      const std::lock_guard<std::mutex> lock(progressMutex);
+      if (percent <= lastDrawnPercent) {
+        return;
+      }
+      lastDrawnPercent = percent;
+      const int filled = (percent * progressBarWidth) / 100;
+      std::cerr << "\rRendering [";
+      for (int i = 0; i < progressBarWidth; ++i) {
+        std::cerr << (i < filled ? "█" : "░");
+      }
+      std::cerr << "] " << std::setw(3) << percent << "%" << std::flush;
+      if (progress >= 1.0) {
+        std::cerr << '\n';
+      }
+    });
+  }
 
-  const RendererConfig config{
-      .scene = scene, .settings = settings, .integrator = nullptr};
+  const RendererConfig config{.scene = scene,
+                              .settings = settings,
+                              .integrator =
+                                  std::make_shared<PathIntegrator>()};
   const Frame frame{.camera = scene->getCamera()};
   components::Image image = renderer.render(config, frame);
 

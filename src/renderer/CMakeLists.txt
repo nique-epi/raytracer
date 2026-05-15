@@ -2,7 +2,8 @@ add_library(raytracer_renderer STATIC)
 
 target_sources(raytracer_renderer
   PRIVATE
-    monoThreadRenderer/MonoThreadRenderer.cpp
+    Tile.cpp
+    raytracerRenderer/RaytracerRenderer.cpp
 )
 
 target_include_directories(raytracer_renderer
@@ -16,6 +17,7 @@ target_link_libraries(raytracer_renderer
     raytracer_scene
     raytracer_integrator
     raytracer_math
+    raytracer_threads
 )
 
 raytracer_enable_target_warnings(raytracer_renderer)

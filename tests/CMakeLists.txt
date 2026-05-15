@@ -93,8 +93,9 @@ add_executable(raytracer_tests
   scene/background/SolidBackgroundTest.cpp
   scene/background/GradientBackgroundTest.cpp
   exceptions/ExceptionsTest.cpp
-  renderer/BasicRendererTest.cpp
   renderer/RendererViewportModeTest.cpp
+  renderer/TileTest.cpp
+  renderer/RaytracerRendererTest.cpp
   config/ConfigExceptionTest.cpp
   components/image/ImageTest.cpp
   components/image/ImageExceptionTest.cpp
@@ -112,6 +113,9 @@ add_executable(raytracer_tests
   factory/MaterialFactoryTest.cpp
   factory/CameraFactoryTest.cpp
   factory/TransformationFactoryTest.cpp
+  common/helper/QueueTest.cpp
+  common/helper/LoggerTest.cpp
+  os/threads/ThreadPoolTest.cpp
   components/material/textures/SolidColorTest.cpp
   components/material/textures/CheckerTextureTest.cpp
   components/material/TexturedMaterialTest.cpp
