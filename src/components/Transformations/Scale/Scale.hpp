@@ -9,6 +9,8 @@
 
 #include "components/Transformations/ITransformation.hpp"
 
+namespace raytracer::components::transformation {
+
 /**
  * @brief Non-uniform scale transformation for resizing points and normals.
  *
@@ -16,11 +18,6 @@
  * become an ellipsoid, a cube become a rectangular box, etc.  The normal
  * transform uses the transpose-inverse rule so that surface normals remain
  * perpendicular to their geometric surface after scaling.
- */
-namespace raytracer::components::transformation {
-
-/**
- * @brief A transformation that scales points by per-axis factors.
  *
  * @see ITransformation for the interface contract.
  * @see Translation for complementary positional transformations.
