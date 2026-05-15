@@ -11,6 +11,7 @@
 #include <iomanip>
 #include <iostream>
 #include <memory>
+#include <cmath>
 #include <mutex>
 #include "components/image/Image.hpp"
 #include "exceptions/Exceptions.hpp"
