@@ -9,3 +9,9 @@ raytracer_add_test(
 	SOURCES TranslationTransformationTests.cpp
 	LIBS raytracer_translation raytracer_math
 )
+
+raytracer_add_test(
+	NAME scale_transformation_test
+	SOURCES ScaleTransformationTests.cpp
+	LIBS raytracer_scale raytracer_math
+)

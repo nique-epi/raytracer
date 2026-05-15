@@ -38,3 +38,18 @@ target_link_libraries(raytracer_translation
 )
 
 raytracer_enable_target_warnings(raytracer_translation)
+
+
+add_library(raytracer_scale STATIC)
+
+target_sources(raytracer_scale
+  PRIVATE
+    Scale/Scale.cpp
+)
+
+target_link_libraries(raytracer_scale
+  PUBLIC
+    raytracer_transformations
+)
+
+raytracer_enable_target_warnings(raytracer_scale)

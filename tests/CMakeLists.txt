@@ -146,6 +146,7 @@ target_link_libraries(raytracer_tests
   PRIVATE
     raytracer_src
 	raytracer_translation
+	raytracer_scale
     raytracer_tests_helpers
     GTest::gtest_main
 )

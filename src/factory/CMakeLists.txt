@@ -21,6 +21,7 @@ target_link_libraries(raytracer_factory
     raytracer_components
     raytracer_translation
     raytracer_rotation
+    raytracer_scale
     config++
 )
 

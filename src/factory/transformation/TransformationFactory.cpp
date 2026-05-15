@@ -10,6 +10,7 @@
 #include <memory>
 #include <string>
 #include "components/Transformations/Rotation/Rotation.hpp"
+#include "components/Transformations/Scale/Scale.hpp"
 #include "components/Transformations/Translation/Translation.hpp"
 #include "exceptions/Exceptions.hpp"
 #include "utils/math/Vector3D.hpp"
@@ -19,6 +20,7 @@ namespace raytracer::core::factory {
 namespace {
 
 using raytracer::components::transformation::Rotation;
+using raytracer::components::transformation::Scale;
 using raytracer::components::transformation::Translation;
 using raytracer::math::Vector3D;
 
@@ -56,6 +58,13 @@ std::shared_ptr<ITransformation> createRotationFromCfg(
   return TransformationFactory::createRotation(axis, angle);
 }
 
+std::shared_ptr<ITransformation> createScaleFromCfg(
+    const libconfig::Setting& cfg) {
+  Vector3D factor{1.0, 1.0, 1.0};
+  overrideVec3IfPresent(cfg, "factor", factor);
+  return TransformationFactory::createScale(factor);
+}
+
 }  // namespace
 
 std::shared_ptr<ITransformation> TransformationFactory::createTranslation(
@@ -68,6 +77,11 @@ std::shared_ptr<ITransformation> TransformationFactory::createRotation(
   return std::make_shared<Rotation>(axis, angle);
 }
 
+std::shared_ptr<ITransformation> TransformationFactory::createScale(
+    const math::Vector3D& factor) {
+  return std::make_shared<Scale>(factor);
+}
+
 std::shared_ptr<ITransformation> TransformationFactory::create(
     const std::string& type, const libconfig::Setting& cfg) {
   if (type == "translation") {
@@ -75,6 +89,9 @@ std::shared_ptr<ITransformation> TransformationFactory::create(
   }
   if (type == "rotation") {
     return createRotationFromCfg(cfg);
+  }
+  if (type == "scale") {
+    return createScaleFromCfg(cfg);
   }
   throw RaytracerException(
       "TransformationFactory: unknown transformation type '" + type + "'");
