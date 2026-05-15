@@ -20,9 +20,12 @@
  *  - `RenderedShader`         — delegates to an `IIntegrator`
  *                               (currently `WhittedIntegrator`).
  *
- * Picking the right shader for the scene's active `ViewportMode` is the
- * job of `ViewportShadingDispatcher`, which itself implements
- * `IShadingMode` so callers stay uniform.
+ * Picking the right shader for the scene's active `ViewportMode` is
+ * the job of the application layer: `Application::createShadingContext`
+ * inspects `World::viewportMode()` and wraps the selected concrete
+ * `IShadingMode` in a `ShadingContext`. The renderer then resolves the
+ * active strategy through that context once per `render()`, so the rest
+ * of the pipeline only ever talks to this interface.
  *
  * Background and recursion policies are owned by each shader: the
  * interface does not constrain them.
