@@ -89,6 +89,29 @@ void displayProgressBar(RaytracerRenderer& renderer) {
     });
   }
 }
+
+void hdrToSdr(components::Image& image) {
+  for (std::size_t y = 0; y < image.getHeight(); ++y) {
+    for (std::size_t x = 0; x < image.getWidth(); ++x) {
+      auto c = image.getPixel(x, y);
+
+      // 1. TONE MAPPING (Algorithme de Reinhard simple)
+      // Compresse en douceur les hautes lumières pour qu'elles tendent vers 1.0
+      // sans jamais le dépasser.
+      c.r = c.r / (c.r + 1.0);
+      c.g = c.g / (c.g + 1.0);
+      c.b = c.b / (c.b + 1.0);
+
+      // 2. CORRECTION GAMMA (Votre code d'origine)
+      c.r = std::pow(c.r, 1.0 / 2.2);
+      c.g = std::pow(c.g, 1.0 / 2.2);
+      c.b = std::pow(c.b, 1.0 / 2.2);
+
+      image.setPixel(x, y, c);
+    }
+  }
+}
+
 }  // namespace
 
 Application::Application() {
@@ -130,6 +153,7 @@ int Application::run(const std::string& scenePath, bool useBVH) {
   components::Image image = renderer.render(config, frame);
 
   output::ppm writer;
+  hdrToSdr(image);
 #ifdef BUILD_BONUS
   OIDDenoiser::denoise(image);
 #endif
