@@ -129,8 +129,8 @@ TEST(RendererViewportModeTest, RenderedAppliesDirectLightingFromPointLight) {
   const auto image = renderScene(scene, makeSettings(1));
   const auto center = image.getPixel(kCenter, kCenter);
 
-  const double expectedValue = 1.0 / (4.0 * raytracer::math::constants::pi *
-                                      raytracer::math::constants::pi);
+  const double expectedValue = 1.0 / (4.0 * raytracer::math::constants::PI *
+                                      raytracer::math::constants::PI);
   EXPECT_NEAR(center.r, expectedValue, 1e-3);
   EXPECT_NEAR(center.g, expectedValue, 1e-3);
   EXPECT_NEAR(center.b, expectedValue, 1e-3);

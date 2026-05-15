@@ -31,6 +31,6 @@ constexpr double DOUBLE = 2.0;
 /**
  * @brief Mathematical constant PI.
  */
-constexpr double pi = std::numbers::pi;
+constexpr double PI = std::numbers::pi;
 
 }  // namespace raytracer::math::constants

@@ -41,7 +41,7 @@ Color lambertContributionFromLight(const ILight& light,
     if (cosTheta == 0.0) {
       return {0, 0, 0};
     }
-    brdfFactor = 1.0 / constants::pi;
+    brdfFactor = 1.0 / constants::PI;
   }
   const Color radiance = light.illuminate(shadingPoint, scene);
   if (radiance.r == 0.0 && radiance.g == 0.0 && radiance.b == 0.0) {

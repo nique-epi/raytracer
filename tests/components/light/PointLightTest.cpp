@@ -39,8 +39,8 @@ TEST(PointLightTest, IlluminateAppliesInverseSquareFalloff) {
   PointLight light(Vector3D(0.0, 0.0, 0.0), Color(1.0, 1.0, 1.0), 4.0);
   const Color nearColor = light.illuminate(Vector3D(2.0, 0.0, 0.0), scene);
   const Color farColor = light.illuminate(Vector3D(4.0, 0.0, 0.0), scene);
-  EXPECT_NEAR(nearColor.r, 1.0 / (4.0 * raytracer::math::constants::pi), 1e-9);
-  EXPECT_NEAR(farColor.r, 1.0 / (16.0 * raytracer::math::constants::pi), 1e-9);
+  EXPECT_NEAR(nearColor.r, 1.0 / (4.0 * raytracer::math::constants::PI), 1e-9);
+  EXPECT_NEAR(farColor.r, 1.0 / (16.0 * raytracer::math::constants::PI), 1e-9);
 }
 
 TEST(PointLightTest, IsOccludedDetectsBlockerBetweenPointAndLight) {
