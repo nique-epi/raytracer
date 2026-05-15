@@ -9,7 +9,7 @@
 #include <set>
 #include <utility>
 
-#include "renderer/Tile.hpp"
+#include "rendering/renderer/Tile.hpp"
 
 using raytracer::core::Tile;
 
