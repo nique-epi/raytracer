@@ -9,7 +9,7 @@
 #include <assimp/pbrmaterial.h>
 #include <algorithm>
 #include <cmath>
-#include <iostream>
+#include "common/helper/Logger.hpp"
 #include "factory/material/MaterialFactory.hpp"
 #include "utils/math/Color.hpp"
 
@@ -26,10 +26,11 @@ std::vector<std::shared_ptr<IMaterial>> MaterialParser::loadMaterials(
     const aiScene* scene) {
   std::vector<std::shared_ptr<IMaterial>> materials;
 
+  static raytracer::common::Logger logger{"AssimpMaterialParser"};
+
   for (unsigned int i = 0; i < scene->mNumMaterials; ++i) {
     aiMaterial* mat = scene->mMaterials[i];
-    std::cerr << "[AssimpMaterialParser] Parsing Assimp material #" << i
-              << " / " << scene->mNumMaterials << '\n';
+    logger.debug("Parsing Assimp material #", i, " / ", scene->mNumMaterials);
     materials.push_back(parseMaterial(mat));
   }
   return materials;
@@ -69,12 +70,11 @@ std::shared_ptr<IMaterial> MaterialParser::parseMaterial(aiMaterial* mat) {
         std::log(1.0 + shininess) / std::log(1.0 + maxShininessValue);
     finalRoughness = std::clamp(finalRoughness, 0.0, 1.0);
   }
-  std::cerr << "[AssimpMaterialParser] Created principledBSDF material with"
-            << " baseColor=(" << baseColor.r << ", " << baseColor.g << ", "
-            << baseColor.b << ")"
-            << ", metallic=" << finalMetallic
-            << ", roughness=" << finalRoughness << ", ior=" << refractionIndex
-            << ", alpha=" << alpha << '\n';
+  static raytracer::common::Logger logger{"AssimpMaterialParser"};
+  logger.debug("Created principledBSDF material with baseColor=(", baseColor.r,
+               ", ", baseColor.g, ", ", baseColor.b, ")",
+               ", metallic=", finalMetallic, ", roughness=", finalRoughness,
+               ", ior=", refractionIndex, ", alpha=", alpha);
   std::shared_ptr<IMaterial> material =
       core::factory::MaterialFactory::createPrincipled(
           baseColor, finalMetallic, finalRoughness, refractionIndex, alpha);

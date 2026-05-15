@@ -8,10 +8,10 @@
 #include "LightsParser.hpp"
 #include <assimp/matrix3x3.h>
 #include <cmath>
-#include <iostream>
 #include <memory>
 #include <numbers>
 #include <stack>
+#include "common/helper/Logger.hpp"
 #include "components/light/ambient/AmbientLight.hpp"
 #include "components/light/directional/Directional.hpp"
 #include "components/light/point/Point.hpp"
@@ -41,10 +41,9 @@ void LightParser::parse(const aiScene* scene, SceneBuilder& builder) {
     const math::Color color = {r / 2, g / 2, b / 2};
     const float intensity = 1;
     const aiMatrix4x4 worldTransform = findWorldTransform(scene, light->mName);
-
-    std::cerr << "[AssimpLightParser] Parsing Assimp light '"
-              << light->mName.C_Str() << "' (type=" << light->mType
-              << ", intensity=" << intensity << ")" << '\n';
+    static raytracer::common::Logger logger{"AssimpLightParser"};
+    logger.debug("Parsing Assimp light '", light->mName.C_Str(),
+                 "' (type=", light->mType, ", intensity=", intensity, ")");
 
     switch (light->mType) {
       case aiLightSource_DIRECTIONAL:
@@ -102,12 +101,12 @@ void LightParser::addDirectional(SceneBuilder& builder, const aiLight* light,
   aiMatrix3x3 rotMat(worldTransform);
   aiVector3D worldDir = rotMat * light->mDirection;
   worldDir.Normalize();
-  std::cerr << "[AssimpLightParser] Created Assimp directional light '"
-            << light->mName.C_Str() << "' direction=(" << worldDir.x << ", "
-            << worldDir.y << ", " << worldDir.z << ")"
-            << ", color=(" << light->mColorDiffuse.r << ", "
-            << light->mColorDiffuse.g << ", " << light->mColorDiffuse.b << ")"
-            << ", intensity=" << intensity << '\n';
+  static raytracer::common::Logger logger{"AssimpLightParser"};
+  logger.debug("Created Assimp directional light '", light->mName.C_Str(),
+               "' direction=(", worldDir.x, ", ", worldDir.y, ", ", worldDir.z,
+               ")", ", color=(", light->mColorDiffuse.r, ", ",
+               light->mColorDiffuse.g, ", ", light->mColorDiffuse.b, ")",
+               ", intensity=", intensity);
 
   builder.addLight(
       std::make_shared<components::light::directional::Directional>(
@@ -122,10 +121,10 @@ void LightParser::addPoint(SceneBuilder& builder,
   aiVector3D scale;
   aiQuaternion rot;
   worldTransform.Decompose(scale, rot, pos);
-  std::cerr << "[AssimpLightParser] Created Assimp point light at (" << pos.x
-            << ", " << pos.y << ", " << pos.z << ")"
-            << ", color=(" << color.r << ", " << color.g << ", " << color.b
-            << ")" << ", intensity=" << intensity << '\n';
+  static raytracer::common::Logger logger{"AssimpLightParser"};
+  logger.debug("Created Assimp point light at (", pos.x, ", ", pos.y, ", ",
+               pos.z, ")", ", color=(", color.r, ", ", color.g, ", ", color.b,
+               ")", ", intensity=", intensity);
 
   builder.addLight(std::make_shared<components::light::point::PointLight>(
       math::Point3D(pos.x, pos.y, pos.z), color,
@@ -133,18 +132,18 @@ void LightParser::addPoint(SceneBuilder& builder,
 }
 
 void LightParser::addAmbient(SceneBuilder& builder, const aiLight* light) {
-  std::cerr << "[AssimpLightParser] Created Assimp ambient light '"
-            << light->mName.C_Str() << "' color=(" << light->mColorAmbient.r
-            << ", " << light->mColorAmbient.g << ", " << light->mColorAmbient.b
-            << ")" << '\n';
+  static raytracer::common::Logger logger{"AssimpLightParser"};
+  logger.debug("Created Assimp ambient light '", light->mName.C_Str(),
+               "' color=(", light->mColorAmbient.r, ", ",
+               light->mColorAmbient.g, ", ", light->mColorAmbient.b, ")");
   builder.addLight(std::make_shared<components::light::ambient::Ambient>(
       math::Color(1, 1, 1), 1.0));
 }
 
 void LightParser::addFallback(SceneBuilder& builder) {
-  std::cerr << "[AssimpLightParser] Created Assimp fallback directional light"
-            << " direction=(" << -fallbackDir << ", -1, " << -fallbackDir << ")"
-            << '\n';
+  static raytracer::common::Logger logger{"AssimpLightParser"};
+  logger.debug("Created Assimp fallback directional light direction=(",
+               -fallbackDir, ", -1, ", -fallbackDir, ")");
   builder.addLight(
       std::make_shared<components::light::directional::Directional>(
           math::Vector3D(-fallbackDir, -1.0, -fallbackDir),

@@ -21,6 +21,7 @@ target_link_libraries(bonus_assimp_loader
         ${CMAKE_CURRENT_SOURCE_DIR}/Assimp/libassimp.a
         config++
         raytracer_components
+    raytracer_helper
         raytracer_math
         raytracer_scene
         z
