@@ -38,7 +38,7 @@ void LightParser::parse(const aiScene* scene, SceneBuilder& builder) {
     double g = assimpColor.g * powerMultiplier;
     double b = assimpColor.b * powerMultiplier;
 
-    const math::Color color = {r, g, b};
+    const math::Color color = {r / 2, g / 2, b / 2};
     const float intensity = 1;
     const aiMatrix4x4 worldTransform = findWorldTransform(scene, light->mName);
 
