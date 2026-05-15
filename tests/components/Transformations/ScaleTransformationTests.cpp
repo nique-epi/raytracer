@@ -60,7 +60,7 @@ TEST_F(ScaleTransformationTest, ApplyToNormalUsesTransposeInverse) {
   const Vector3D normal(1.0, 0.0, 0.0);
   const Vector3D result = nonUniform.applyToNormal(normal);
 
-  EXPECT_NEAR(result.x, 0.5 / std::sqrt(0.25), 1e-12);
+  EXPECT_NEAR(result.x, 1.0, 1e-12);
   EXPECT_NEAR(result.y, 0.0, 1e-12);
   EXPECT_NEAR(result.z, 0.0, 1e-12);
   EXPECT_NEAR(result.length(), 1.0, 1e-12);
