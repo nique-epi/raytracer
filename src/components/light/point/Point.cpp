@@ -29,7 +29,8 @@ raytracer::math::Color PointLight::illuminate(
   if (isOccluded(point, scene)) {
     return {0.0, 0.0, 0.0};
   }
-  return color * intensity / distanceSquared;
+  return (color * intensity) /
+         (4.0 * raytracer::math::constants::PI * distanceSquared);
 }
 
 raytracer::math::Vector3D PointLight::getDirection(

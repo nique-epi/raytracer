@@ -11,6 +11,7 @@
 #include "fixtures/SphereFixture.hpp"
 #include "scene/Scene.hpp"
 #include "utils/math/Color.hpp"
+#include "utils/math/Constants.hpp"
 #include "utils/math/Vector3D.hpp"
 
 namespace {
@@ -38,8 +39,8 @@ TEST(PointLightTest, IlluminateAppliesInverseSquareFalloff) {
   PointLight light(Vector3D(0.0, 0.0, 0.0), Color(1.0, 1.0, 1.0), 4.0);
   const Color nearColor = light.illuminate(Vector3D(2.0, 0.0, 0.0), scene);
   const Color farColor = light.illuminate(Vector3D(4.0, 0.0, 0.0), scene);
-  EXPECT_DOUBLE_EQ(nearColor.r, 1.0);
-  EXPECT_DOUBLE_EQ(farColor.r, 0.25);
+  EXPECT_NEAR(nearColor.r, 1.0 / (4.0 * raytracer::math::constants::PI), 1e-9);
+  EXPECT_NEAR(farColor.r, 1.0 / (16.0 * raytracer::math::constants::PI), 1e-9);
 }
 
 TEST(PointLightTest, IsOccludedDetectsBlockerBetweenPointAndLight) {
