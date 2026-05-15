@@ -14,19 +14,16 @@
  * to a disjoint pixel region of the shared `Image` — writes do not need
  * external synchronisation because the regions never overlap.
  *
- * Shading is **not** implemented here: each primary ray is handed off
- * to `config.integrator->computeRadiance(...)`. The renderer's only job
- * is camera sampling, tile dispatch, and writing the resulting pixels.
- * Both this renderer and `MonoThreadRenderer` share the same integrator
- * path so the multithread output is bit-identical to the mono output
- * when `samplesPerPixel == 1`.
+ * Shading is **not** implemented here: at the start of every
+ * `render()` call the renderer snapshots the active strategy from
+ * `config.shadingContext->currentStrategy()` and uses it for the whole
+ * frame. A `setStrategy()` performed mid-render takes effect at the
+ * next frame.
  *
  * Determinism contract: when `settings.samplesPerPixel == 1` no jitter
- * is applied, so the output is bit-identical to the mono-thread
- * renderer regardless of `numThreads`. With `samplesPerPixel > 1` the
- * per-pixel jitter draws from `thread_local` RNGs, so output may vary
- * across thread counts; this matches the mono-thread behaviour and is
- * acceptable per the ticket.
+ * is applied, so the output is bit-identical regardless of
+ * `numThreads`. With `samplesPerPixel > 1` the per-pixel jitter draws
+ * from `thread_local` RNGs, so output may vary across thread counts.
  */
 
 #pragma once
@@ -35,14 +32,14 @@
 #include <functional>
 #include "common/helper/Logger.hpp"
 #include "components/image/Image.hpp"
-#include "renderer/Frame.hpp"
-#include "renderer/IRenderer.hpp"
-#include "renderer/RendererConfig.hpp"
-#include "renderer/Tile.hpp"
+#include "rendering/renderer/Frame.hpp"
+#include "rendering/renderer/IRenderer.hpp"
+#include "rendering/renderer/RendererConfig.hpp"
+#include "rendering/renderer/Tile.hpp"
 
-namespace raytracer::core {
-class IIntegrator;
-}  // namespace raytracer::core
+namespace raytracer::shading {
+class IShadingMode;
+}  // namespace raytracer::shading
 
 namespace raytracer::scene {
 class Scene;
@@ -75,12 +72,13 @@ class RaytracerRenderer : public IRenderer {
    * respect to other `renderTile` calls **only if the tiles are
    * disjoint** — the underlying `Image::setPixel` does not synchronise.
    *
-   * @p integrator is the shading engine used for every primary ray.
+   * @p shader is the shading entry point used for every primary ray.
    */
   static void renderTile(const Tile& tile, const scene::Scene& scene,
                          const ICamera& camera,
                          const math::RenderSettings& settings,
-                         IIntegrator& integrator, components::Image& image);
+                         shading::IShadingMode& shader,
+                         components::Image& image);
 
  private:
   std::function<void(double)> progressCallback_;

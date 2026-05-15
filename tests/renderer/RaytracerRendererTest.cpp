@@ -6,19 +6,19 @@
 */
 
 #include <gtest/gtest.h>
-#include <chrono>
-#include <cstdlib>
 #include <memory>
-#include <thread>
 #include <type_traits>
 #include "../fixtures/OrthoCameraFixture.hpp"
 #include "../fixtures/SphereFixture.hpp"
 #include "components/image/Image.hpp"
-#include "integrator/pathIntegrator/PathIntegrator.hpp"
-#include "renderer/Frame.hpp"
-#include "renderer/IRenderer.hpp"
-#include "renderer/RendererConfig.hpp"
-#include "renderer/raytracerRenderer/RaytracerRenderer.hpp"
+#include "rendering/integrator/whittedIntegrator/WhittedIntegrator.hpp"
+#include "rendering/renderer/Frame.hpp"
+#include "rendering/renderer/IRenderer.hpp"
+#include "rendering/renderer/RendererConfig.hpp"
+#include "rendering/renderer/raytracerRenderer/RaytracerRenderer.hpp"
+#include "rendering/shading/IShadingMode.hpp"
+#include "rendering/shading/ShadingContext.hpp"
+#include "rendering/shading/rendered/RenderedShader.hpp"
 #include "scene/Scene.hpp"
 #include "utils/math/RenderSettings.hpp"
 #include "utils/math/Vector3D.hpp"
@@ -51,10 +51,13 @@ raytracer::components::Image renderWith(
   auto scene = buildSphereScene();
   auto camera = std::make_shared<OrthoCameraFixture>();
 
+  std::shared_ptr<raytracer::shading::IShadingMode> strategy =
+      std::make_shared<raytracer::shading::RenderedShader>(
+          std::make_shared<raytracer::core::WhittedIntegrator>());
+  auto context =
+      std::make_shared<raytracer::shading::ShadingContext>(std::move(strategy));
   const raytracer::core::RendererConfig config{
-      .scene = scene,
-      .settings = settings,
-      .integrator = std::make_shared<raytracer::core::PathIntegrator>()};
+      .scene = scene, .settings = settings, .shadingContext = context};
   const raytracer::core::Frame frame{.camera = camera};
   return renderer.render(config, frame);
 }
