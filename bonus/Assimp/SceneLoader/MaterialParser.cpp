@@ -16,6 +16,7 @@
 namespace {
 
 constexpr float maxShininessValue = 128.0F;
+constexpr float defaultPrincipledRefractionIndex = 1.5F;
 
 }  // namespace
 
@@ -48,7 +49,7 @@ std::shared_ptr<IMaterial> MaterialParser::parseMaterial(aiMaterial* mat) {
   mat->Get(AI_MATKEY_OPACITY, opacity);
   const float alpha = std::clamp(std::min(baseColor4.a, opacity), 0.0F, 1.0F);
 
-  float refractionIndex = 1.5F;
+  float refractionIndex = defaultPrincipledRefractionIndex;
   mat->Get(AI_MATKEY_REFRACTI, refractionIndex);
 
   float roughness = -1.0F;

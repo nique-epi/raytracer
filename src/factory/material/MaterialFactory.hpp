@@ -21,7 +21,7 @@ namespace raytracer::core::factory {
 
 inline constexpr double defaultGlassRefractionIndex = 1.5;
 inline constexpr double defaultPrincipledRoughness = 0.5;
-inline constexpr double defaultPrincipledRefractionIndex = 1.45;
+inline constexpr double defaultPrincipledRefractionIndex = 1.5;
 
 /**
  * @brief Static, statically-linked factory for `IMaterial` materials.
@@ -80,7 +80,7 @@ class MaterialFactory {
    * metal).
    * @param [in] roughness Roughness factor in [0, 1] (0 = mirror-like, 1 =
    * diffuse).
-   * @param [in] ior       Index of refraction for dielectrics (default: 1.45).
+    * @param [in] ior       Index of refraction for dielectrics (default: 1.5).
    * @param [in] alpha     Opacity factor in [0, 1] (0 = fully transparent,
    * 1 = fully opaque).
    * @returns Shared pointer to the freshly constructed material.

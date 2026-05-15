@@ -12,7 +12,7 @@
 
 namespace raytracer::components::material {
 
-inline constexpr double defaultPrincipledRefractionIndex = 1.45;
+inline constexpr double defaultPrincipledRefractionIndex = 1.5;
 
 /**
  * @brief Simplified Principled BSDF material.

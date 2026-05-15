@@ -16,7 +16,7 @@ constexpr int imageHeight = 600;
 constexpr int tileWidth = 32;
 constexpr int tileHeight = 32;
 constexpr int numThreads = 0;
-constexpr int samplesPerPixel = 10;
+constexpr int samplesPerPixel = 1;
 constexpr int maxDepth = 5;
 }  // namespace defaults
 
