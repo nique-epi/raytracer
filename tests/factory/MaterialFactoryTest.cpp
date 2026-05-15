@@ -39,6 +39,28 @@ TEST(MaterialFactoryTest, CreateGlossyFromCfg) {
   EXPECT_NE(material, nullptr);
 }
 
+TEST(MaterialFactoryTest, CreatePrincipledFromCfgReadsAlpha) {
+  CfgFromString cfg(
+      "principled = { baseColor = { r = 255; g = 128; b = 0; }; alpha = 0.0; "
+      "};");
+  auto material = MaterialFactory::create("principled", cfg.at("principled"));
+  ASSERT_NE(material, nullptr);
+  const auto diffuseAlbedo = material->diffuseAlbedo();
+  EXPECT_DOUBLE_EQ(diffuseAlbedo.r, 0.0);
+  EXPECT_DOUBLE_EQ(diffuseAlbedo.g, 0.0);
+  EXPECT_DOUBLE_EQ(diffuseAlbedo.b, 0.0);
+}
+
+TEST(MaterialFactoryTest, CreatePrincipledWithAlphaScalesDiffuseAlbedo) {
+  auto material = MaterialFactory::createPrincipled(Color(0.8, 0.4, 0.2), 0.0,
+                                                    0.5, 1.45, 0.25);
+  ASSERT_NE(material, nullptr);
+  const auto diffuseAlbedo = material->diffuseAlbedo();
+  EXPECT_DOUBLE_EQ(diffuseAlbedo.r, 0.2);
+  EXPECT_DOUBLE_EQ(diffuseAlbedo.g, 0.1);
+  EXPECT_DOUBLE_EQ(diffuseAlbedo.b, 0.05);
+}
+
 TEST(MaterialFactoryTest, CreateGlassFromCfg) {
   CfgFromString cfg("glass = { refractionIndex = 1.33; };");
   auto material = MaterialFactory::create("glass", cfg.at("glass"));

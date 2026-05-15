@@ -11,6 +11,7 @@
 #include "LightsParser.hpp"
 #include "NodeParser.hpp"
 #include "background/Solid/SolidBackground.hpp"
+#include "common/helper/Logger.hpp"
 #include "scene/SceneBuilder.hpp"
 
 namespace {
@@ -46,17 +47,18 @@ bool AssimpLoader::load(const std::string& path, SceneBuilder& builder,
     return false;
   }
 
-  std::cerr << "Loaded GLTF: " << scene->mNumMeshes << " meshes, "
-            << scene->mNumMaterials << " materials, " << scene->mNumCameras
-            << " cameras, " << scene->mNumLights << " lights, "
-            << countTriangles(scene) << " triangles" << '\n';
+  static raytracer::common::Logger logger{"AssimpLoader"};
+  logger.info("Loaded GLTF: ", scene->mNumMeshes, " meshes, ",
+              scene->mNumMaterials, " materials, ", scene->mNumCameras,
+              " cameras, ", scene->mNumLights, " lights, ",
+              countTriangles(scene), " triangles");
 
   NodeParser::parse(scene->mRootNode, scene, builder, aiMatrix4x4());
   LightParser::parse(scene, builder);
   CameraParser::parse(scene, builder, settings);
   builder.setBackground(
       std::make_shared<raytracer::scene::background::SolidBackground>(
-          math::Color{1, 1, 1}));
+          math::Color{0.5, 0.5, 0.5}));
   return true;
 }
 

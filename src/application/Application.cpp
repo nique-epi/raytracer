@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <chrono>
 #include <cstdint>
+#include <cmath>
 #include <cstdio>
 #include <iomanip>
 #include <iostream>
@@ -124,6 +125,7 @@ void displayProgressBar(RaytracerRenderer& renderer) {
     });
   }
 }
+
 }  // namespace
 
 Application::Application() {
@@ -165,6 +167,7 @@ int Application::run(const std::string& scenePath, bool useBVH) {
   components::Image image = renderer.render(config, frame);
 
   output::ppm writer;
+
 #ifdef BUILD_BONUS
   OIDDenoiser::denoise(image);
 #endif

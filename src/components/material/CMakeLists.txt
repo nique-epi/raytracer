@@ -16,6 +16,7 @@ target_sources(raytracer_components
     diffuse/DiffuseMaterial.cpp
     glossy/Glossy.cpp
     glass/Glass.cpp
+    principledBSDF/PrincipledBSDF.cpp
     Textures/solid/SolidColor.cpp
     Textures/checker/CheckerTexture.cpp
     textured/TexturedMaterial.cpp
