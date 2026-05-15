@@ -15,7 +15,7 @@
 #include "integrator/pathIntegrator/PathIntegrator.hpp"
 #include "renderer/Frame.hpp"
 #include "renderer/RendererConfig.hpp"
-#include "renderer/monoThreadRenderer/MonoThreadRenderer.hpp"
+#include "renderer/raytracerRenderer/RaytracerRenderer.hpp"
 #include "scene/Scene.hpp"
 #include "scene/World.hpp"
 #include "scene/background/Solid/SolidBackground.hpp"
@@ -29,7 +29,7 @@ using raytracer::components::light::point::PointLight;
 using raytracer::components::material::DiffuseMaterial;
 using raytracer::components::primitives::Sphere;
 using raytracer::core::Frame;
-using raytracer::core::MonoThreadRenderer;
+using raytracer::core::RaytracerRenderer;
 using raytracer::core::RendererConfig;
 using raytracer::math::Color;
 using raytracer::math::RenderSettings;
@@ -70,7 +70,7 @@ RenderSettings makeSettings(int maxDepth) {
 raytracer::components::Image renderScene(const std::shared_ptr<Scene>& scene,
                                          const RenderSettings& settings) {
   auto camera = std::make_shared<OrthoCameraFixture>();
-  MonoThreadRenderer renderer;
+  raytracer::core::RaytracerRenderer renderer;
   const RendererConfig config{
       .scene = scene,
       .settings = settings,
@@ -83,8 +83,8 @@ double imageSum(const raytracer::components::Image& image) {
   double sum = 0.0;
   for (std::size_t y = 0; y < image.getHeight(); ++y) {
     for (std::size_t x = 0; x < image.getWidth(); ++x) {
-      const auto pixel = image.getPixel(static_cast<int>(x),
-                                        static_cast<int>(y));
+      const auto pixel =
+          image.getPixel(static_cast<int>(x), static_cast<int>(y));
       sum += pixel.r + pixel.g + pixel.b;
     }
   }
@@ -141,9 +141,10 @@ TEST(RendererViewportModeTest, RenderedDropShadowOccludesDirectLighting) {
   // Small blocker sphere sitting between the hit point (0, 0, -1) and
   // the light (0, 0, 5). Any opaque material works — we use the same
   // diffuse since only the shadow-ray occlusion matters.
-  auto blockerMaterial = std::make_shared<DiffuseMaterial>(Color(0.0, 0.0, 0.0));
-  scene->add(std::make_shared<Sphere>(Vector3D(0.0, 0.0, 0.5), 0.25,
-                                      blockerMaterial));
+  auto blockerMaterial =
+      std::make_shared<DiffuseMaterial>(Color(0.0, 0.0, 0.0));
+  scene->add(
+      std::make_shared<Sphere>(Vector3D(0.0, 0.0, 0.5), 0.25, blockerMaterial));
   scene->getWorld().setViewportMode(ViewportMode::Rendered);
 
   const auto image = renderScene(scene, makeSettings(1));
@@ -179,8 +180,7 @@ TEST(RendererViewportModeTest, BackgroundOnSecondaryRaysDiffersByMode) {
   const RenderSettings settings = makeSettings(2);
 
   const auto imageRendered = renderScene(sceneRendered, settings);
-  const auto imageMaterialPreview =
-      renderScene(sceneMaterialPreview, settings);
+  const auto imageMaterialPreview = renderScene(sceneMaterialPreview, settings);
 
   // We can't compare per-pixel sphere coverage exactly because the
   // background also fills the off-sphere pixels in both modes. To isolate
