@@ -6,10 +6,7 @@
 */
 
 #include <gtest/gtest.h>
-#include <chrono>
-#include <cstdlib>
 #include <memory>
-#include <thread>
 #include <type_traits>
 #include "../fixtures/OrthoCameraFixture.hpp"
 #include "../fixtures/SphereFixture.hpp"
