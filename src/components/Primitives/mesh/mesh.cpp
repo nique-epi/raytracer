@@ -24,6 +24,7 @@ Mesh::Mesh(std::vector<std::shared_ptr<Triangle>> triangles)
 void Mesh::addTriangle(std::shared_ptr<Triangle> triangle) {
   triangles_.push_back(std::move(triangle));
   bboxDirty_ = true;
+  internalBVH_.reset();
 }
 
 bool Mesh::hits(const raytracer::math::Ray& ray, double tMin, double tMax,

@@ -95,7 +95,7 @@ bool PrincipledMaterial::scatterMetallic(
   }
 
   scatteredRay = math::Ray(hitRecord.point, scatteredDirection);
-  attenuation = baseColor_ * alpha_;
+  attenuation = baseColor_;
   return true;
 }
 
@@ -119,7 +119,7 @@ bool PrincipledMaterial::scatterSpecularReflection(
   }
 
   scatteredRay = math::Ray(hitRecord.point, scatteredDirection);
-  attenuation = math::Color(1.0, 1.0, 1.0) * alpha_;
+  attenuation = math::Color(1.0, 1.0, 1.0);
   return true;
 }
 
@@ -135,7 +135,7 @@ bool PrincipledMaterial::scatterDiffuseReflection(
   }
 
   scatteredRay = math::Ray(hitRecord.point, scatteredDirection);
-  attenuation = baseColor_ * alpha_;
+  attenuation = baseColor_;
   return true;
 }
 
