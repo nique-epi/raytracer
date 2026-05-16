@@ -296,8 +296,12 @@ int runWithViewport(raytracer::core::RaytracerRenderer& renderer,
     logger.info("render interrupted: ", finalSamples, '/', effectiveSamples,
                 " samples - close window to export partial result");
   }
-  const std::lock_guard<std::mutex> lock(finalImageMutex);
-  viewport.write(finalImage, "out.ppm");
+  raytracer::components::Image exportImage(width, height);
+  {
+    const std::lock_guard<std::mutex> lock(finalImageMutex);
+    exportImage = finalImage;
+  }
+  viewport.write(exportImage, "out.ppm");
   return 0;
 }
 
