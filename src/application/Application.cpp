@@ -165,6 +165,13 @@ int Application::run(const std::string& scenePath, bool useBVH,
 #endif
 
   if (!settings.validate()) {
+#ifdef BUILD_BONUS
+    if (renderConfigPath) {
+      throw RaytracerException(
+          "Invalid render settings loaded from scene: " + scenePath +
+          ", overridden by config: " + *renderConfigPath);
+    }
+#endif
     throw RaytracerException("Invalid render settings loaded from: " +
                              scenePath);
   }
@@ -193,9 +200,9 @@ int Application::run(const std::string& scenePath, bool useBVH,
 
 #ifdef BUILD_BONUS
   OIDDenoiser::denoise(image);
-  const std::string outputPath =
-      (globalConfig && globalConfig->outputFile) ? *globalConfig->outputFile
-                                                 : "out.ppm";
+  const std::string outputPath = (globalConfig && globalConfig->outputFile)
+                                     ? *globalConfig->outputFile
+                                     : "out.ppm";
 #else
   const std::string outputPath = "out.ppm";
 #endif
