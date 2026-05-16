@@ -110,3 +110,38 @@ TEST(ArgsParserTest, UnknownThirdArgReturnsNullopt) {
   const char* args[] = {"raytracer", "scenes/example.cfg", "--unknown"};
   EXPECT_FALSE(ArgsParser::parse(3, args).has_value());
 }
+
+#ifdef BUILD_BONUS
+// Given: a scene path followed by --viewport.
+// When:  parse() is called on a bonus build.
+// Then:  returns a SceneRequest with viewport set to true.
+TEST(ArgsParserTest, ViewportFlagEnablesViewport) {
+  const char* args[] = {"raytracer", "scenes/example.cfg", "--viewport"};
+  const auto result = ArgsParser::parse(3, args);
+  ASSERT_TRUE(result.has_value());
+  ASSERT_TRUE(std::holds_alternative<SceneRequest>(*result));
+  EXPECT_TRUE(std::get<SceneRequest>(*result).viewport);
+  EXPECT_TRUE(std::get<SceneRequest>(*result).useBVH);
+}
+
+// Given: a scene path with --no-bvh and --viewport in either order.
+// When:  parse() is called on a bonus build.
+// Then:  both flags are applied regardless of order.
+TEST(ArgsParserTest, ViewportAndNoBVHTogether) {
+  const char* argsA[] = {"raytracer", "scenes/example.cfg", "--no-bvh",
+                         "--viewport"};
+  const auto resultA = ArgsParser::parse(4, argsA);
+  ASSERT_TRUE(resultA.has_value());
+  const auto& reqA = std::get<SceneRequest>(*resultA);
+  EXPECT_FALSE(reqA.useBVH);
+  EXPECT_TRUE(reqA.viewport);
+
+  const char* argsB[] = {"raytracer", "scenes/example.cfg", "--viewport",
+                         "--no-bvh"};
+  const auto resultB = ArgsParser::parse(4, argsB);
+  ASSERT_TRUE(resultB.has_value());
+  const auto& reqB = std::get<SceneRequest>(*resultB);
+  EXPECT_FALSE(reqB.useBVH);
+  EXPECT_TRUE(reqB.viewport);
+}
+#endif

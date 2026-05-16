@@ -33,6 +33,7 @@
 #ifdef BUILD_BONUS
 #include "Assimp/SceneLoader/AssimpLoaderRegistration.hpp"
 #include "postprocess/denoise/OIDDenoiser.hpp"
+#include "viewport.hpp"
 #endif
 
 namespace raytracer::core {
@@ -121,12 +122,19 @@ int Application::run(const std::string& scenePath, bool useBVH) {
   scene->getCamera()->setResolution(settings.imageWidth, settings.imageHeight);
 
   RaytracerRenderer renderer;
-  displayProgressBar(renderer);
   auto shadingContext = createShadingContext(*scene);
 
   const RendererConfig config{
       .scene = scene, .settings = settings, .shadingContext = shadingContext};
   const Frame frame{.camera = scene->getCamera()};
+
+#ifdef BUILD_BONUS
+  if (viewportRequested_) {
+    return raytracer::bonus::runWithViewport(renderer, config, frame);
+  }
+#endif
+
+  displayProgressBar(renderer);
   components::Image image = renderer.render(config, frame);
 
   output::ppm writer;
@@ -136,5 +144,9 @@ int Application::run(const std::string& scenePath, bool useBVH) {
   writer.write(image, "out.ppm");
   return 0;
 }
+
+#ifdef BUILD_BONUS
+void Application::setViewport(bool enabled) { viewportRequested_ = enabled; }
+#endif
 
 }  // namespace raytracer::core
