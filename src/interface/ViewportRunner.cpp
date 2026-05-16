@@ -86,11 +86,23 @@ void ViewportRunner::accumulate(Viewport& viewport) {
                    totalPasses_);
       break;
     }
+    renderer_.setProgressCallback([this, &viewport, pass](double fraction) {
+      reportPassProgress(viewport, pass, fraction);
+    });
     const raytracer::components::Image passImage =
         renderer_.render(perPassConfig, frame_);
     accumulatePass(accumulator, passImage, displayImage, pass);
     publishPass(viewport, displayImage, pass);
   }
+}
+
+void ViewportRunner::reportPassProgress(Viewport& viewport, int pass,
+                                        double fraction) const {
+  const int completedSamples = (pass - 1) * samplesPerPass;
+  const int percent = static_cast<int>(fraction * 100.0);
+  viewport.setStatus("Rendering " + std::to_string(completedSamples) + " / " +
+                     std::to_string(effectiveSamples_) + " samples (pass " +
+                     std::to_string(percent) + "%)");
 }
 
 void ViewportRunner::accumulatePass(
@@ -102,9 +114,9 @@ void ViewportRunner::accumulatePass(
       const std::size_t index =
           (static_cast<std::size_t>(y) * static_cast<std::size_t>(width_)) +
           static_cast<std::size_t>(x);
-      accumulator[index] = accumulator[index] +
-                           passImage.getPixel(static_cast<std::size_t>(x),
-                                              static_cast<std::size_t>(y));
+      accumulator[index] =
+          accumulator[index] + passImage.getPixel(static_cast<std::size_t>(x),
+                                                  static_cast<std::size_t>(y));
       displayImage.setPixel(static_cast<std::size_t>(x),
                             static_cast<std::size_t>(y),
                             accumulator[index] / static_cast<double>(pass));

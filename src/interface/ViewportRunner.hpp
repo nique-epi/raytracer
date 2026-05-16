@@ -66,6 +66,7 @@ class ViewportRunner {
                       int pass) const;
   void publishPass(Viewport& viewport,
                    const raytracer::components::Image& displayImage, int pass);
+  void reportPassProgress(Viewport& viewport, int pass, double fraction) const;
   void reportOutcome(Viewport& viewport);
 
   raytracer::core::RaytracerRenderer& renderer_;
