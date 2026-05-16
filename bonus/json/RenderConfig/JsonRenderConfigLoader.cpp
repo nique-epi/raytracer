@@ -35,32 +35,38 @@ GlobalRenderConfig JsonRenderConfigLoader::load(
   nlohmann::json j;
   try {
     file >> j;
-  } catch (const nlohmann::json::parse_error& error) {
+    if (!j.is_object()) {
+      throw raytracer::scene::SceneParseException(path,
+                                                   "root must be a JSON object");
+    }
+
+    GlobalRenderConfig config;
+    config.settings = base;
+    math::RenderSettings& settings = config.settings;
+
+    settings.imageWidth = j.value("imageWidth", settings.imageWidth);
+    settings.imageHeight = j.value("imageHeight", settings.imageHeight);
+    settings.tileWidth = j.value("tileWidth", settings.tileWidth);
+    settings.tileHeight = j.value("tileHeight", settings.tileHeight);
+    settings.numThreads = j.value("numThreads", settings.numThreads);
+    settings.samplesPerPixel =
+        j.value("samplesPerPixel", settings.samplesPerPixel);
+    settings.maxDepth = j.value("maxDepth", settings.maxDepth);
+
+    if (j.contains("viewportMode") && j.at("viewportMode").is_string()) {
+      config.viewportMode =
+          viewportModeFromString(j.at("viewportMode").get<std::string>());
+    }
+    if (j.contains("name") && j.at("name").is_string()) {
+      config.outputFile = j.at("name").get<std::string>();
+    }
+
+    return config;
+  } catch (const raytracer::scene::SceneParseException&) {
+    throw;
+  } catch (const nlohmann::json::exception& error) {
     throw raytracer::scene::SceneParseException(path, error.what());
   }
-
-  GlobalRenderConfig config;
-  config.settings = base;
-  math::RenderSettings& settings = config.settings;
-
-  settings.imageWidth = j.value("imageWidth", settings.imageWidth);
-  settings.imageHeight = j.value("imageHeight", settings.imageHeight);
-  settings.tileWidth = j.value("tileWidth", settings.tileWidth);
-  settings.tileHeight = j.value("tileHeight", settings.tileHeight);
-  settings.numThreads = j.value("numThreads", settings.numThreads);
-  settings.samplesPerPixel =
-      j.value("samplesPerPixel", settings.samplesPerPixel);
-  settings.maxDepth = j.value("maxDepth", settings.maxDepth);
-
-  if (j.contains("viewportMode") && j.at("viewportMode").is_string()) {
-    config.viewportMode =
-        viewportModeFromString(j.at("viewportMode").get<std::string>());
-  }
-  if (j.contains("name") && j.at("name").is_string()) {
-    config.outputFile = j.at("name").get<std::string>();
-  }
-
-  return config;
 }
 
 }  // namespace raytracer::bonus::json
