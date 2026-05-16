@@ -193,8 +193,13 @@ int Application::run(const std::string& scenePath, bool useBVH,
 
 #ifdef BUILD_BONUS
   OIDDenoiser::denoise(image);
+  const std::string outputPath =
+      (globalConfig && globalConfig->outputFile) ? *globalConfig->outputFile
+                                                 : "out.ppm";
+#else
+  const std::string outputPath = "out.ppm";
 #endif
-  writer.write(image, "out.ppm");
+  writer.write(image, outputPath);
   return 0;
 }
 

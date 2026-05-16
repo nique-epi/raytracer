@@ -56,6 +56,9 @@ GlobalRenderConfig JsonRenderConfigLoader::load(
     config.viewportMode =
         viewportModeFromString(j.at("viewportMode").get<std::string>());
   }
+  if (j.contains("name") && j.at("name").is_string()) {
+    config.outputFile = j.at("name").get<std::string>();
+  }
 
   return config;
 }

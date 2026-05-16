@@ -25,6 +25,7 @@ namespace raytracer::bonus::json {
 struct GlobalRenderConfig {
   math::RenderSettings settings;
   std::optional<raytracer::scene::ViewportMode> viewportMode;
+  std::optional<std::string> outputFile;
 };
 
 /**
@@ -32,7 +33,8 @@ struct GlobalRenderConfig {
  *
  * The JSON file must be a flat object whose keys are a subset of:
  * `"imageWidth"`, `"imageHeight"`, `"tileWidth"`, `"tileHeight"`,
- * `"numThreads"`, `"samplesPerPixel"`, `"maxDepth"`, `"viewportMode"`.
+ * `"numThreads"`, `"samplesPerPixel"`, `"maxDepth"`, `"viewportMode"`,
+ * `"name"`.
  * All keys are optional; absent keys keep the `RenderSettings` defaults.
  *
  * `"viewportMode"` accepts the strings `"rendered"`, `"wireframe"`, and
