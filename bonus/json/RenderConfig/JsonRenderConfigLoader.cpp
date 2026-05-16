@@ -37,7 +37,7 @@ GlobalRenderConfig JsonRenderConfigLoader::load(
     file >> j;
     if (!j.is_object()) {
       throw raytracer::scene::SceneParseException(path,
-                                                   "root must be a JSON object");
+                                                  "root must be a JSON object");
     }
 
     GlobalRenderConfig config;
