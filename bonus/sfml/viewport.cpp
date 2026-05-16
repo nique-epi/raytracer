@@ -38,6 +38,12 @@ constexpr float overlayPadding = 12.0F;
 constexpr float overlayMargin = 16.0F;
 constexpr float overlayPaddingTotal = overlayPadding * 2.0F;
 constexpr std::uint8_t overlayBackgroundAlpha = 160;
+
+// RaytracerRenderer only applies sub-pixel jitter when samplesPerPixel > 1
+// (see RaytracerRenderer.hpp determinism contract). A pass must therefore
+// render at least 2 samples, otherwise every pass is bit-identical and
+// accumulation never reduces noise.
+constexpr int samplesPerPass = 2;
 }  // namespace
 
 struct Viewport::Impl {
@@ -203,14 +209,17 @@ int runWithViewport(raytracer::core::RaytracerRenderer& renderer,
   raytracer::common::Logger logger("ViewportLoop");
   const int width = baseConfig.settings.imageWidth;
   const int height = baseConfig.settings.imageHeight;
-  const int totalSamples = std::max(1, baseConfig.settings.samplesPerPixel);
+  const int targetSamples = std::max(1, baseConfig.settings.samplesPerPixel);
+  const int totalPasses = std::max(1, targetSamples / samplesPerPass);
+  const int effectiveSamples = totalPasses * samplesPerPass;
 
   Viewport viewport(width, height, "Raytracer");
-  logger.info("viewport opened ", width, 'x', height,
-              ", target samples=", totalSamples);
+  logger.info("viewport opened ", width, 'x', height, ", ", totalPasses,
+              " passes of ", samplesPerPass, " samples (", effectiveSamples,
+              " total)");
 
   raytracer::math::RenderSettings perPassSettings = baseConfig.settings;
-  perPassSettings.samplesPerPixel = 1;
+  perPassSettings.samplesPerPixel = samplesPerPass;
   const raytracer::core::RendererConfig perPassConfig{
       .scene = baseConfig.scene,
       .settings = perPassSettings,
@@ -218,7 +227,7 @@ int runWithViewport(raytracer::core::RaytracerRenderer& renderer,
 
   std::mutex finalImageMutex;
   raytracer::components::Image finalImage(width, height);
-  std::atomic<int> completedSamples{0};
+  std::atomic<int> completedPasses{0};
   std::atomic<bool> renderDone{false};
 
   std::thread renderThread([&]() {
@@ -226,24 +235,26 @@ int runWithViewport(raytracer::core::RaytracerRenderer& renderer,
     std::vector<raytracer::math::Color> accumulator(
         static_cast<std::size_t>(width) * static_cast<std::size_t>(height));
     raytracer::components::Image displayImage(width, height);
-    for (int sample = 1; sample <= totalSamples; ++sample) {
+    for (int pass = 1; pass <= totalPasses; ++pass) {
       if (viewport.shouldClose()) {
-        logger.info("user closed viewport at sample ", sample - 1, '/',
-                    totalSamples);
+        logger.info("user closed viewport at pass ", pass - 1, '/',
+                    totalPasses);
         break;
       }
-      raytracer::components::Image pass = renderer.render(perPassConfig, frame);
+      raytracer::components::Image passImage =
+          renderer.render(perPassConfig, frame);
       for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
           const std::size_t index =
               (static_cast<std::size_t>(y) * static_cast<std::size_t>(width)) +
               static_cast<std::size_t>(x);
           accumulator[index] =
-              accumulator[index] + pass.getPixel(static_cast<std::size_t>(x),
-                                                 static_cast<std::size_t>(y));
+              accumulator[index] +
+              passImage.getPixel(static_cast<std::size_t>(x),
+                                 static_cast<std::size_t>(y));
           displayImage.setPixel(
               static_cast<std::size_t>(x), static_cast<std::size_t>(y),
-              accumulator[index] / static_cast<double>(sample));
+              accumulator[index] / static_cast<double>(pass));
         }
       }
       viewport.liveDisplay(displayImage);
@@ -251,10 +262,11 @@ int runWithViewport(raytracer::core::RaytracerRenderer& renderer,
         const std::lock_guard<std::mutex> lock(finalImageMutex);
         finalImage = displayImage;
       }
-      completedSamples.store(sample);
-      viewport.setStatus("Rendering " + std::to_string(sample) + " / " +
-                         std::to_string(totalSamples) + " samples");
-      logger.debug("sample ", sample, '/', totalSamples, " accumulated");
+      completedPasses.store(pass);
+      viewport.setStatus("Rendering " +
+                         std::to_string(pass * samplesPerPass) + " / " +
+                         std::to_string(effectiveSamples) + " samples");
+      logger.debug("pass ", pass, '/', totalPasses, " accumulated");
     }
     renderDone.store(true);
   });
@@ -266,22 +278,22 @@ int runWithViewport(raytracer::core::RaytracerRenderer& renderer,
 
   renderThread.join();
 
-  if (completedSamples.load() == 0) {
+  if (completedPasses.load() == 0) {
     logger.warn(
-        "viewport closed before any sample completed; nothing to export");
+        "viewport closed before any pass completed; nothing to export");
     return 0;
   }
-  const int finalSamples = completedSamples.load();
-  if (finalSamples == totalSamples) {
+  const int finalSamples = completedPasses.load() * samplesPerPass;
+  if (completedPasses.load() == totalPasses) {
     viewport.setStatus("Done | " + std::to_string(finalSamples) +
                        " samples | close window to save out.ppm");
-    logger.info("render finished: ", finalSamples, '/', totalSamples,
+    logger.info("render finished: ", finalSamples,
                 " samples - close window to export");
   } else {
     viewport.setStatus("Interrupted at " + std::to_string(finalSamples) +
-                       " / " + std::to_string(totalSamples) +
+                       " / " + std::to_string(effectiveSamples) +
                        " samples | close window to save partial out.ppm");
-    logger.info("render interrupted: ", finalSamples, '/', totalSamples,
+    logger.info("render interrupted: ", finalSamples, '/', effectiveSamples,
                 " samples - close window to export partial result");
   }
   const std::lock_guard<std::mutex> lock(finalImageMutex);
