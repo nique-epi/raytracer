@@ -37,6 +37,8 @@ static const std::string WorldMaterialPreviewCfg =
     SCENE_FIXTURES_DIR "/world_material_preview.cfg";
 static const std::string WorldUnknownModeCfg =
     SCENE_FIXTURES_DIR "/world_unknown_mode.cfg";
+static const std::string WorldAmbientOcclusionCfg =
+    SCENE_FIXTURES_DIR "/world_ambient_occlusion.cfg";
 
 class CFGSceneLoaderTest : public SceneBuilderFixture {
  protected:
@@ -289,4 +291,36 @@ TEST_F(CFGSceneLoaderTest, LoadUnknownModeFallsBackToRendered) {
   const auto scene = builder.build();
   EXPECT_EQ(scene->getWorld().viewportMode(),
             raytracer::scene::ViewportMode::Rendered);
+}
+
+// Given: a .cfg file whose world block declares an ambientOcclusion
+//        configuration with non-default values.
+// When:  the scene is built.
+// Then:  the World's AO settings reflect the parsed values verbatim.
+TEST_F(CFGSceneLoaderTest, LoadWorldAmbientOcclusionPopulatesSettings) {
+  SceneBuilder builder(factory_);
+  raytracer::math::RenderSettings settings;
+
+  EXPECT_TRUE(loader.load(WorldAmbientOcclusionCfg, builder, settings));
+
+  const auto scene = builder.build();
+  const auto& ao = scene->getWorld().ambientOcclusion();
+  EXPECT_TRUE(ao.enabled);
+  EXPECT_EQ(ao.samples, 24);
+  EXPECT_DOUBLE_EQ(ao.radius, 1.5);
+  EXPECT_DOUBLE_EQ(ao.intensity, 0.75);
+}
+
+// Given: a .cfg file with no ambientOcclusion block.
+// When:  the scene is built.
+// Then:  AO settings keep their disabled defaults so nothing changes.
+TEST_F(CFGSceneLoaderTest, LoadWithoutAmbientOcclusionKeepsDefaults) {
+  SceneBuilder builder(factory_);
+  raytracer::math::RenderSettings settings;
+
+  EXPECT_TRUE(loader.load(WorldWireframeCfg, builder, settings));
+
+  const auto scene = builder.build();
+  const auto& ao = scene->getWorld().ambientOcclusion();
+  EXPECT_FALSE(ao.enabled);
 }

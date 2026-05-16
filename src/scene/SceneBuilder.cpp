@@ -88,6 +88,11 @@ void SceneBuilder::setViewportMode(ViewportMode mode) {
   scene_->getWorld().setViewportMode(mode);
 }
 
+void SceneBuilder::setAmbientOcclusion(
+    const AmbientOcclusionSettings& settings) {
+  scene_->getWorld().setAmbientOcclusion(settings);
+}
+
 std::shared_ptr<Scene> SceneBuilder::build() {
   if (!scene_->getCamera()) {
     throw SceneBuildException(

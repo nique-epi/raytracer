@@ -11,6 +11,34 @@
 
 namespace raytracer::scene {
 
+inline constexpr int defaultAmbientOcclusionSamples = 16;
+inline constexpr double defaultAmbientOcclusionRadius = 1.0;
+inline constexpr double defaultAmbientOcclusionIntensity = 1.0;
+
+/**
+ * @brief Ambient-occlusion configuration applied as a post-shading
+ *        multiplicative factor on primary rays.
+ *
+ * Ambient occlusion is a world-space approximation of how much of the
+ * upper hemisphere above a shaded point is occluded by nearby geometry.
+ * It is multiplied onto the primary-ray radiance so concave regions
+ * darken naturally without paying for true global illumination.
+ *
+ * AO is intentionally limited to primary rays: applying it on every
+ * recursive bounce would multiply the cost exponentially without an
+ * equivalent visual gain.
+ */
+struct AmbientOcclusionSettings {
+  /// Whether the AO pass runs. Defaults to false to preserve baseline.
+  bool enabled{false};
+  /// Number of hemisphere samples per shaded point (higher = less noise).
+  int samples{defaultAmbientOcclusionSamples};
+  /// Maximum distance an occlusion sample considers as "blocking".
+  double radius{defaultAmbientOcclusionRadius};
+  /// AO strength in [0, 1]: 0 disables darkening, 1 applies full AO.
+  double intensity{defaultAmbientOcclusionIntensity};
+};
+
 /**
  * @brief Shading strategy used to render the scene, mirroring Blender's
  *        3D viewport shading dropdown.
@@ -67,8 +95,15 @@ class World {
   [[nodiscard]] ViewportMode viewportMode() const;
   void setViewportMode(ViewportMode mode);
 
+  /// @returns The active ambient-occlusion settings (disabled by default).
+  [[nodiscard]] const AmbientOcclusionSettings& ambientOcclusion() const;
+
+  /// @brief Replace the ambient-occlusion settings wholesale.
+  void setAmbientOcclusion(const AmbientOcclusionSettings& settings);
+
  private:
   ViewportMode viewportMode_;
+  AmbientOcclusionSettings ambientOcclusion_;
 };
 
 }  // namespace raytracer::scene

@@ -15,4 +15,12 @@ ViewportMode World::viewportMode() const { return viewportMode_; }
 
 void World::setViewportMode(ViewportMode mode) { viewportMode_ = mode; }
 
+const AmbientOcclusionSettings& World::ambientOcclusion() const {
+  return ambientOcclusion_;
+}
+
+void World::setAmbientOcclusion(const AmbientOcclusionSettings& settings) {
+  ambientOcclusion_ = settings;
+}
+
 }  // namespace raytracer::scene

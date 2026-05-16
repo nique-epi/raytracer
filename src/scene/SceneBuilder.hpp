@@ -111,6 +111,14 @@ class SceneBuilder {
   void setViewportMode(ViewportMode mode);
 
   /**
+   * @brief Replace the ambient-occlusion settings on the scene's World.
+   *
+   * @param [in] settings Configuration block (enabled flag + sampler
+   *                      parameters) applied to the underlying World.
+   */
+  void setAmbientOcclusion(const AmbientOcclusionSettings& settings);
+
+  /**
    * @brief Finalise and return the assembled scene.
    *
    * @returns A shared pointer to the constructed @ref Scene.

@@ -122,6 +122,8 @@ add_executable(raytracer_tests
   components/material/textures/PerlinNoiseTest.cpp
   components/material/textures/NoiseTextureTest.cpp
   components/material/textures/ImageTextureTest.cpp
+  rendering/HemisphereSamplerTest.cpp
+  rendering/AmbientOcclusionTest.cpp
   fixtures/SphereFixture.cpp
   fixtures/OrthoCameraFixture.cpp
   fixtures/ComponentFactoryFixture.cpp

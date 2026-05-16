@@ -54,6 +54,27 @@ class AMaterial : public IMaterial {
    * @returns Color(0, 0, 0).
    */
   [[nodiscard]] raytracer::math::Color diffuseAlbedo() const override;
+
+  /**
+   * @brief Default Lambertian BRDF: @c diffuseAlbedo() / PI.
+   *
+   * Materials whose direct-lighting response is purely Lambertian inherit
+   * this implementation; they only need to override @c diffuseAlbedo() to
+   * return the correct value. Materials that add other reflection terms
+   * (e.g. Phong specular highlight) override this method to add the extra
+   * contribution on top of the diffuse base.
+   *
+   * @param [in] incomingDirection Unit direction from the light toward the
+   *                               shaded point.
+   * @param [in] outgoingDirection Unit direction from the shaded point
+   *                               toward the camera.
+   * @param [in] normal            Unit surface normal at the shaded point.
+   * @returns @c diffuseAlbedo() divided by @c PI.
+   */
+  [[nodiscard]] raytracer::math::Color brdf(
+      const raytracer::math::Vector3D& incomingDirection,
+      const raytracer::math::Vector3D& outgoingDirection,
+      const raytracer::math::Vector3D& normal) const override;
 };
 
 #endif  // MATERIAL_ABSTRACT_AMATERIAL_HPP_
