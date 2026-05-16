@@ -191,8 +191,18 @@ int Application::run(const std::string& scenePath, bool useBVH,
   RaytracerRenderer renderer;
   auto shadingContext = createShadingContext(*scene);
 
-  const RendererConfig config{
-      .scene = scene, .settings = settings, .shadingContext = shadingContext};
+#ifdef BUILD_BONUS
+  const std::string outputPath = (jsonSettings && jsonSettings->outputFile)
+                                     ? *jsonSettings->outputFile
+                                     : "out.ppm";
+#else
+  const std::string outputPath = "out.ppm";
+#endif
+
+  const RendererConfig config{.scene = scene,
+                              .settings = settings,
+                              .shadingContext = shadingContext,
+                              .outputPath = outputPath};
   const Frame frame{.camera = scene->getCamera()};
 
   if (viewportRequested_) {
@@ -206,11 +216,6 @@ int Application::run(const std::string& scenePath, bool useBVH,
 
 #ifdef BUILD_BONUS
   OIDDenoiser::denoise(image);
-  const std::string outputPath = (jsonSettings && jsonSettings->outputFile)
-                                     ? *jsonSettings->outputFile
-                                     : "out.ppm";
-#else
-  const std::string outputPath = "out.ppm";
 #endif
   writer.write(image, outputPath);
   return 0;

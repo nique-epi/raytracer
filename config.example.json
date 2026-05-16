@@ -7,5 +7,5 @@
   "tileHeight": 32,
   "numThreads": 4,
   "viewportMode": "rendered",
-  "name": "out.ppm"
+  "name": "test.ppm"
 }

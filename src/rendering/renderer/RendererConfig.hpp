@@ -8,6 +8,7 @@
 #pragma once
 
 #include <memory>
+#include <string>
 #include "utils/math/RenderSettings.hpp"
 
 namespace raytracer::scene {
@@ -38,6 +39,15 @@ struct RendererConfig {
   std::shared_ptr<const scene::Scene> scene;
   math::RenderSettings settings;
   std::shared_ptr<shading::ShadingContext> shadingContext;
+  /**
+   * @brief Output file path used by the renderer or viewport runner when
+   *        saving the final image. Defaults to `"out.ppm"`.
+   *
+   * Set from the JSON render-configuration `outputFile` field
+   * (BUILD_BONUS). Propagated to both the headless and viewport paths so
+   * the two code-paths write to the same destination.
+   */
+  std::string outputPath{"out.ppm"};
 };
 
 }  // namespace raytracer::core
