@@ -51,7 +51,8 @@ class JsonRenderConfigLoader {
    *
    * @param [in] path Path to the JSON render-configuration file.
    * @param [in] base Starting settings (typically populated from the scene
-   *                  file). Defaults to a zero-initialised `RenderSettings`.
+   *                  file). Defaults to a default-constructed
+   *                  `RenderSettings`.
    * @returns Populated `GlobalRenderConfig`.
    * @throws raytracer::scene::SceneFileNotFoundException If the file cannot be
    *         opened.
