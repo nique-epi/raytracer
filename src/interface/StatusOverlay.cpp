@@ -47,7 +47,7 @@ void StatusOverlay::applyPendingStatus() {
   const sf::FloatRect bounds = text_.getLocalBounds();
   background_.setSize(
       sf::Vector2f(bounds.width + paddingTotal,
-                   static_cast<float>(fontSize) + paddingTotal));
+                   font_.getLineSpacing(fontSize) + paddingTotal));
 }
 
 void StatusOverlay::draw(sf::RenderWindow& window) {
