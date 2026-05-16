@@ -10,6 +10,10 @@ add_subdirectory(rendering)
 add_subdirectory(application)
 add_subdirectory(output)
 
+if(BUILD_VIEWPORT)
+  add_subdirectory(interface)
+endif()
+
 add_library(raytracer_src INTERFACE)
 
 target_include_directories(raytracer_src
@@ -46,6 +50,12 @@ target_include_directories(raytracer
 )
 
 target_link_libraries(raytracer PRIVATE raytracer_src)
+
+if(BUILD_VIEWPORT)
+  target_compile_definitions(raytracer PRIVATE BUILD_VIEWPORT)
+  target_compile_definitions(raytracer_application PRIVATE BUILD_VIEWPORT)
+  target_link_libraries(raytracer PRIVATE raytracer_viewport)
+endif()
 
 raytracer_enable_target_warnings(raytracer)
 

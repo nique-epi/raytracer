@@ -8,6 +8,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(BUILD_TESTS "Build unit tests" OFF)
 option(BUILD_BONUS "Build bonus features" OFF)
+option(BUILD_VIEWPORT "Build the SFML live-display viewport" ON)
 
 # ---------------------------------------------------------------------------
 # LOG_LEVEL — compile-time minimum log level.
@@ -87,8 +88,6 @@ if(BUILD_BONUS)
   target_link_libraries(raytracer PRIVATE bonus_assimp_loader)
   target_link_libraries(raytracer_application PRIVATE bonus_OID_denoiser)
   target_link_libraries(raytracer PRIVATE bonus_OID_denoiser)
-  target_link_libraries(raytracer_application PRIVATE bonus_viewport)
-  target_link_libraries(raytracer PRIVATE bonus_viewport)
 endif()
 
 if(BUILD_TESTS)

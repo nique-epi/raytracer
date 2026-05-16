@@ -24,13 +24,14 @@ class Application {
 
   int run(const std::string& scenePath, bool useBVH = true);
 
-#ifdef BUILD_BONUS
+#ifdef BUILD_VIEWPORT
   /**
-   * @brief Enable the SFML live-display viewport for the next `run()`.
+   * @brief Toggle the SFML live-display viewport for the next `run()`.
    *
-   * When set, `run()` skips the regular blocking render and delegates
-   * the per-sample accumulation loop to `bonus::runWithViewport`.
-   * Defaults to disabled.
+   * When enabled, `run()` skips the regular blocking render and
+   * delegates the progressive accumulation loop to
+   * `interface::runWithViewport`. Defaults to enabled; pass `false`
+   * (CLI `--no-viewport`) for a headless render straight to `out.ppm`.
    */
   void setViewport(bool enabled);
 #endif
@@ -39,8 +40,8 @@ class Application {
   raytracer::common::Logger logger_{"Application"};
   scene::SceneLoaderFactory _factory;
   factory::ComponentFactory _componentFactory;
-#ifdef BUILD_BONUS
-  bool viewportRequested_{false};
+#ifdef BUILD_VIEWPORT
+  bool viewportRequested_{true};
 #endif
 };
 

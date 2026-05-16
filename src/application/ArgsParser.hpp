@@ -19,14 +19,14 @@ struct HelpRequest {};
  *
  * Built by `ArgsParser::parse` from `argv`. Owns no resources.
  * The `viewport` field is only present when the project is built with
- * `BUILD_BONUS=ON`, so the core binary cannot be asked for the
- * SFML live-display path.
+ * `BUILD_VIEWPORT=ON`. It defaults to true (the SFML live-display
+ * window opens unless `--no-viewport` is passed).
  */
 struct SceneRequest {
   std::string scenePath;
   bool useBVH{true};
-#ifdef BUILD_BONUS
-  bool viewport{false};
+#ifdef BUILD_VIEWPORT
+  bool viewport{true};
 #endif
 };
 
@@ -39,11 +39,11 @@ class ArgsParser {
    *
    * Recognised forms:
    *   raytracer -h | --help
-   *   raytracer <SCENE_FILE> [--no-bvh] [--viewport]
+   *   raytracer <SCENE_FILE> [--no-bvh] [--no-viewport]
    *
-   * `--viewport` is only accepted when compiled with `BUILD_BONUS`.
-   * Flags after the scene path may appear in any order. Any unknown
-   * flag yields `std::nullopt` (usage error).
+   * `--no-viewport` is only accepted when compiled with
+   * `BUILD_VIEWPORT`. Flags after the scene path may appear in any
+   * order. Any unknown flag yields `std::nullopt` (usage error).
    *
    * @param [in] argc Argument count from `main`.
    * @param [in] argv Argument vector from `main`.

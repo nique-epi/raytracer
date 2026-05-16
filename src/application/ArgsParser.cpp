@@ -16,9 +16,9 @@ bool applyFlag(std::string_view flag, SceneRequest& request) {
     request.useBVH = false;
     return true;
   }
-#ifdef BUILD_BONUS
-  if (flag == "--viewport") {
-    request.viewport = true;
+#ifdef BUILD_VIEWPORT
+  if (flag == "--no-viewport") {
+    request.viewport = false;
     return true;
   }
 #endif

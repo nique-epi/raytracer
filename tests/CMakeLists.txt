@@ -161,8 +161,12 @@ if(BUILD_BONUS)
     PRIVATE
       bonus_assimp_loader
       bonus_OID_denoiser
-      bonus_viewport
   )
+endif()
+
+if(BUILD_VIEWPORT)
+  target_compile_definitions(raytracer_tests PRIVATE BUILD_VIEWPORT)
+  target_link_libraries(raytracer_tests PRIVATE raytracer_viewport)
 endif()
 
 raytracer_enable_target_warnings(raytracer_tests)
