@@ -2,10 +2,10 @@
 ** EPITECH PROJECT, 2026
 ** raytracer
 ** File description:
-** JsonRenderConfigLoader
+** JsonSettingsLoader
 */
 
-#include "JsonRenderConfigLoader.hpp"
+#include "JsonSettingsLoader.hpp"
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include <string>
@@ -25,8 +25,8 @@ raytracer::scene::ViewportMode viewportModeFromString(const std::string& mode) {
 
 }  // namespace
 
-GlobalRenderConfig JsonRenderConfigLoader::load(
-    const std::string& path, const math::RenderSettings& base) {
+JsonSettings JsonSettingsLoader::load(const std::string& path,
+                                       const math::RenderSettings& base) {
   std::ifstream file(path);
   if (!file.is_open()) {
     throw raytracer::scene::SceneFileNotFoundException(path);
@@ -40,9 +40,9 @@ GlobalRenderConfig JsonRenderConfigLoader::load(
                                                   "root must be a JSON object");
     }
 
-    GlobalRenderConfig config;
-    config.settings = base;
-    math::RenderSettings& settings = config.settings;
+    JsonSettings result;
+    result.settings = base;
+    math::RenderSettings& settings = result.settings;
 
     settings.imageWidth = j.value("imageWidth", settings.imageWidth);
     settings.imageHeight = j.value("imageHeight", settings.imageHeight);
@@ -54,14 +54,14 @@ GlobalRenderConfig JsonRenderConfigLoader::load(
     settings.maxDepth = j.value("maxDepth", settings.maxDepth);
 
     if (j.contains("viewportMode") && j.at("viewportMode").is_string()) {
-      config.viewportMode =
+      result.viewportMode =
           viewportModeFromString(j.at("viewportMode").get<std::string>());
     }
     if (j.contains("name") && j.at("name").is_string()) {
-      config.outputFile = j.at("name").get<std::string>();
+      result.outputFile = j.at("name").get<std::string>();
     }
 
-    return config;
+    return result;
   } catch (const raytracer::scene::SceneParseException&) {
     throw;
   } catch (const nlohmann::json::exception& error) {

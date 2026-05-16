@@ -37,7 +37,7 @@
 
 #ifdef BUILD_BONUS
 #include "Assimp/SceneLoader/AssimpLoaderRegistration.hpp"
-#include "json/RenderConfig/JsonRenderConfigLoader.hpp"
+#include "json/JsonSettingsLoader.hpp"
 #include "postprocess/denoise/OIDDenoiser.hpp"
 #endif
 
@@ -156,17 +156,17 @@ int Application::run(const std::string& scenePath, bool useBVH,
   loader->load(scenePath, builder, settings);
 
 #ifdef BUILD_BONUS
-  std::optional<raytracer::bonus::json::GlobalRenderConfig> globalConfig;
+  std::optional<raytracer::bonus::json::JsonSettings> jsonSettings;
   if (renderConfigPath) {
-    globalConfig = raytracer::bonus::json::JsonRenderConfigLoader::load(
+    jsonSettings = raytracer::bonus::json::JsonSettingsLoader::load(
         *renderConfigPath, settings);
-    settings = globalConfig->settings;
+    settings = jsonSettings->settings;
   }
 #endif
 
   if (!settings.validate()) {
 #ifdef BUILD_BONUS
-    if (renderConfigPath) {
+    if (jsonSettings) {
       throw RaytracerException(
           "Invalid render settings loaded from scene: " + scenePath +
           ", overridden by config: " + *renderConfigPath);
@@ -178,8 +178,8 @@ int Application::run(const std::string& scenePath, bool useBVH,
   auto scene = builder.build();
 
 #ifdef BUILD_BONUS
-  if (globalConfig && globalConfig->viewportMode) {
-    scene->getWorld().setViewportMode(*globalConfig->viewportMode);
+  if (jsonSettings && jsonSettings->viewportMode) {
+    scene->getWorld().setViewportMode(*jsonSettings->viewportMode);
   }
 #endif
   if (useBVH) {
@@ -200,8 +200,8 @@ int Application::run(const std::string& scenePath, bool useBVH,
 
 #ifdef BUILD_BONUS
   OIDDenoiser::denoise(image);
-  const std::string outputPath = (globalConfig && globalConfig->outputFile)
-                                     ? *globalConfig->outputFile
+  const std::string outputPath = (jsonSettings && jsonSettings->outputFile)
+                                     ? *jsonSettings->outputFile
                                      : "out.ppm";
 #else
   const std::string outputPath = "out.ppm";

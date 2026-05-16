@@ -31,7 +31,7 @@ target_link_libraries(bonus_assimp_loader
 raytracer_enable_target_warnings(bonus_assimp_loader)
 
 add_library(bonus_json_loader
-    json/RenderConfig/JsonRenderConfigLoader.cpp
+    json/JsonSettingsLoader.cpp
 )
 
 target_include_directories(bonus_json_loader
