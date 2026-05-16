@@ -30,7 +30,7 @@ class Application {
    *
    * When enabled, `run()` skips the regular blocking render and
    * delegates the progressive accumulation loop to
-   * `interface::runWithViewport`. Defaults to enabled; pass `false`
+   * `interface::ViewportRunner`. Defaults to enabled; pass `false`
    * (CLI `--no-viewport`) for a headless render straight to `out.ppm`.
    */
   void setViewport(bool enabled);
