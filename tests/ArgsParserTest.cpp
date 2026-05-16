@@ -110,3 +110,47 @@ TEST(ArgsParserTest, UnknownThirdArgReturnsNullopt) {
   const char* args[] = {"raytracer", "scenes/example.cfg", "--unknown"};
   EXPECT_FALSE(ArgsParser::parse(3, args).has_value());
 }
+
+// Given: a scene path with no viewport flag.
+// When:  parse() is called.
+// Then:  viewport defaults to true (the live window opens).
+TEST(ArgsParserTest, ViewportEnabledByDefault) {
+  const char* args[] = {"raytracer", "scenes/example.cfg"};
+  const auto result = ArgsParser::parse(2, args);
+  ASSERT_TRUE(result.has_value());
+  ASSERT_TRUE(std::holds_alternative<SceneRequest>(*result));
+  EXPECT_TRUE(std::get<SceneRequest>(*result).viewport);
+}
+
+// Given: a scene path followed by --no-viewport.
+// When:  parse() is called.
+// Then:  returns a SceneRequest with viewport set to false.
+TEST(ArgsParserTest, NoViewportFlagDisablesViewport) {
+  const char* args[] = {"raytracer", "scenes/example.cfg", "--no-viewport"};
+  const auto result = ArgsParser::parse(3, args);
+  ASSERT_TRUE(result.has_value());
+  ASSERT_TRUE(std::holds_alternative<SceneRequest>(*result));
+  EXPECT_FALSE(std::get<SceneRequest>(*result).viewport);
+  EXPECT_TRUE(std::get<SceneRequest>(*result).useBVH);
+}
+
+// Given: a scene path with --no-bvh and --no-viewport in either order.
+// When:  parse() is called.
+// Then:  both flags are applied regardless of order.
+TEST(ArgsParserTest, NoViewportAndNoBVHTogether) {
+  const char* argsA[] = {"raytracer", "scenes/example.cfg", "--no-bvh",
+                         "--no-viewport"};
+  const auto resultA = ArgsParser::parse(4, argsA);
+  ASSERT_TRUE(resultA.has_value());
+  const auto& reqA = std::get<SceneRequest>(*resultA);
+  EXPECT_FALSE(reqA.useBVH);
+  EXPECT_FALSE(reqA.viewport);
+
+  const char* argsB[] = {"raytracer", "scenes/example.cfg", "--no-viewport",
+                         "--no-bvh"};
+  const auto resultB = ArgsParser::parse(4, argsB);
+  ASSERT_TRUE(resultB.has_value());
+  const auto& reqB = std::get<SceneRequest>(*resultB);
+  EXPECT_FALSE(reqB.useBVH);
+  EXPECT_FALSE(reqB.viewport);
+}

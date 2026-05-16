@@ -19,6 +19,7 @@
 #include <sstream>
 #include "components/image/Image.hpp"
 #include "exceptions/Exceptions.hpp"
+#include "interface/ViewportRunner.hpp"
 #include "output/ppm/ppm.hpp"
 #include "rendering/integrator/whittedIntegrator/WhittedIntegrator.hpp"
 #include "rendering/renderer/Frame.hpp"
@@ -158,12 +159,17 @@ int Application::run(const std::string& scenePath, bool useBVH) {
   scene->getCamera()->setResolution(settings.imageWidth, settings.imageHeight);
 
   RaytracerRenderer renderer;
-  displayProgressBar(renderer);
   auto shadingContext = createShadingContext(*scene);
 
   const RendererConfig config{
       .scene = scene, .settings = settings, .shadingContext = shadingContext};
   const Frame frame{.camera = scene->getCamera()};
+
+  if (viewportRequested_) {
+    return raytracer::interface::ViewportRunner(renderer, config, frame).run();
+  }
+
+  displayProgressBar(renderer);
   components::Image image = renderer.render(config, frame);
 
   output::ppm writer;
@@ -174,5 +180,7 @@ int Application::run(const std::string& scenePath, bool useBVH) {
   writer.write(image, "out.ppm");
   return 0;
 }
+
+void Application::setViewport(bool enabled) { viewportRequested_ = enabled; }
 
 }  // namespace raytracer::core

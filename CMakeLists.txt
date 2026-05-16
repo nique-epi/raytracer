@@ -72,6 +72,7 @@ add_subdirectory(src)
 
 if(BUILD_BONUS)
   add_subdirectory(bonus)
+  target_compile_definitions(raytracer PRIVATE BUILD_BONUS)
   target_compile_definitions(raytracer_application PRIVATE BUILD_BONUS)
   target_compile_definitions(raytracer_components PRIVATE BUILD_BONUS)
   target_include_directories(raytracer_components PRIVATE ${CMAKE_SOURCE_DIR}/bonus/stb_image)

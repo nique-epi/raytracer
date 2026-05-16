@@ -9,6 +9,7 @@ add_subdirectory(scene)
 add_subdirectory(rendering)
 add_subdirectory(application)
 add_subdirectory(output)
+add_subdirectory(interface)
 
 add_library(raytracer_src INTERFACE)
 
@@ -45,7 +46,7 @@ target_include_directories(raytracer
     ${CMAKE_SOURCE_DIR}/src
 )
 
-target_link_libraries(raytracer PRIVATE raytracer_src)
+target_link_libraries(raytracer PRIVATE raytracer_src raytracer_viewport)
 
 raytracer_enable_target_warnings(raytracer)
 

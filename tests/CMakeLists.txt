@@ -156,6 +156,17 @@ target_sources(raytracer_tests PRIVATE
   $<TARGET_OBJECTS:raytracer_application>
 )
 
+if(BUILD_BONUS)
+  target_compile_definitions(raytracer_tests PRIVATE BUILD_BONUS)
+  target_link_libraries(raytracer_tests
+    PRIVATE
+      bonus_assimp_loader
+      bonus_OID_denoiser
+  )
+endif()
+
+target_link_libraries(raytracer_tests PRIVATE raytracer_viewport)
+
 raytracer_enable_target_warnings(raytracer_tests)
 
 gtest_discover_tests(raytracer_tests)
