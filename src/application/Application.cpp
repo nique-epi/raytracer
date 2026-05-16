@@ -9,8 +9,8 @@
 #include <unistd.h>
 #include <algorithm>
 #include <chrono>
-#include <cstdint>
 #include <cmath>
+#include <cstdint>
 #include <cstdio>
 #include <iomanip>
 #include <iostream>
@@ -37,6 +37,7 @@
 
 #ifdef BUILD_BONUS
 #include "Assimp/SceneLoader/AssimpLoaderRegistration.hpp"
+#include "json/RenderConfig/JsonRenderConfigLoader.hpp"
 #include "postprocess/denoise/OIDDenoiser.hpp"
 #endif
 
@@ -136,7 +137,14 @@ Application::Application() {
 #endif
 }
 
-int Application::run(const std::string& scenePath, bool useBVH) {
+int Application::run(const std::string& scenePath, bool useBVH,
+                     const std::optional<std::string>& renderConfigPath) {
+#ifndef BUILD_BONUS
+  if (renderConfigPath) {
+    throw RaytracerException(
+        "--config requires BUILD_BONUS. Rebuild with: cmake --preset bonus");
+  }
+#endif
   const auto loader = _factory.getLoader(scenePath);
   if (!loader) {
     throw RaytracerException("No loader available for: " + scenePath);
@@ -147,11 +155,26 @@ int Application::run(const std::string& scenePath, bool useBVH) {
 
   loader->load(scenePath, builder, settings);
 
+#ifdef BUILD_BONUS
+  std::optional<raytracer::bonus::json::GlobalRenderConfig> globalConfig;
+  if (renderConfigPath) {
+    globalConfig = raytracer::bonus::json::JsonRenderConfigLoader::load(
+        *renderConfigPath, settings);
+    settings = globalConfig->settings;
+  }
+#endif
+
   if (!settings.validate()) {
     throw RaytracerException("Invalid render settings loaded from: " +
                              scenePath);
   }
   auto scene = builder.build();
+
+#ifdef BUILD_BONUS
+  if (globalConfig && globalConfig->viewportMode) {
+    scene->getWorld().setViewportMode(*globalConfig->viewportMode);
+  }
+#endif
   if (useBVH) {
     scene->buildBVH();
   }

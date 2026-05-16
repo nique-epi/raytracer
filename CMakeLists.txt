@@ -71,6 +71,13 @@ endfunction()
 add_subdirectory(src)
 
 if(BUILD_BONUS)
+  FetchContent_Declare(
+    nlohmann_json
+    GIT_REPOSITORY https://github.com/nlohmann/json.git
+    GIT_TAG v3.11.3
+  )
+  FetchContent_MakeAvailable(nlohmann_json)
+
   add_subdirectory(bonus)
   target_compile_definitions(raytracer_application PRIVATE BUILD_BONUS)
   target_compile_definitions(raytracer_components PRIVATE BUILD_BONUS)
@@ -86,6 +93,8 @@ if(BUILD_BONUS)
   target_link_libraries(raytracer PRIVATE bonus_assimp_loader)
   target_link_libraries(raytracer_application PRIVATE bonus_OID_denoiser)
   target_link_libraries(raytracer PRIVATE bonus_OID_denoiser)
+  target_link_libraries(raytracer_application PRIVATE bonus_json_loader)
+  target_link_libraries(raytracer PRIVATE bonus_json_loader)
 endif()
 
 if(BUILD_TESTS)

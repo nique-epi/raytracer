@@ -6,6 +6,7 @@
 */
 
 #pragma once
+#include <optional>
 #include <string>
 #include "common/helper/Logger.hpp"
 #include "factory/ComponentFactory.hpp"
@@ -22,7 +23,19 @@ class Application {
   Application(Application&&) = delete;
   Application& operator=(Application&&) = delete;
 
-  int run(const std::string& scenePath, bool useBVH = true);
+  /**
+   * @brief Run the render pipeline for a single scene file.
+   *
+   * @param [in] scenePath       Path to the scene file (`.cfg`, `.gltf`, …).
+   * @param [in] useBVH          Whether to build a BVH acceleration structure.
+   * @param [in] renderConfigPath Optional path to a JSON render-configuration
+   *                             file. When present and compiled with
+   *                             `BUILD_BONUS`, its values override the render
+   *                             settings parsed from the scene file.
+   * @returns 0 on success, non-zero on error.
+   */
+  int run(const std::string& scenePath, bool useBVH = true,
+          const std::optional<std::string>& renderConfigPath = std::nullopt);
 
  private:
   raytracer::common::Logger logger_{"Application"};

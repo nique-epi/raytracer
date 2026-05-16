@@ -30,6 +30,24 @@ target_link_libraries(bonus_assimp_loader
 
 raytracer_enable_target_warnings(bonus_assimp_loader)
 
+add_library(bonus_json_loader
+    json/RenderConfig/JsonRenderConfigLoader.cpp
+)
+
+target_include_directories(bonus_json_loader
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_SOURCE_DIR}/src
+)
+
+target_link_libraries(bonus_json_loader
+    PUBLIC
+        nlohmann_json::nlohmann_json
+        raytracer_scene
+)
+
+raytracer_enable_target_warnings(bonus_json_loader)
+
 add_library(bonus_OID_denoiser
     postprocess/denoise/OIDDenoiser.cpp
 )
