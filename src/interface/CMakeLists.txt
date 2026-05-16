@@ -20,6 +20,7 @@ target_link_libraries(raytracer_viewport
         raytracer_components
         raytracer_math
         raytracer_renderer
+        raytracer_shading
         raytracer_scene
         raytracer_helper
         raytracer_exceptions

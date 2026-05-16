@@ -15,4 +15,28 @@ ViewportMode World::viewportMode() const { return viewportMode_; }
 
 void World::setViewportMode(ViewportMode mode) { viewportMode_ = mode; }
 
+ViewportMode nextViewportMode(ViewportMode mode) {
+  switch (mode) {
+    case ViewportMode::Wireframe:
+      return ViewportMode::MaterialPreview;
+    case ViewportMode::MaterialPreview:
+      return ViewportMode::Rendered;
+    case ViewportMode::Rendered:
+      return ViewportMode::Wireframe;
+  }
+  return ViewportMode::Rendered;
+}
+
+const char* viewportModeName(ViewportMode mode) {
+  switch (mode) {
+    case ViewportMode::Wireframe:
+      return "Wireframe";
+    case ViewportMode::MaterialPreview:
+      return "Material Preview";
+    case ViewportMode::Rendered:
+      return "Rendered";
+  }
+  return "Unknown";
+}
+
 }  // namespace raytracer::scene
