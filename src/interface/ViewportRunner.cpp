@@ -30,15 +30,15 @@ ViewportRunner::ViewportRunner(raytracer::core::RaytracerRenderer& renderer,
       width_(baseConfig_.settings.imageWidth),
       height_(baseConfig_.settings.imageHeight),
       targetSamples_(std::max(1, baseConfig_.settings.samplesPerPixel)),
-      totalPasses_(std::max(1, targetSamples_ / samplesPerPass)),
+      totalPasses_((targetSamples_ + samplesPerPass - 1) / samplesPerPass),
       effectiveSamples_(totalPasses_ * samplesPerPass),
       finalImage_(width_, height_) {}
 
 int ViewportRunner::run() {
   Viewport viewport(width_, height_, "Raytracer");
-  logger_.info("viewport opened ", width_, 'x', height_, ", ", totalPasses_,
-               " passes of ", samplesPerPass, " samples (", effectiveSamples_,
-               " total)");
+  logger_.info("viewport opened ", width_, 'x', height_, ", requested ",
+               targetSamples_, " samples -> ", totalPasses_, " passes x ",
+               samplesPerPass, " = ", effectiveSamples_, " effective");
 
   std::atomic<bool> renderDone{false};
   std::thread worker([this, &viewport, &renderDone]() {
