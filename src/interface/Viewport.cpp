@@ -28,6 +28,16 @@ Viewport::Viewport(int width, int height, const std::string& title)
 
 void Viewport::write(const raytracer::components::Image& image,
                      const std::string& path) {
+  if (!path.empty()) {
+    const auto dot = path.rfind('.');
+    const std::string extension =
+        dot == std::string::npos ? std::string{} : path.substr(dot);
+    if (!supports(extension)) {
+      throw ViewportException(
+          "Viewport::write: unsupported output extension in '" + path +
+          "', only .ppm is written");
+    }
+  }
   framebuffer_.store(image);
   while (!shouldClose_.load()) {
     tick();

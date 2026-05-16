@@ -51,11 +51,15 @@ class Viewport : public raytracer::output::IImageWriter {
    *        user closes it, then export to disk.
    *
    * Must be called from the same thread that constructed the viewport.
-   * If @p path is non-empty the image is serialised to PPM via
-   * `Image::savePPM` once the window is closed.
+   * When @p path is non-empty its extension must be one `supports()`
+   * accepts (`.ppm`) — the viewport only serialises PPM, via
+   * `Image::savePPM`. Any other extension is rejected up front rather
+   * than silently writing PPM bytes under a misleading name. An empty
+   * @p path skips the export entirely.
    *
    * @param [in] image Final image to display and export.
    * @param [in] path  Destination path; empty means "no export".
+   * @throws ViewportException When @p path has an unsupported extension.
    */
   void write(const raytracer::components::Image& image,
              const std::string& path) override;
