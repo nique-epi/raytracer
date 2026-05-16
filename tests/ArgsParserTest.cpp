@@ -111,9 +111,8 @@ TEST(ArgsParserTest, UnknownThirdArgReturnsNullopt) {
   EXPECT_FALSE(ArgsParser::parse(3, args).has_value());
 }
 
-#ifdef BUILD_VIEWPORT
 // Given: a scene path with no viewport flag.
-// When:  parse() is called on a viewport build.
+// When:  parse() is called.
 // Then:  viewport defaults to true (the live window opens).
 TEST(ArgsParserTest, ViewportEnabledByDefault) {
   const char* args[] = {"raytracer", "scenes/example.cfg"};
@@ -124,7 +123,7 @@ TEST(ArgsParserTest, ViewportEnabledByDefault) {
 }
 
 // Given: a scene path followed by --no-viewport.
-// When:  parse() is called on a viewport build.
+// When:  parse() is called.
 // Then:  returns a SceneRequest with viewport set to false.
 TEST(ArgsParserTest, NoViewportFlagDisablesViewport) {
   const char* args[] = {"raytracer", "scenes/example.cfg", "--no-viewport"};
@@ -136,7 +135,7 @@ TEST(ArgsParserTest, NoViewportFlagDisablesViewport) {
 }
 
 // Given: a scene path with --no-bvh and --no-viewport in either order.
-// When:  parse() is called on a viewport build.
+// When:  parse() is called.
 // Then:  both flags are applied regardless of order.
 TEST(ArgsParserTest, NoViewportAndNoBVHTogether) {
   const char* argsA[] = {"raytracer", "scenes/example.cfg", "--no-bvh",
@@ -155,4 +154,3 @@ TEST(ArgsParserTest, NoViewportAndNoBVHTogether) {
   EXPECT_FALSE(reqB.useBVH);
   EXPECT_FALSE(reqB.viewport);
 }
-#endif

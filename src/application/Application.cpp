@@ -14,6 +14,7 @@
 #include <mutex>
 #include "components/image/Image.hpp"
 #include "exceptions/Exceptions.hpp"
+#include "interface/ViewportRunner.hpp"
 #include "output/ppm/ppm.hpp"
 #include "rendering/integrator/whittedIntegrator/WhittedIntegrator.hpp"
 #include "rendering/renderer/Frame.hpp"
@@ -33,10 +34,6 @@
 #ifdef BUILD_BONUS
 #include "Assimp/SceneLoader/AssimpLoaderRegistration.hpp"
 #include "postprocess/denoise/OIDDenoiser.hpp"
-#endif
-
-#ifdef BUILD_VIEWPORT
-#include "interface/ViewportRunner.hpp"
 #endif
 
 namespace raytracer::core {
@@ -131,11 +128,9 @@ int Application::run(const std::string& scenePath, bool useBVH) {
       .scene = scene, .settings = settings, .shadingContext = shadingContext};
   const Frame frame{.camera = scene->getCamera()};
 
-#ifdef BUILD_VIEWPORT
   if (viewportRequested_) {
     return raytracer::interface::ViewportRunner(renderer, config, frame).run();
   }
-#endif
 
   displayProgressBar(renderer);
   components::Image image = renderer.render(config, frame);
@@ -148,8 +143,6 @@ int Application::run(const std::string& scenePath, bool useBVH) {
   return 0;
 }
 
-#ifdef BUILD_VIEWPORT
 void Application::setViewport(bool enabled) { viewportRequested_ = enabled; }
-#endif
 
 }  // namespace raytracer::core

@@ -164,10 +164,7 @@ if(BUILD_BONUS)
   )
 endif()
 
-if(BUILD_VIEWPORT)
-  target_compile_definitions(raytracer_tests PRIVATE BUILD_VIEWPORT)
-  target_link_libraries(raytracer_tests PRIVATE raytracer_viewport)
-endif()
+target_link_libraries(raytracer_tests PRIVATE raytracer_viewport)
 
 raytracer_enable_target_warnings(raytracer_tests)
 

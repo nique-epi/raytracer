@@ -8,7 +8,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(BUILD_TESTS "Build unit tests" OFF)
 option(BUILD_BONUS "Build bonus features" OFF)
-option(BUILD_VIEWPORT "Build the SFML live-display viewport" ON)
 
 # ---------------------------------------------------------------------------
 # LOG_LEVEL — compile-time minimum log level.

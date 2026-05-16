@@ -24,7 +24,6 @@ class Application {
 
   int run(const std::string& scenePath, bool useBVH = true);
 
-#ifdef BUILD_VIEWPORT
   /**
    * @brief Toggle the SFML live-display viewport for the next `run()`.
    *
@@ -34,15 +33,12 @@ class Application {
    * (CLI `--no-viewport`) for a headless render straight to `out.ppm`.
    */
   void setViewport(bool enabled);
-#endif
 
  private:
   raytracer::common::Logger logger_{"Application"};
   scene::SceneLoaderFactory _factory;
   factory::ComponentFactory _componentFactory;
-#ifdef BUILD_VIEWPORT
   bool viewportRequested_{true};
-#endif
 };
 
 }  // namespace raytracer::core
