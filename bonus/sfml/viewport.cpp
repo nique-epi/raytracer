@@ -278,13 +278,13 @@ int runWithViewport(raytracer::core::RaytracerRenderer& renderer,
 
   renderThread.join();
 
-  if (completedPasses.load() == 0) {
+  const int donePasses = completedPasses.load();
+  const int finalSamples = donePasses * samplesPerPass;
+  if (donePasses == 0) {
+    viewport.setStatus("Aborted before first pass | saving black out.ppm");
     logger.warn(
-        "viewport closed before any pass completed; nothing to export");
-    return 0;
-  }
-  const int finalSamples = completedPasses.load() * samplesPerPass;
-  if (completedPasses.load() == totalPasses) {
+        "viewport closed before any pass completed; exporting black image");
+  } else if (donePasses == totalPasses) {
     viewport.setStatus("Done | " + std::to_string(finalSamples) +
                        " samples | close window to save out.ppm");
     logger.info("render finished: ", finalSamples,
