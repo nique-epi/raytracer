@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cmath>
 #include <random>
+#include "utils/math/Constants.hpp"
 #include "utils/math/HitRecord.hpp"
 #include "utils/math/Optics.hpp"
 #include "utils/math/Ray.hpp"
@@ -17,6 +18,9 @@
 namespace {
 constexpr double transparencyRayEpsilon = 1e-4;
 constexpr double maximumSpecularBoost = 0.25;
+constexpr double dielectricBaseReflectance = 0.04;
+constexpr double maximumShininess = 255.0;
+constexpr double smoothnessExponent = 4.0;
 
 double generateRandomDouble() {
   thread_local std::mt19937 generator(std::random_device{}());
@@ -141,6 +145,33 @@ bool PrincipledMaterial::scatterDiffuseReflection(
 
 math::Color PrincipledMaterial::diffuseAlbedo() const {
   return baseColor_ * (1.0 - metallic_) * alpha_;
+}
+
+math::Color PrincipledMaterial::specularAlbedo() const {
+  const math::Color dielectricF0(dielectricBaseReflectance,
+                                  dielectricBaseReflectance,
+                                  dielectricBaseReflectance);
+  return (dielectricF0 * (1.0 - metallic_)) + (baseColor_ * metallic_);
+}
+
+double PrincipledMaterial::shininess() const {
+  const double smoothness = 1.0 - roughness_;
+  return (std::pow(smoothness, smoothnessExponent) * maximumShininess) + 1.0;
+}
+
+math::Color PrincipledMaterial::brdf(
+    const raytracer::math::Vector3D& incomingDirection,
+    const raytracer::math::Vector3D& outgoingDirection,
+    const raytracer::math::Vector3D& normal) const {
+  const math::Color diffuse =
+      baseColor_ * (1.0 - metallic_) * alpha_ / math::constants::PI;
+  const math::Vector3D halfVector =
+      (-incomingDirection + outgoingDirection).normalize();
+  const double alignment = std::max(0.0, normal.dot(halfVector));
+  const math::Color fresnelF0 = specularAlbedo();
+  const math::Color specular =
+      fresnelF0 * std::pow(alignment, shininess());
+  return diffuse + specular;
 }
 
 }  // namespace raytracer::components::material
