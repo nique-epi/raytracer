@@ -128,9 +128,12 @@ if(CLANG_TIDY)
   )
 endif()
 
-add_custom_target(man
-  COMMAND man -l ${CMAKE_SOURCE_DIR}/doc/raytracer.1
-  COMMENT "Previewing doc/raytracer.1 manpage..."
-  VERBATIM
-  USES_TERMINAL
-)
+find_program(MAN NAMES man)
+if(MAN)
+  add_custom_target(man
+    COMMAND ${MAN} -l ${CMAKE_SOURCE_DIR}/doc/raytracer.1
+    COMMENT "Previewing doc/raytracer.1 manpage..."
+    VERBATIM
+    USES_TERMINAL
+  )
+endif()
