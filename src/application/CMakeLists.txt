@@ -1,6 +1,8 @@
 add_library(raytracer_application OBJECT
   Application.cpp
   ArgsParser.cpp
+  ProgressBar.cpp
+  SceneAssembler.cpp
 )
 
 target_include_directories(raytracer_application

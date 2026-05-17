@@ -6,16 +6,24 @@
 */
 
 #pragma once
+
+#include <memory>
 #include <optional>
 #include <string>
+
+#include "application/SceneAssembler.hpp"
 #include "common/helper/Logger.hpp"
-#include "factory/ComponentFactory.hpp"
 #include "rendering/renderer/raytracerRenderer/RaytracerRenderer.hpp"
-#include "scene/SceneLoaderFactory.hpp"
+
+namespace raytracer::shading {
+class ShadingPool;
+}  // namespace raytracer::shading
+
 namespace raytracer::core {
+
 class Application {
  public:
-  Application();
+  Application() = default;
   ~Application() = default;
 
   Application(const Application&) = delete;
@@ -48,9 +56,32 @@ class Application {
   void setViewport(bool enabled);
 
  private:
+  /**
+   * @brief Run the SFML viewport accumulation loop to completion.
+   *
+   * @param[in] config Renderer config (scene, settings, shading context).
+   * @param[in] frame  Per-frame camera state.
+   * @param[in] pool   Pre-built shader pool for live mode switching.
+   * @returns Viewport exit code.
+   */
+  static int runViewport(const RendererConfig& config, const Frame& frame,
+                         std::shared_ptr<shading::ShadingPool> pool);
+
+  /**
+   * @brief Run a single blocking render and write the image to disk.
+   *
+   * Attaches a CLI progress bar when stderr is a TTY, runs the
+   * renderer once, optionally denoises (BUILD_BONUS) and writes the
+   * result to `config.outputPath` as PPM.
+   *
+   * @param[in] config Renderer config (scene, settings, shading context).
+   * @param[in] frame  Per-frame camera state.
+   * @returns 0 on success.
+   */
+  static int runHeadless(const RendererConfig& config, const Frame& frame);
+
   raytracer::common::Logger logger_{"Application"};
-  scene::SceneLoaderFactory _factory;
-  factory::ComponentFactory _componentFactory;
+  SceneAssembler sceneAssembler_;
   bool viewportRequested_{true};
 };
 
