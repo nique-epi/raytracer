@@ -24,6 +24,10 @@
 #include "utils/math/Color.hpp"
 #include "utils/math/RenderSettings.hpp"
 
+#ifdef BUILD_BONUS
+#include "postprocess/denoise/OIDDenoiser.hpp"
+#endif
+
 namespace raytracer::interface {
 
 ViewportRunner::ViewportRunner(raytracer::core::RaytracerRenderer& renderer,
@@ -122,8 +126,7 @@ bool ViewportRunner::handleModeSwitch(Viewport& viewport) {
 }
 
 void ViewportRunner::renderPass(
-    Viewport& viewport,
-    const raytracer::core::RendererConfig& perPassConfig) {
+    Viewport& viewport, const raytracer::core::RendererConfig& perPassConfig) {
   const int pass = pass_;
   renderer_.setProgressCallback([this, &viewport, pass](double fraction) {
     reportPassProgress(viewport, pass, fraction);
@@ -192,8 +195,17 @@ void ViewportRunner::publishPass(Viewport& viewport) {
   completedPasses_.store(pass_);
   const int samples = pass_ * samplesPerPass;
   if (pass_ >= totalPasses_) {
+#ifdef BUILD_BONUS
+    raytracer::components::Image denoised = displayImage_;
+    OIDDenoiser::denoise(denoised);
+    viewport.liveDisplay(denoised);
+    {
+      const std::lock_guard<std::mutex> lock(finalImageMutex_);
+      finalImage_ = denoised;
+    }
+#endif
     viewport.setStatus(decorateStatus("Done - " + std::to_string(samples) +
-                                      " samples - close window to save"));
+                                      " samples - denoising and saving"));
   } else {
     viewport.setStatus(
         decorateStatus("Rendering " + std::to_string(samples) + " / " +
