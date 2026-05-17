@@ -1,0 +1,135 @@
+.TH RAYTRACER 1 "2026-05-17" "raytracer 1.0" "Raytracer Manual"
+.SH NAME
+raytracer \- physically-based ray tracing renderer
+.SH SYNOPSIS
+.B raytracer
+.I SCENE_FILE
+.RB [ \-\-no\-bvh ]
+.RB [ \-\-no\-viewport ]
+.RB [ \-\-config
+.IR FILE ]
+.br
+.B raytracer
+.BR \-h | \-\-help
+.SH DESCRIPTION
+.B raytracer
+renders a 3D scene to a 2D image using ray tracing. It loads a scene
+description from
+.IR SCENE_FILE ,
+traces primary and secondary rays through the scene, and shades each
+pixel with a physically-based integrator.
+.PP
+By default the renderer opens a live SFML viewport that displays the
+image as it is computed. With
+.B \-\-no\-viewport
+the renderer runs headless and writes the rendered image in PPM format
+to a file
+.RB ( out.ppm
+in the current directory by default; the destination can be overridden
+by the JSON configuration passed to
+.BR \-\-config ).
+.PP
+The libconfig
+.RB ( .cfg )
+scene format is always available. Builds compiled with
+.B BUILD_BONUS
+additionally accept the formats handled by the Assimp loader:
+.BR .gltf ,
+.BR .glb ,
+.BR .obj ,
+.BR .fbx ,
+and
+.BR .dae .
+The runtime log verbosity is controlled by the
+.B RT_LOG_LEVEL
+environment variable, which accepts
+.BR trace ,
+.BR debug ,
+.BR info ,
+.B warn
+(or
+.BR warning ),
+.BR error ,
+and
+.B silent
+(or
+.BR off ", " none ).
+The default is
+.BR info .
+.SH OPTIONS
+.TP
+.I SCENE_FILE
+Path to the scene description to render. Required for any rendering
+invocation. The libconfig
+.RB ( .cfg )
+format is always supported.
+.BR .gltf ", " .glb ", " .obj ", " .fbx " and " .dae
+files are supported only in builds compiled with
+.B BUILD_BONUS
+(via the Assimp loader).
+.TP
+.B \-\-no\-bvh
+Disable the BVH (bounding volume hierarchy) acceleration structure.
+Intersection tests fall back to a linear scan of every primitive. Useful
+for debugging or for very small scenes; significantly slower otherwise.
+.TP
+.B \-\-no\-viewport
+Render headless: skip the live SFML display window and write the
+rendered image to a PPM file
+.RB ( out.ppm
+by default).
+.TP
+.BI \-\-config " FILE"
+Load a JSON render-configuration file describing render settings
+(resolution, sample count, output file, etc.). The
+.B outputFile
+field, when present, overrides the default
+.B out.ppm
+destination. Only available in builds compiled with
+.BR BUILD_BONUS .
+.TP
+.BR \-h ", " \-\-help
+Print a usage summary and exit. Must be the only argument.
+.SH EXAMPLES
+.TP
+Render a scene in the live viewport:
+.B raytracer
+.I scenes/example.cfg
+.TP
+Render headless; the image is written to out.ppm:
+.B raytracer
+.I scenes/example.cfg
+.B \-\-no\-viewport
+.TP
+Render without the BVH acceleration structure:
+.B raytracer
+.I scenes/example.cfg
+.B \-\-no\-bvh
+.TP
+Render with a custom JSON render configuration (bonus build):
+.B raytracer
+.I scenes/example.cfg
+.B \-\-config
+.I config.json
+.TP
+Increase log verbosity for a single run:
+.B RT_LOG_LEVEL=debug
+.B raytracer
+.I scenes/example.cfg
+.SH EXIT STATUS
+.TP
+.B 0
+The scene was rendered successfully.
+.TP
+.B 84
+An error occurred: invalid command-line arguments, an unreadable or
+malformed scene file, or an unhandled runtime exception. A diagnostic
+message is written to standard error.
+.SH SEE ALSO
+.BR ppm (5)
+.PP
+Project documentation and example scenes are available in the
+.B README.md
+file and the
+.B scenes/
+directory of the source distribution.
