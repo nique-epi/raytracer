@@ -7,6 +7,7 @@
 
 #include "rendering/helper/HemisphereSampler.hpp"
 
+#include <algorithm>
 #include <cmath>
 #include <random>
 
