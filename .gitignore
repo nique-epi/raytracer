@@ -22,3 +22,7 @@ G-OOP-400_raytracer.pdf
 *.png
 *.bin
 *.jpg
+*.ppm
+*.glb
+*.mtl
+*.obj
