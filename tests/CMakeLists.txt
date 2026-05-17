@@ -168,6 +168,7 @@ if(BUILD_BONUS)
     PRIVATE
       bonus_assimp_loader
       bonus_OID_denoiser
+      bonus_json_loader
   )
 endif()
 

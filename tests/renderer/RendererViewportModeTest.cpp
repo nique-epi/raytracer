@@ -224,12 +224,13 @@ TEST(RendererViewportModeTest, BackgroundOnSecondaryRaysDiffersByMode) {
       << "Without direct lights, both modes should be similarly bright";
 }
 
-// 5) Wireframe ignores both lights and materials, returning the surface
-//    normal mapped into [0, 1]. The centre pixel sits on the sphere's
-//    apex where the outward normal is (0, 0, 1), so the expected colour
-//    is (0.5, 0.5, 1.0). This guarantees no path through the lighting or
-//    scatter code is taken.
-TEST(RendererViewportModeTest, WireframeRendersNormalsRegardlessOfLighting) {
+// 5) Wireframe ignores both lights and materials, returning a flat grey
+//    shaded by `max(0, N·V)` (Blender-Solid look). The centre pixel sits
+//    on the sphere's apex where the outward normal is (0, 0, 1) and the
+//    view direction is also (0, 0, 1), so `N·V = 1` and brightness hits
+//    the upper bound 0.85. This guarantees no path through the lighting
+//    or scatter code is taken.
+TEST(RendererViewportModeTest, WireframeRendersFlatGreyRegardlessOfLighting) {
   auto scene = buildSphereScene(Color(1.0, 0.2, 0.2));
   scene->addLight(std::make_shared<PointLight>(Vector3D(0.0, 0.0, 0.0),
                                                Color(1.0, 1.0, 1.0), 1.0));
@@ -237,7 +238,7 @@ TEST(RendererViewportModeTest, WireframeRendersNormalsRegardlessOfLighting) {
 
   const auto image = renderScene(scene, makeSettings(1));
   const auto center = image.getPixel(kCenter, kCenter);
-  EXPECT_NEAR(center.r, 0.5, 1e-3);
-  EXPECT_NEAR(center.g, 0.5, 1e-3);
-  EXPECT_NEAR(center.b, 1.0, 1e-3);
+  EXPECT_NEAR(center.r, 0.85, 1e-3);
+  EXPECT_NEAR(center.g, 0.85, 1e-3);
+  EXPECT_NEAR(center.b, 0.85, 1e-3);
 }
