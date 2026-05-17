@@ -93,9 +93,12 @@ math::Color WhittedIntegrator::castRay(const math::Ray& ray,
 
   math::Color directLighting(0, 0, 0);
   const math::Color albedo = record.material->diffuseAlbedo();
-  const bool hasDiffuseTerm =
-      albedo.r > 0.0 || albedo.g > 0.0 || albedo.b > 0.0;
-  if (hasDiffuseTerm) {
+  const math::Color specularAlbedo = record.material->specularAlbedo();
+  const bool hasDirectLightingTerm =
+      albedo.r > 0.0 || albedo.g > 0.0 || albedo.b > 0.0 ||
+      specularAlbedo.r > 0.0 || specularAlbedo.g > 0.0 ||
+      specularAlbedo.b > 0.0;
+  if (hasDirectLightingTerm) {
     const math::Vector3D viewDirection = (-ray.getDirection()).normalize();
     for (const auto& light : scene.getLights()) {
       directLighting =

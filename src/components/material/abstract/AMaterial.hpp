@@ -27,7 +27,20 @@
  */
 class AMaterial : public IMaterial {
  public:
-  AMaterial() = default;
+  /**
+   * @brief Construct an AMaterial with optional Phong specular parameters.
+   *
+   * Defaults (@c Color(0, 0, 0) and @c 1.0) collapse the specular term in
+   * @c brdf to zero, so subclasses that don't pass any value behave as
+   * pure Lambert just like before this contract was widened.
+   *
+   * @param [in] specularAlbedo Phong @c ks. @c Color(0, 0, 0) disables the
+   *                            highlight.
+   * @param [in] shininess      Phong @c alpha. Must be strictly positive.
+   */
+  explicit AMaterial(raytracer::math::Color specularAlbedo
+                         = raytracer::math::Color(0.0, 0.0, 0.0),
+                     double shininess = 1.0);
   ~AMaterial() override = default;
 
   AMaterial(const AMaterial&) = delete;
@@ -56,25 +69,47 @@ class AMaterial : public IMaterial {
   [[nodiscard]] raytracer::math::Color diffuseAlbedo() const override;
 
   /**
-   * @brief Default Lambertian BRDF: @c diffuseAlbedo() / PI.
+   * @brief Return the Phong @c ks stored at construction.
    *
-   * Materials whose direct-lighting response is purely Lambertian inherit
-   * this implementation; they only need to override @c diffuseAlbedo() to
-   * return the correct value. Materials that add other reflection terms
-   * (e.g. Phong specular highlight) override this method to add the extra
-   * contribution on top of the diffuse base.
+   * @returns Linear RGB specular reflectance constant.
+   */
+  [[nodiscard]] raytracer::math::Color specularAlbedo() const override;
+
+  /**
+   * @brief Return the Phong shininess stored at construction.
+   *
+   * @returns Phong exponent applied to @c max(0, R·V) in @c brdf.
+   */
+  [[nodiscard]] double shininess() const override;
+
+  /**
+   * @brief Universal Phong BRDF: Lambert diffuse + Phong specular highlight.
+   *
+   * Computes @c diffuseAlbedo()/PI + @c specularAlbedo() *
+   * @c max(0, R·V)^shininess() where @c R is the reflection of the incoming
+   * light direction about the surface normal. When @c specularAlbedo()
+   * returns black (the default), this collapses to pure Lambert
+   * @c diffuseAlbedo()/PI.
+   *
+   * Subclasses that need a different direct-lighting response (e.g.
+   * @c PrincipledMaterial with Blinn-Phong + Schlick Fresnel) override
+   * this method.
    *
    * @param [in] incomingDirection Unit direction from the light toward the
    *                               shaded point.
    * @param [in] outgoingDirection Unit direction from the shaded point
    *                               toward the camera.
    * @param [in] normal            Unit surface normal at the shaded point.
-   * @returns @c diffuseAlbedo() divided by @c PI.
+   * @returns @c diffuseAlbedo()/PI plus Phong specular contribution.
    */
   [[nodiscard]] raytracer::math::Color brdf(
       const raytracer::math::Vector3D& incomingDirection,
       const raytracer::math::Vector3D& outgoingDirection,
       const raytracer::math::Vector3D& normal) const override;
+
+ private:
+  raytracer::math::Color specularAlbedo_;
+  double shininess_;
 };
 
 #endif  // MATERIAL_ABSTRACT_AMATERIAL_HPP_
