@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <algorithm>
 #include "components/material/abstract/AMaterial.hpp"
 #include "utils/math/Color.hpp"
 
@@ -18,8 +17,20 @@ class Glossy : public AMaterial {
   Glossy() = default;
   ~Glossy() override = default;
 
-  Glossy(double fuzz, const math::Color& albedo)
-      : fuzz(std::clamp(fuzz, 0.0, 1.0)), albedo(albedo) {}
+  /**
+   * @brief Construct a glossy (rough-mirror) material.
+   *
+   * @param [in] fuzz           Roughness factor in [0, 1] (clamped). 0 =
+   *                            perfect mirror, 1 = uniformly scattered.
+   * @param [in] albedo         Surface tint applied to the scattered ray.
+   * @param [in] specularAlbedo Phong @c ks for the direct-lighting
+   *                            highlight. @c Color(0, 0, 0) disables it.
+   * @param [in] shininess      Phong exponent @c alpha. Strictly positive.
+   */
+  Glossy(double fuzz, const math::Color& albedo,
+         const raytracer::math::Color& specularAlbedo
+             = raytracer::math::Color(0.0, 0.0, 0.0),
+         double shininess = 1.0);
 
   Glossy(const Glossy&) = delete;
   Glossy& operator=(const Glossy&) = delete;

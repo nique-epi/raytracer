@@ -23,12 +23,18 @@ namespace raytracer::components::material {
 class TexturedMaterial : public AMaterial {
  public:
   /**
-   * @brief Construct a textured material.
-   * @param [in] texture Texture used to modulate the surface color.
-   * @param [in] albedo  Base color multiplied by the texture sample.
+   * @brief Construct a textured material with optional Phong highlight.
+   * @param [in] texture        Texture used to modulate the surface color.
+   * @param [in] albedo         Base color multiplied by the texture sample.
+   * @param [in] specularAlbedo Phong @c ks. @c Color(0, 0, 0) disables the
+   *                            highlight (default).
+   * @param [in] shininess      Phong exponent @c alpha. Strictly positive.
    */
   TexturedMaterial(std::shared_ptr<raytracer::materials::ITexture> texture,
-                   const raytracer::math::Color& albedo);
+                   const raytracer::math::Color& albedo,
+                   const raytracer::math::Color& specularAlbedo
+                       = raytracer::math::Color(0.0, 0.0, 0.0),
+                   double shininess = 1.0);
 
   TexturedMaterial(const TexturedMaterial&) = delete;
   TexturedMaterial& operator=(const TexturedMaterial&) = delete;

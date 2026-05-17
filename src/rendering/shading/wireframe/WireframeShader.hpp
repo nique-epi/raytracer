@@ -7,12 +7,15 @@
 
 /**
  * @file WireframeShader.hpp
- * @brief Geometry-only viewport shader.
+ * @brief Geometry-only viewport shader rendered as Blender-style grey.
  *
- * Renders the surface normal of the first scene hit as an RGB colour,
- * mapping the normal components from `[-1, 1]` to `[0, 1]`. No
- * material, no lighting, no recursion, no background sampling: rays
- * that miss the scene produce black.
+ * Shades the first scene hit with a flat grey whose brightness follows
+ * the facing ratio @c max(0, N·V) — surfaces facing the camera are
+ * light grey, silhouette edges fall back to a dark grey floor. This
+ * matches Blender's "Solid" viewport look: the geometry reads as a
+ * three-dimensional clay model, with no material colour, no lighting,
+ * no recursion, and no background sampling. Rays that miss the scene
+ * produce black.
  *
  * This shader is the cheapest of the three: useful for verifying
  * primitive placement and transforms without paying for any shading

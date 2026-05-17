@@ -41,36 +41,49 @@ class MaterialFactory {
   MaterialFactory& operator=(MaterialFactory&&) = delete;
 
   /**
-   * @brief Create a Lambertian diffuse material.
+   * @brief Create a Lambertian diffuse material with optional Phong highlight.
    *
-   * @param [in] albedo Surface albedo (default: white).
+   * @param [in] albedo         Surface albedo (default: white).
+   * @param [in] specularAlbedo Phong @c ks (default: black, no highlight).
+   * @param [in] shininess      Phong @c alpha exponent (default: 1).
    * @returns Shared pointer to the freshly constructed material.
    */
   [[nodiscard]] static std::shared_ptr<IMaterial> createDiffuse(
-      const math::Color& albedo = math::Color(1.0, 1.0, 1.0));
+      const math::Color& albedo = math::Color(1.0, 1.0, 1.0),
+      const math::Color& specularAlbedo = math::Color(0.0, 0.0, 0.0),
+      double shininess = 1.0);
 
   /**
    * @brief Create a glossy (slightly-rough mirror) material.
    *
-   * @param [in] fuzz   Roughness in [0, 1] (default: 0.0 — perfect mirror).
-   * @param [in] albedo Surface albedo (default: white).
+   * @param [in] fuzz           Roughness in [0, 1] (default: 0.0 — perfect
+   *                            mirror).
+   * @param [in] albedo         Surface albedo (default: white).
+   * @param [in] specularAlbedo Phong @c ks (default: black, no highlight).
+   * @param [in] shininess      Phong @c alpha exponent (default: 1).
    * @returns Shared pointer to the freshly constructed material.
    */
   [[nodiscard]] static std::shared_ptr<IMaterial> createGlossy(
       double fuzz = 0.0,
-      const math::Color& albedo = math::Color(1.0, 1.0, 1.0));
+      const math::Color& albedo = math::Color(1.0, 1.0, 1.0),
+      const math::Color& specularAlbedo = math::Color(0.0, 0.0, 0.0),
+      double shininess = 1.0);
 
   /**
    * @brief Create a dielectric (glass-like) material.
    *
    * @param [in] refractionIndex Index of refraction (default: 1.5).
    * @param [in] tint            Tint color applied when light passes through
-   * (default: white).
+   *                             (default: white).
+   * @param [in] specularAlbedo  Phong @c ks (default: black, no highlight).
+   * @param [in] shininess       Phong @c alpha exponent (default: 1).
    * @returns Shared pointer to the freshly constructed material.
    */
   [[nodiscard]] static std::shared_ptr<IMaterial> createGlass(
       double refractionIndex = defaultGlassRefractionIndex,
-      const math::Color& tint = math::Color(1.0, 1.0, 1.0));
+      const math::Color& tint = math::Color(1.0, 1.0, 1.0),
+      const math::Color& specularAlbedo = math::Color(0.0, 0.0, 0.0),
+      double shininess = 1.0);
 
   /**
    * @brief Create a Principled BSDF material (metallic/roughness PBR).
@@ -91,16 +104,20 @@ class MaterialFactory {
       double ior = defaultPrincipledRefractionIndex, double alpha = 1.0);
 
   /**
-   * @brief Create a textured Lambertian material.
+   * @brief Create a textured Lambertian material with optional Phong highlight.
    *
-   * @param [in] texture Texture used to modulate the surface color.
-   * @param [in] albedo  Base color multiplied by the texture sample (default:
-   * white).
+   * @param [in] texture        Texture used to modulate the surface color.
+   * @param [in] albedo         Base color multiplied by the texture sample
+   *                            (default: white).
+   * @param [in] specularAlbedo Phong @c ks (default: black, no highlight).
+   * @param [in] shininess      Phong @c alpha exponent (default: 1).
    * @returns Shared pointer to the freshly constructed material.
    */
   [[nodiscard]] static std::shared_ptr<IMaterial> createTextured(
       std::shared_ptr<raytracer::materials::ITexture> texture,
-      const math::Color& albedo = math::Color(1.0, 1.0, 1.0));
+      const math::Color& albedo = math::Color(1.0, 1.0, 1.0),
+      const math::Color& specularAlbedo = math::Color(0.0, 0.0, 0.0),
+      double shininess = 1.0);
 
   /**
    * @brief Parse an `ITexture` from a libconfig texture block.

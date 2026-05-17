@@ -18,6 +18,7 @@
 
 namespace raytracer::math {
 class HitRecord;
+class Vector3D;
 }  // namespace raytracer::math
 
 /**
@@ -69,7 +70,7 @@ class IMaterial {
    * @brief Lambertian albedo used to weight direct lighting.
    *
    * Direct-lighting contribution at a shaded point is evaluated by the
-   * renderer as `diffuseAlbedo() * incomingRadiance * max(0, N · L)`.
+   * renderer as `brdf(L, V, N) * incomingRadiance * max(0, N · -L)`.
    * Materials whose response to direct light is purely specular or
    * refractive (mirrors, glass) return black so a `PointLight` does not
    * paint them as if they were Lambertian. Their lighting comes from the
@@ -79,6 +80,54 @@ class IMaterial {
    *          materials.
    */
   [[nodiscard]] virtual raytracer::math::Color diffuseAlbedo() const = 0;
+
+  /**
+   * @brief Specular reflectance constant (Phong @c ks).
+   *
+   * Used by @c brdf to weight the Phong specular highlight. Materials with
+   * no highlight (pure Lambert) return @c Color(0, 0, 0) so the specular
+   * term collapses to zero. @c PrincipledMaterial derives this from its
+   * @c metallic / @c baseColor via Schlick @c F0.
+   *
+   * @returns Linear RGB specular reflectance. @c Color(0, 0, 0) disables
+   *          the highlight.
+   */
+  [[nodiscard]] virtual raytracer::math::Color specularAlbedo() const = 0;
+
+  /**
+   * @brief Phong shininess exponent (@c alpha).
+   *
+   * Controls highlight width: larger values produce smaller, sharper
+   * highlights. Must be strictly positive. Materials with no highlight
+   * return @c 1.0 (the value is irrelevant when @c specularAlbedo is
+   * black).
+   *
+   * @returns Phong exponent applied to @c max(0, R·V) in @c AMaterial::brdf
+   *          and to @c max(0, N·H) in @c PrincipledMaterial::brdf.
+   */
+  [[nodiscard]] virtual double shininess() const = 0;
+
+  /**
+   * @brief Evaluate the surface BRDF (bidirectional reflectance distribution)
+   *        at a shading point.
+   *
+   * The integrator multiplies the returned value by `incomingRadiance`
+   * and the geometry term `max(0, N · -incomingDirection)` to obtain the
+   * outgoing direct-lighting contribution along @p outgoingDirection.
+   *
+   * @param [in] incomingDirection Unit direction from the light toward the
+   *                               shaded point (i.e. ray direction the
+   *                               light would travel).
+   * @param [in] outgoingDirection Unit direction from the shaded point
+   *                               toward the camera.
+   * @param [in] normal            Unit surface normal at the shaded point.
+   * @returns BRDF value per steradian, already normalised (Lambert returns
+   *          `albedo / PI`).
+   */
+  [[nodiscard]] virtual raytracer::math::Color brdf(
+      const raytracer::math::Vector3D& incomingDirection,
+      const raytracer::math::Vector3D& outgoingDirection,
+      const raytracer::math::Vector3D& normal) const = 0;
 };
 
 #endif  // MATERIAL_IMATERIAL_HPP_

@@ -15,7 +15,7 @@
  * through this interface.
  *
  * Three concrete shaders ship today, one per `ViewportMode`:
- *  - `WireframeShader`        — debug visualizer (normals as RGB).
+ *  - `WireframeShader`        — Blender-style flat grey clay preview.
  *  - `MaterialPreviewShader`  — env-light-only preview.
  *  - `RenderedShader`         — delegates to an `IIntegrator`
  *                               (currently `WhittedIntegrator`).

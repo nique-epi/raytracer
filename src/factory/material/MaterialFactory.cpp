@@ -45,28 +45,44 @@ void overrideColorIfPresent(const libconfig::Setting& cfg, const char* key,
   }
 }
 
+void parsePhongParams(const libconfig::Setting& cfg, Color& specularAlbedo,
+                      double& shininess) {
+  overrideColorIfPresent(cfg, "specular", specularAlbedo);
+  cfg.lookupValue("shininess", shininess);
+}
+
 std::shared_ptr<IMaterial> createDiffuseFromCfg(const libconfig::Setting& cfg) {
   Color albedo(1.0, 1.0, 1.0);
+  Color specularAlbedo(0.0, 0.0, 0.0);
+  double shininess = 1.0;
   overrideColorIfPresent(cfg, "albedo", albedo);
   overrideColorIfPresent(cfg, "color", albedo);
-  return MaterialFactory::createDiffuse(albedo);
+  parsePhongParams(cfg, specularAlbedo, shininess);
+  return MaterialFactory::createDiffuse(albedo, specularAlbedo, shininess);
 }
 
 std::shared_ptr<IMaterial> createGlossyFromCfg(const libconfig::Setting& cfg) {
   double fuzz = 0.0;
   Color albedo(1.0, 1.0, 1.0);
+  Color specularAlbedo(0.0, 0.0, 0.0);
+  double shininess = 1.0;
   cfg.lookupValue("fuzz", fuzz);
   overrideColorIfPresent(cfg, "albedo", albedo);
   overrideColorIfPresent(cfg, "color", albedo);
-  return MaterialFactory::createGlossy(fuzz, albedo);
+  parsePhongParams(cfg, specularAlbedo, shininess);
+  return MaterialFactory::createGlossy(fuzz, albedo, specularAlbedo, shininess);
 }
 
 std::shared_ptr<IMaterial> createGlassFromCfg(const libconfig::Setting& cfg) {
   double refractionIndex = defaultGlassRefractionIndex;
   cfg.lookupValue("refractionIndex", refractionIndex);
   Color tint(1.0, 1.0, 1.0);
+  Color specularAlbedo(0.0, 0.0, 0.0);
+  double shininess = 1.0;
   overrideColorIfPresent(cfg, "tint", tint);
-  return MaterialFactory::createGlass(refractionIndex, tint);
+  parsePhongParams(cfg, specularAlbedo, shininess);
+  return MaterialFactory::createGlass(refractionIndex, tint, specularAlbedo,
+                                       shininess);
 }
 
 std::shared_ptr<IMaterial> createPrincipledFromCfg(
@@ -88,18 +104,22 @@ std::shared_ptr<IMaterial> createPrincipledFromCfg(
 }  // namespace
 
 std::shared_ptr<IMaterial> MaterialFactory::createDiffuse(
-    const math::Color& albedo) {
-  return std::make_shared<DiffuseMaterial>(albedo);
+    const math::Color& albedo, const math::Color& specularAlbedo,
+    double shininess) {
+  return std::make_shared<DiffuseMaterial>(albedo, specularAlbedo, shininess);
 }
 
 std::shared_ptr<IMaterial> MaterialFactory::createGlossy(
-    double fuzz, const math::Color& albedo) {
-  return std::make_shared<Glossy>(fuzz, albedo);
+    double fuzz, const math::Color& albedo,
+    const math::Color& specularAlbedo, double shininess) {
+  return std::make_shared<Glossy>(fuzz, albedo, specularAlbedo, shininess);
 }
 
 std::shared_ptr<IMaterial> MaterialFactory::createGlass(
-    double refractionIndex, const math::Color& tint) {
-  return std::make_shared<Glass>(refractionIndex, tint);
+    double refractionIndex, const math::Color& tint,
+    const math::Color& specularAlbedo, double shininess) {
+  return std::make_shared<Glass>(refractionIndex, tint, specularAlbedo,
+                                  shininess);
 }
 
 std::shared_ptr<IMaterial> MaterialFactory::createPrincipled(
@@ -112,8 +132,10 @@ std::shared_ptr<IMaterial> MaterialFactory::createPrincipled(
 // NOLINTNEXTLINE(misc-use-internal-linkage)
 std::shared_ptr<IMaterial> MaterialFactory::createTextured(
     std::shared_ptr<raytracer::materials::ITexture> texture,
-    const math::Color& albedo) {
-  return std::make_shared<TexturedMaterial>(std::move(texture), albedo);
+    const math::Color& albedo, const math::Color& specularAlbedo,
+    double shininess) {
+  return std::make_shared<TexturedMaterial>(std::move(texture), albedo,
+                                             specularAlbedo, shininess);
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
@@ -189,13 +211,16 @@ std::shared_ptr<IMaterial> MaterialFactory::create(
   }
   if (type == "textured") {
     Color albedo(1.0, 1.0, 1.0);
+    Color specularAlbedo(0.0, 0.0, 0.0);
+    double shininess = 1.0;
     overrideColorIfPresent(cfg, "color", albedo);
     overrideColorIfPresent(cfg, "albedo", albedo);
+    parsePhongParams(cfg, specularAlbedo, shininess);
     const std::shared_ptr<ITexture> texture =
         cfg.exists("texture")
             ? parseTexture(cfg.lookup("texture"))
             : std::make_shared<SolidColor>(Color(1.0, 1.0, 1.0));
-    return createTextured(texture, albedo);
+    return createTextured(texture, albedo, specularAlbedo, shininess);
   }
   throw RaytracerException("MaterialFactory: unknown material type '" + type +
                            "'");

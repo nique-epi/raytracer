@@ -15,6 +15,7 @@ target_link_libraries(raytracer_integrator
     raytracer_math
     raytracer_scene
     raytracer_rendering_helper
+    raytracer_helper
 )
 
 raytracer_enable_target_warnings(raytracer_integrator)

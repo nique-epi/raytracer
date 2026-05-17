@@ -1,5 +1,4 @@
 #include "Glass.hpp"
-#include <cmath>
 #include <random>
 #include "utils/math/HitRecord.hpp"
 #include "utils/math/Optics.hpp"
@@ -21,6 +20,12 @@ double randomDouble() {
 }  // namespace
 
 namespace raytracer::components::material {
+
+Glass::Glass(double refractionIndex, const math::Color& tint,
+             const raytracer::math::Color& specularAlbedo, double shininess)
+    : AMaterial(specularAlbedo, shininess),
+      refractionIndex_(refractionIndex),
+      tint_(tint) {}
 
 bool Glass::scatter(const raytracer::math::Ray& in,
                     const raytracer::math::HitRecord& rec,

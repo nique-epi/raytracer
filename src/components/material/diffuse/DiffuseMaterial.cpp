@@ -13,8 +13,10 @@
 
 namespace raytracer::components::material {
 
-DiffuseMaterial::DiffuseMaterial(const raytracer::math::Color& albedo)
-    : albedo_(albedo) {}
+DiffuseMaterial::DiffuseMaterial(const raytracer::math::Color& albedo,
+                                  const raytracer::math::Color& specularAlbedo,
+                                  double shininess)
+    : AMaterial(specularAlbedo, shininess), albedo_(albedo) {}
 
 bool DiffuseMaterial::scatter(const raytracer::math::Ray& /*in*/,
                               const raytracer::math::HitRecord& rec,

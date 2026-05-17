@@ -6,12 +6,19 @@
 */
 
 #include "Glossy.hpp"
+#include <algorithm>
 #include "utils/math/HitRecord.hpp"
 #include "utils/math/Optics.hpp"
 #include "utils/math/Ray.hpp"
 #include "utils/math/Vector3D.hpp"
 
 namespace raytracer::components::material {
+
+Glossy::Glossy(double fuzz, const math::Color& albedo,
+               const raytracer::math::Color& specularAlbedo, double shininess)
+    : AMaterial(specularAlbedo, shininess),
+      fuzz(std::clamp(fuzz, 0.0, 1.0)),
+      albedo(albedo) {}
 
 bool Glossy::scatter(const raytracer::math::Ray& in,
                      const raytracer::math::HitRecord& rec,

@@ -21,7 +21,19 @@ namespace raytracer::components::material {
  */
 class DiffuseMaterial : public AMaterial {
  public:
-  explicit DiffuseMaterial(const raytracer::math::Color& albedo);
+  /**
+   * @brief Construct a Lambertian material with optional Phong highlight.
+   *
+   * @param [in] albedo         Lambertian diffuse albedo (kd).
+   * @param [in] specularAlbedo Phong @c ks. @c Color(0, 0, 0) disables the
+   *                            highlight (default).
+   * @param [in] shininess      Phong exponent @c alpha. Strictly positive.
+   */
+  explicit DiffuseMaterial(
+      const raytracer::math::Color& albedo,
+      const raytracer::math::Color& specularAlbedo
+          = raytracer::math::Color(0.0, 0.0, 0.0),
+      double shininess = 1.0);
 
   DiffuseMaterial(const DiffuseMaterial&) = delete;
   DiffuseMaterial& operator=(const DiffuseMaterial&) = delete;

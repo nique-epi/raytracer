@@ -2,6 +2,7 @@ add_library(raytracer_rendering_helper STATIC)
 
 target_sources(raytracer_rendering_helper
   PRIVATE
+    HemisphereSampler.cpp
     RenderingHelpers.cpp
 )
 

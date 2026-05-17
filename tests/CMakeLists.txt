@@ -121,9 +121,14 @@ add_executable(raytracer_tests
   components/material/textures/SolidColorTest.cpp
   components/material/textures/CheckerTextureTest.cpp
   components/material/TexturedMaterialTest.cpp
+  components/material/AMaterialBrdfTest.cpp
+  components/material/PrincipledBrdfTest.cpp
   components/material/textures/PerlinNoiseTest.cpp
   components/material/textures/NoiseTextureTest.cpp
   components/material/textures/ImageTextureTest.cpp
+  rendering/HemisphereSamplerTest.cpp
+  rendering/AmbientOcclusionTest.cpp
+  rendering/WhittedIntegratorHighlightTest.cpp
   fixtures/SphereFixture.cpp
   fixtures/OrthoCameraFixture.cpp
   fixtures/ComponentFactoryFixture.cpp
@@ -164,6 +169,7 @@ if(BUILD_BONUS)
     PRIVATE
       bonus_assimp_loader
       bonus_OID_denoiser
+      bonus_json_loader
   )
 endif()
 

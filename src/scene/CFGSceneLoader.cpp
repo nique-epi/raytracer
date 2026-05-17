@@ -161,6 +161,15 @@ void CFGSceneLoader::parseWorld(const libconfig::Setting& root,
   } else {
     builder.setViewportMode(ViewportMode::Rendered);
   }
+  if (w.exists("ambientOcclusion")) {
+    const auto& ao = w["ambientOcclusion"];
+    AmbientOcclusionSettings settings;
+    ao.lookupValue("enabled", settings.enabled);
+    ao.lookupValue("samples", settings.samples);
+    ao.lookupValue("radius", settings.radius);
+    ao.lookupValue("intensity", settings.intensity);
+    builder.setAmbientOcclusion(settings);
+  }
 }
 
 }  // namespace raytracer::scene
