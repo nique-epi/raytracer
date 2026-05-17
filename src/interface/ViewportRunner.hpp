@@ -8,6 +8,7 @@
 #pragma once
 
 #include <atomic>
+#include <memory>
 #include <mutex>
 #include <string>
 #include <vector>
@@ -18,6 +19,10 @@
 #include "rendering/renderer/raytracerRenderer/RaytracerRenderer.hpp"
 #include "scene/World.hpp"
 #include "utils/math/Color.hpp"
+
+namespace raytracer::shading {
+class ShadingPool;
+}  // namespace raytracer::shading
 
 namespace raytracer::interface {
 
@@ -43,10 +48,13 @@ class ViewportRunner {
    * @param [in] baseConfig     Scene, shading context and target
    *                            settings (copied).
    * @param [in] frame          Per-frame camera state (copied).
+   * @param [in] shadingPool    Pre-built shader pool consulted on every
+   *                            viewport-mode switch.
    */
   ViewportRunner(raytracer::core::RaytracerRenderer& renderer,
                  raytracer::core::RendererConfig baseConfig,
-                 raytracer::core::Frame frame);
+                 raytracer::core::Frame frame,
+                 std::shared_ptr<raytracer::shading::ShadingPool> shadingPool);
 
   /**
    * @brief Run the accumulation loop to completion.
@@ -119,10 +127,10 @@ class ViewportRunner {
   /**
    * @brief Swap the active shading strategy to @p mode.
    *
-   * Builds the matching shader via `ShadingModeFactory` and installs it
-   * on the shared `ShadingContext`. The next `render()` call picks it
-   * up. Callers must also discard any accumulated samples, since they
-   * belong to the previous mode.
+   * Looks the matching shader up in the pre-built `ShadingPool` and
+   * installs it on the shared `ShadingContext`. The next `render()`
+   * call picks it up. Callers must also discard any accumulated
+   * samples, since they belong to the previous mode.
    *
    * @param[in] mode Viewport mode to switch to.
    */
@@ -139,6 +147,7 @@ class ViewportRunner {
   raytracer::core::RaytracerRenderer& renderer_;
   raytracer::core::RendererConfig baseConfig_;
   raytracer::core::Frame frame_;
+  std::shared_ptr<raytracer::shading::ShadingPool> shadingPool_;
   int width_;
   int height_;
   int targetSamples_;

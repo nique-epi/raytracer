@@ -3,7 +3,7 @@ add_library(raytracer_shading STATIC)
 target_sources(raytracer_shading
   PRIVATE
     ShadingContext.cpp
-    ShadingModeFactory.cpp
+    ShadingPool.cpp
     wireframe/WireframeShader.cpp
     materialPreview/MaterialPreviewShader.cpp
     rendered/RenderedShader.cpp

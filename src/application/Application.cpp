@@ -23,9 +23,13 @@
 #include "output/ppm/ppm.hpp"
 #include "rendering/renderer/Frame.hpp"
 #include "rendering/renderer/RendererConfig.hpp"
+#include "rendering/integrator/whittedIntegrator/WhittedIntegrator.hpp"
 #include "rendering/renderer/raytracerRenderer/RaytracerRenderer.hpp"
 #include "rendering/shading/ShadingContext.hpp"
-#include "rendering/shading/ShadingModeFactory.hpp"
+#include "rendering/shading/ShadingPool.hpp"
+#include "rendering/shading/materialPreview/MaterialPreviewShader.hpp"
+#include "rendering/shading/rendered/RenderedShader.hpp"
+#include "rendering/shading/wireframe/WireframeShader.hpp"
 #include "scene/CFGSceneLoader.hpp"
 #include "scene/Scene.hpp"
 #include "scene/SceneBuilder.hpp"
@@ -61,10 +65,12 @@ std::string formatRemainingTime(std::int64_t remainingSeconds) {
   return stream.str();
 }
 
-std::shared_ptr<shading::ShadingContext> createShadingContext(
-    const scene::Scene& scene) {
-  return std::make_shared<shading::ShadingContext>(
-      shading::ShadingModeFactory::create(scene.getWorld().viewportMode()));
+std::shared_ptr<shading::ShadingPool> createShadingPool() {
+  return std::make_shared<shading::ShadingPool>(
+      std::make_shared<shading::WireframeShader>(),
+      std::make_shared<shading::MaterialPreviewShader>(),
+      std::make_shared<shading::RenderedShader>(
+          std::make_shared<core::WhittedIntegrator>()));
 }
 
 void displayProgressBar(RaytracerRenderer& renderer) {
@@ -168,7 +174,9 @@ int Application::run(const std::string& scenePath, bool useBVH,
   scene->getCamera()->setResolution(settings.imageWidth, settings.imageHeight);
 
   RaytracerRenderer renderer;
-  auto shadingContext = createShadingContext(*scene);
+  auto shadingPool = createShadingPool();
+  auto shadingContext = std::make_shared<shading::ShadingContext>(
+      shadingPool->get(scene->getWorld().viewportMode()));
 
 #ifdef BUILD_BONUS
   const std::string outputPath = (jsonSettings && jsonSettings->outputFile)
@@ -185,7 +193,9 @@ int Application::run(const std::string& scenePath, bool useBVH,
   const Frame frame{.camera = scene->getCamera()};
 
   if (viewportRequested_) {
-    return raytracer::interface::ViewportRunner(renderer, config, frame).run();
+    return raytracer::interface::ViewportRunner(renderer, config, frame,
+                                                shadingPool)
+        .run();
   }
 
   displayProgressBar(renderer);
