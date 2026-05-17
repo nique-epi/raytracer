@@ -22,9 +22,12 @@ pixel with a physically-based integrator.
 By default the renderer opens a live SFML viewport that displays the
 image as it is computed. With
 .B \-\-no\-viewport
-the renderer runs headless and writes the resulting image in PPM format
-to standard output, which can be redirected to a file or piped to an
-image viewer.
+the renderer runs headless and writes the rendered image in PPM format
+to a file
+.RB ( out.ppm
+in the current directory by default; the destination can be overridden
+by the JSON configuration passed to
+.BR \-\-config ).
 .PP
 Scene files are accepted in libconfig
 .RB ( .cfg )
@@ -56,12 +59,18 @@ Intersection tests fall back to a linear scan of every primitive. Useful
 for debugging or for very small scenes; significantly slower otherwise.
 .TP
 .B \-\-no\-viewport
-Render headless: skip the live SFML display window and write the image
-to standard output instead.
+Render headless: skip the live SFML display window and write the
+rendered image to a PPM file
+.RB ( out.ppm
+by default).
 .TP
 .BI \-\-config " FILE"
 Load a JSON render-configuration file describing render settings
-(resolution, sample count, etc.). Only available in builds compiled with
+(resolution, sample count, output file, etc.). The
+.B outputFile
+field, when present, overrides the default
+.B out.ppm
+destination. Only available in builds compiled with
 .BR BUILD_BONUS .
 .TP
 .BR \-h ", " \-\-help
@@ -72,12 +81,10 @@ Render a scene in the live viewport:
 .B raytracer
 .I scenes/example.cfg
 .TP
-Render headless and save the image to a file:
+Render headless; the image is written to out.ppm:
 .B raytracer
 .I scenes/example.cfg
 .B \-\-no\-viewport
-.B >
-.I image.ppm
 .TP
 Render without the BVH acceleration structure:
 .B raytracer
