@@ -155,6 +155,9 @@ std::string ViewportRunner::decorateStatus(const std::string& body) const {
 
 void ViewportRunner::reportPassProgress(Viewport& viewport, int pass,
                                         double fraction) const {
+  if (viewport.hasModeRequest()) {
+    return;
+  }
   const int completedSamples = (pass - 1) * samplesPerPass;
   const int percent = static_cast<int>(fraction * 100.0);
   viewport.setStatus(

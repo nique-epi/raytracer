@@ -101,6 +101,18 @@ class ViewportRunner {
 
   void accumulatePass(const raytracer::components::Image& passImage);
   void publishPass(Viewport& viewport);
+
+  /**
+   * @brief Push the in-pass progress of @p pass to the status overlay.
+   *
+   * No-op while a mode switch is pending: the current pass is about to
+   * be discarded, so painting its progress would only show stale
+   * numbers that the imminent switch will overwrite.
+   *
+   * @param[in,out] viewport Viewport whose overlay is updated.
+   * @param[in] pass         1-based index of the pass being rendered.
+   * @param[in] fraction     Pass completion fraction in [0, 1].
+   */
   void reportPassProgress(Viewport& viewport, int pass, double fraction) const;
   void reportOutcome(Viewport& viewport);
 
