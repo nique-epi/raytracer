@@ -12,6 +12,10 @@
 #include "scene/World.hpp"
 #include "utils/math/RenderSettings.hpp"
 
+namespace raytracer::scene {
+class Scene;
+}  // namespace raytracer::scene
+
 namespace raytracer::bonus::json {
 
 /**
@@ -62,6 +66,29 @@ class JsonSettingsLoader {
   [[nodiscard]] static JsonSettings load(
       const std::string& path,
       const math::RenderSettings& base = math::RenderSettings{});
+
+  /**
+   * @brief Push the values held by @p json into @p settings, @p scene and
+   *        @p outputPath.
+   *
+   * Always overwrites @p settings with `json.settings` (the JSON is the
+   * authoritative source once a config file is provided). Conditionally
+   * overrides the scene's `viewportMode` and the caller's @p outputPath
+   * only when the JSON had those keys set (i.e. when the matching
+   * optional is engaged); a missing key never clobbers the value
+   * coming from the scene file or the caller's default.
+   *
+   * @param[in,out] scene      Scene whose `World::viewportMode` may be
+   *                           overridden.
+   * @param[in,out] settings   Render settings replaced wholesale by
+   *                           `json.settings`.
+   * @param[in]     json       JSON-derived overrides.
+   * @param[in,out] outputPath Output path that may be replaced.
+   */
+  static void applyOverrides(raytracer::scene::Scene& scene,
+                             math::RenderSettings& settings,
+                             const JsonSettings& json,
+                             std::string& outputPath);
 };
 
 }  // namespace raytracer::bonus::json

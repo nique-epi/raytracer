@@ -66,6 +66,28 @@ class ShadingPool {
   [[nodiscard]] std::shared_ptr<IShadingMode> get(
       scene::ViewportMode mode) const;
 
+  /**
+   * @brief Build the default shader pool wired with the project's
+   *        canonical shaders.
+   *
+   * Equivalent to:
+   * @code
+   * std::make_shared<ShadingPool>(
+   *     std::make_shared<WireframeShader>(),
+   *     std::make_shared<MaterialPreviewShader>(),
+   *     std::make_shared<RenderedShader>(
+   *         std::make_shared<core::WhittedIntegrator>()));
+   * @endcode
+   *
+   * Single source of truth for "which concrete shaders does the
+   * application start with". Adding a new viewport mode or swapping
+   * the integrator wired into `RenderedShader` only touches this
+   * factory method.
+   *
+   * @returns Shared pointer to a fresh, fully-populated `ShadingPool`.
+   */
+  [[nodiscard]] static std::shared_ptr<ShadingPool> create();
+
  private:
   std::shared_ptr<IShadingMode> wireframe_;
   std::shared_ptr<IShadingMode> materialPreview_;

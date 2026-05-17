@@ -11,17 +11,22 @@
 #include <nlohmann/json.hpp>
 #include <string>
 #include <thread>
+#include "scene/Scene.hpp"
 #include "scene/SceneFileNotFoundException.hpp"
 #include "scene/SceneParseException.hpp"
+#include "scene/World.hpp"
 
 namespace raytracer::bonus::json {
 
 namespace {
 
 raytracer::scene::ViewportMode viewportModeFromString(const std::string& mode) {
-  if (mode == "wireframe") return raytracer::scene::ViewportMode::Wireframe;
-  if (mode == "materialPreview")
+  if (mode == "wireframe") {
+    return raytracer::scene::ViewportMode::Wireframe;
+  }
+  if (mode == "materialPreview") {
     return raytracer::scene::ViewportMode::MaterialPreview;
+  }
   return raytracer::scene::ViewportMode::Rendered;
 }
 
@@ -72,6 +77,19 @@ JsonSettings JsonSettingsLoader::load(const std::string& path,
     throw;
   } catch (const nlohmann::json::exception& error) {
     throw raytracer::scene::SceneParseException(path, error.what());
+  }
+}
+
+void JsonSettingsLoader::applyOverrides(raytracer::scene::Scene& scene,
+                                        math::RenderSettings& settings,
+                                        const JsonSettings& json,
+                                        std::string& outputPath) {
+  settings = json.settings;
+  if (json.viewportMode) {
+    scene.getWorld().setViewportMode(*json.viewportMode);
+  }
+  if (json.outputFile) {
+    outputPath = *json.outputFile;
   }
 }
 
