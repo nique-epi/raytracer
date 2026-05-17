@@ -606,3 +606,44 @@ math::Color shadeRendered(const math::Ray& inRay,
 
 castRay(scattered, scene, depth - 1, false);
 ```
+
+### R11 — Nom de fichier = nom PascalCase de la classe principale
+
+**Règle :** un fichier `.hpp` / `.cpp` doit porter le **nom exact, en
+`PascalCase`, de la classe (ou de l'entité) principale qu'il
+déclare/définit**. Pas de `snake_case`, pas de `lowercase`, pas de
+`kebab-case`.
+
+**Pourquoi :** tout le projet suit cette convention
+(`RaytracerRenderer.cpp`, `ArgsParser.hpp`, `IImageWriter.hpp`,
+`WhittedIntegrator.cpp`, `PerspectiveCamera.cpp`…). Un fichier
+`status_overlay.hpp` ou `viewport_runner.cpp` au milieu casse la
+cohérence, complique la navigation (on cherche la classe `StatusOverlay`
+et on doit deviner le casing du fichier), et trahit du code « collé »
+d'un autre projet. Le nom de fichier doit pouvoir se déduire
+mécaniquement du nom de la classe, et inversement.
+
+**À appliquer :** tout nouveau fichier. Un fichier existant dont le nom
+ne respecte pas la règle doit être renommé dès qu'on le touche lors d'un
+refactoring. Le préfixe `I` des interfaces fait partie du nom de classe
+et donc du nom de fichier (`IRenderer.hpp`). Pour un fichier qui ne
+contient pas de classe (free functions, helpers), utiliser le
+`PascalCase` du concept qu'il regroupe.
+
+**Exemple interdit :**
+
+```
+status_overlay.hpp        // classe StatusOverlay
+viewport_runner.cpp       // classe ViewportRunner
+framebuffer.hpp           // classe Framebuffer
+render-settings.hpp       // classe RenderSettings
+```
+
+**Exemple correct :**
+
+```
+StatusOverlay.hpp
+ViewportRunner.cpp
+Framebuffer.hpp
+RenderSettings.hpp
+```

@@ -14,15 +14,40 @@ namespace raytracer::core {
 
 struct HelpRequest {};
 
+/**
+ * @brief Parsed command-line request to run a scene.
+ *
+ * Built by `ArgsParser::parse` from `argv`. Owns no resources.
+ * `viewport` defaults to true: the SFML live-display window opens
+ * unless `--no-viewport` is passed.
+ * `renderConfigPath` is populated by `--config` (BUILD_BONUS only).
+ */
 struct SceneRequest {
   std::string scenePath;
-  bool useBVH{false};
+  bool useBVH{true};
+  bool viewport{true};
+  std::optional<std::string> renderConfigPath;
 };
 
 using AppConfig = std::variant<HelpRequest, SceneRequest>;
 
 class ArgsParser {
  public:
+  /**
+   * @brief Parse the CLI invocation.
+   *
+   * Recognised forms:
+   *   raytracer -h | --help
+   *   raytracer <SCENE_FILE> [--no-bvh] [--no-viewport] [--config <FILE>]
+   *
+   * Flags after the scene path may appear in any order. Any unknown
+   * flag yields `std::nullopt` (usage error).
+   *
+   * @param [in] argc Argument count from `main`.
+   * @param [in] argv Argument vector from `main`.
+   * @returns `HelpRequest` if help was requested, a `SceneRequest` on a
+   *          valid invocation, or `std::nullopt` on a parse error.
+   */
   [[nodiscard]] static std::optional<AppConfig> parse(int argc,
                                                       const char** argv);
 };

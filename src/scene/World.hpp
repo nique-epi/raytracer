@@ -73,6 +73,29 @@ enum class ViewportMode : std::uint8_t {
 };
 
 /**
+ * @brief Return the next viewport mode in cycle order.
+ *
+ * Cycles `Wireframe -> MaterialPreview -> Rendered -> Wireframe`, so a
+ * single key press can step through every shading mode in turn.
+ *
+ * @param[in] mode Current viewport mode.
+ * @returns The mode following @p mode in cycle order.
+ * @throws raytracer::core::RaytracerException When @p mode is not a known
+ *         enumerator.
+ */
+[[nodiscard]] ViewportMode nextViewportMode(ViewportMode mode);
+
+/**
+ * @brief Human-readable label for a viewport mode.
+ *
+ * @param[in] mode Viewport mode to name.
+ * @returns A static, null-terminated label (e.g. "Rendered").
+ * @throws raytracer::core::RaytracerException When @p mode is not a known
+ *         enumerator.
+ */
+[[nodiscard]] const char* viewportModeName(ViewportMode mode);
+
+/**
  * @brief Scene-level environment settings, mirroring Blender's World
  *        data block.
  *

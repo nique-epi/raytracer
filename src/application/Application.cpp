@@ -9,8 +9,8 @@
 #include <unistd.h>
 #include <algorithm>
 #include <chrono>
-#include <cstdint>
 #include <cmath>
+#include <cstdint>
 #include <cstdio>
 #include <iomanip>
 #include <iostream>
@@ -19,16 +19,13 @@
 #include <sstream>
 #include "components/image/Image.hpp"
 #include "exceptions/Exceptions.hpp"
+#include "interface/ViewportRunner.hpp"
 #include "output/ppm/ppm.hpp"
-#include "rendering/integrator/whittedIntegrator/WhittedIntegrator.hpp"
 #include "rendering/renderer/Frame.hpp"
 #include "rendering/renderer/RendererConfig.hpp"
 #include "rendering/renderer/raytracerRenderer/RaytracerRenderer.hpp"
-#include "rendering/shading/IShadingMode.hpp"
 #include "rendering/shading/ShadingContext.hpp"
-#include "rendering/shading/materialPreview/MaterialPreviewShader.hpp"
-#include "rendering/shading/rendered/RenderedShader.hpp"
-#include "rendering/shading/wireframe/WireframeShader.hpp"
+#include "rendering/shading/ShadingModeFactory.hpp"
 #include "scene/CFGSceneLoader.hpp"
 #include "scene/Scene.hpp"
 #include "scene/SceneBuilder.hpp"
@@ -37,6 +34,7 @@
 
 #ifdef BUILD_BONUS
 #include "Assimp/SceneLoader/AssimpLoaderRegistration.hpp"
+#include "json/JsonSettingsLoader.hpp"
 #include "postprocess/denoise/OIDDenoiser.hpp"
 #endif
 
@@ -65,25 +63,8 @@ std::string formatRemainingTime(std::int64_t remainingSeconds) {
 
 std::shared_ptr<shading::ShadingContext> createShadingContext(
     const scene::Scene& scene) {
-  auto wireframe = std::make_shared<shading::WireframeShader>();
-  auto materialPreview = std::make_shared<shading::MaterialPreviewShader>();
-  auto rendered = std::make_shared<shading::RenderedShader>(
-      std::make_shared<WhittedIntegrator>());
-
-  std::shared_ptr<shading::IShadingMode> initialStrategy;
-  switch (scene.getWorld().viewportMode()) {
-    case scene::ViewportMode::Wireframe:
-      initialStrategy = wireframe;
-      break;
-    case scene::ViewportMode::MaterialPreview:
-      initialStrategy = materialPreview;
-      break;
-    case scene::ViewportMode::Rendered:
-      initialStrategy = rendered;
-      break;
-  }
-
-  return std::make_shared<shading::ShadingContext>(std::move(initialStrategy));
+  return std::make_shared<shading::ShadingContext>(
+      shading::ShadingModeFactory::create(scene.getWorld().viewportMode()));
 }
 
 void displayProgressBar(RaytracerRenderer& renderer) {
@@ -136,7 +117,14 @@ Application::Application() {
 #endif
 }
 
-int Application::run(const std::string& scenePath, bool useBVH) {
+int Application::run(const std::string& scenePath, bool useBVH,
+                     const std::optional<std::string>& renderConfigPath) {
+#ifndef BUILD_BONUS
+  if (renderConfigPath) {
+    throw RaytracerException(
+        "--config requires BUILD_BONUS. Rebuild with: cmake --preset bonus");
+  }
+#endif
   const auto loader = _factory.getLoader(scenePath);
   if (!loader) {
     throw RaytracerException("No loader available for: " + scenePath);
@@ -147,23 +135,60 @@ int Application::run(const std::string& scenePath, bool useBVH) {
 
   loader->load(scenePath, builder, settings);
 
+#ifdef BUILD_BONUS
+  std::optional<raytracer::bonus::json::JsonSettings> jsonSettings;
+  if (renderConfigPath) {
+    jsonSettings = raytracer::bonus::json::JsonSettingsLoader::load(
+        *renderConfigPath, settings);
+    settings = jsonSettings->settings;
+  }
+#endif
+
   if (!settings.validate()) {
+#ifdef BUILD_BONUS
+    if (jsonSettings) {
+      throw RaytracerException(
+          "Invalid render settings loaded from scene: " + scenePath +
+          ", overridden by config: " + *renderConfigPath);
+    }
+#endif
     throw RaytracerException("Invalid render settings loaded from: " +
                              scenePath);
   }
   auto scene = builder.build();
+
+#ifdef BUILD_BONUS
+  if (jsonSettings && jsonSettings->viewportMode) {
+    scene->getWorld().setViewportMode(*jsonSettings->viewportMode);
+  }
+#endif
   if (useBVH) {
     scene->buildBVH();
   }
   scene->getCamera()->setResolution(settings.imageWidth, settings.imageHeight);
 
   RaytracerRenderer renderer;
-  displayProgressBar(renderer);
   auto shadingContext = createShadingContext(*scene);
 
-  const RendererConfig config{
-      .scene = scene, .settings = settings, .shadingContext = shadingContext};
+#ifdef BUILD_BONUS
+  const std::string outputPath = (jsonSettings && jsonSettings->outputFile)
+                                     ? *jsonSettings->outputFile
+                                     : "out.ppm";
+#else
+  const std::string outputPath = "out.ppm";
+#endif
+
+  const RendererConfig config{.scene = scene,
+                              .settings = settings,
+                              .shadingContext = shadingContext,
+                              .outputPath = outputPath};
   const Frame frame{.camera = scene->getCamera()};
+
+  if (viewportRequested_) {
+    return raytracer::interface::ViewportRunner(renderer, config, frame).run();
+  }
+
+  displayProgressBar(renderer);
   components::Image image = renderer.render(config, frame);
 
   output::ppm writer;
@@ -171,8 +196,10 @@ int Application::run(const std::string& scenePath, bool useBVH) {
 #ifdef BUILD_BONUS
   OIDDenoiser::denoise(image);
 #endif
-  writer.write(image, "out.ppm");
+  writer.write(image, outputPath);
   return 0;
 }
+
+void Application::setViewport(bool enabled) { viewportRequested_ = enabled; }
 
 }  // namespace raytracer::core

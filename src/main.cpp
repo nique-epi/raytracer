@@ -15,9 +15,11 @@
 
 namespace {
 constexpr std::string_view usage =
-    "USAGE: ./raytracer <SCENE_FILE> [--no-bvh]\n"
-    "SCENE_FILE: scene configuration\n"
-    "--no-bvh:    disable BVH acceleration structure\n";
+    "USAGE: ./raytracer <SCENE_FILE> [--no-bvh] [--no-viewport] [--config <FILE>]\n"
+    "SCENE_FILE:    scene configuration (.cfg, .gltf, …)\n"
+    "--no-bvh:      disable BVH acceleration structure\n"
+    "--no-viewport: render headless, skip the live SFML window\n"
+    "--config:      JSON render-configuration file (BUILD_BONUS only)\n";
 constexpr int error_exit_code = 84;
 }  // namespace
 
@@ -33,7 +35,9 @@ int main(int argc, char** argv) {
       return 0;
     }
     const auto& req = std::get<raytracer::core::SceneRequest>(*config);
-    return raytracer::core::Application{}.run(req.scenePath, req.useBVH);
+    raytracer::core::Application app;
+    app.setViewport(req.viewport);
+    return app.run(req.scenePath, req.useBVH, req.renderConfigPath);
   } catch (const raytracer::core::RaytracerException& e) {
     std::cerr << "Error: " << e.what() << '\n';
     return error_exit_code;

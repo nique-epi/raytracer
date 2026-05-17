@@ -6,6 +6,7 @@
 */
 
 #include "World.hpp"
+#include "exceptions/Exceptions.hpp"
 
 namespace raytracer::scene {
 
@@ -21,6 +22,30 @@ const AmbientOcclusionSettings& World::ambientOcclusion() const {
 
 void World::setAmbientOcclusion(const AmbientOcclusionSettings& settings) {
   ambientOcclusion_ = settings;
+}
+
+ViewportMode nextViewportMode(ViewportMode mode) {
+  switch (mode) {
+    case ViewportMode::Wireframe:
+      return ViewportMode::MaterialPreview;
+    case ViewportMode::MaterialPreview:
+      return ViewportMode::Rendered;
+    case ViewportMode::Rendered:
+      return ViewportMode::Wireframe;
+  }
+  throw core::RaytracerException("nextViewportMode: unknown ViewportMode");
+}
+
+const char* viewportModeName(ViewportMode mode) {
+  switch (mode) {
+    case ViewportMode::Wireframe:
+      return "Wireframe";
+    case ViewportMode::MaterialPreview:
+      return "Material Preview";
+    case ViewportMode::Rendered:
+      return "Rendered";
+  }
+  throw core::RaytracerException("viewportModeName: unknown ViewportMode");
 }
 
 }  // namespace raytracer::scene

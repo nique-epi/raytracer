@@ -10,18 +10,45 @@
 
 namespace raytracer::core {
 
+namespace {
+bool applyFlag(std::string_view flag, SceneRequest& request) {
+  if (flag == "--no-bvh") {
+    request.useBVH = false;
+    return true;
+  }
+  if (flag == "--no-viewport") {
+    request.viewport = false;
+    return true;
+  }
+  return false;
+}
+}  // namespace
+
 std::optional<AppConfig> ArgsParser::parse(int argc, const char** argv) {
-  if (argc == 2 && (std::string_view(argv[1]) == "-h" ||
-                    std::string_view(argv[1]) == "--help")) {
+  if (argc < 2) {
+    return std::nullopt;
+  }
+  const std::string_view first = argv[1];
+  if (first == "-h" || first == "--help") {
+    if (argc != 2) {
+      return std::nullopt;
+    }
     return HelpRequest{};
   }
-  if (argc == 2) {
-    return SceneRequest{.scenePath = argv[1], .useBVH = true};
+
+  SceneRequest request{.scenePath = argv[1]};
+  for (int i = 2; i < argc; ++i) {
+    const std::string_view arg(argv[i]);
+    if (arg == "--config") {
+      if (i + 1 >= argc) {
+        return std::nullopt;
+      }
+      request.renderConfigPath = argv[++i];
+    } else if (!applyFlag(arg, request)) {
+      return std::nullopt;
+    }
   }
-  if (argc == 3 && std::string_view(argv[2]) == "--no-bvh") {
-    return SceneRequest{.scenePath = argv[1], .useBVH = false};
-  }
-  return std::nullopt;
+  return request;
 }
 
 }  // namespace raytracer::core

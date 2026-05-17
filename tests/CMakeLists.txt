@@ -90,10 +90,12 @@ add_executable(raytracer_tests
   scene/TransformsParserTest.cpp
   scene/SceneExceptionTest.cpp
   scene/SceneTest.cpp
+  scene/WorldTest.cpp
   scene/background/SolidBackgroundTest.cpp
   scene/background/GradientBackgroundTest.cpp
   exceptions/ExceptionsTest.cpp
   renderer/RendererViewportModeTest.cpp
+  rendering/shading/ShadingModeFactoryTest.cpp
   renderer/TileTest.cpp
   renderer/RaytracerRendererTest.cpp
   config/ConfigExceptionTest.cpp
@@ -161,12 +163,15 @@ target_sources(raytracer_tests PRIVATE
 )
 
 if(BUILD_BONUS)
+  target_compile_definitions(raytracer_tests PRIVATE BUILD_BONUS)
   target_link_libraries(raytracer_tests
     PRIVATE
       bonus_assimp_loader
       bonus_OID_denoiser
   )
 endif()
+
+target_link_libraries(raytracer_tests PRIVATE raytracer_viewport)
 
 raytracer_enable_target_warnings(raytracer_tests)
 
