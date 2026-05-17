@@ -29,13 +29,9 @@ inline constexpr double defaultAmbientOcclusionIntensity = 1.0;
  * equivalent visual gain.
  */
 struct AmbientOcclusionSettings {
-  /// Whether the AO pass runs. Defaults to false to preserve baseline.
   bool enabled{false};
-  /// Number of hemisphere samples per shaded point (higher = less noise).
   int samples{defaultAmbientOcclusionSamples};
-  /// Maximum distance an occlusion sample considers as "blocking".
   double radius{defaultAmbientOcclusionRadius};
-  /// AO strength in [0, 1]: 0 disables darkening, 1 applies full AO.
   double intensity{defaultAmbientOcclusionIntensity};
 };
 
