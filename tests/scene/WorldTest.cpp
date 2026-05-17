@@ -6,9 +6,12 @@
 */
 
 #include <gtest/gtest.h>
+#include <cstdint>
 #include <string>
+#include "exceptions/Exceptions.hpp"
 #include "scene/World.hpp"
 
+using raytracer::core::RaytracerException;
 using raytracer::scene::nextViewportMode;
 using raytracer::scene::ViewportMode;
 using raytracer::scene::viewportModeName;
@@ -56,4 +59,18 @@ TEST(WorldTest, ViewportModeNameMatchesEachMode) {
   EXPECT_EQ(std::string(viewportModeName(ViewportMode::MaterialPreview)),
             "Material Preview");
   EXPECT_EQ(std::string(viewportModeName(ViewportMode::Rendered)), "Rendered");
+}
+
+TEST(WorldTest, NextViewportModeThrowsOnUnknownMode) {
+  const auto unknownMode = static_cast<ViewportMode>(std::uint8_t{99});
+
+  EXPECT_THROW(static_cast<void>(nextViewportMode(unknownMode)),
+               RaytracerException);
+}
+
+TEST(WorldTest, ViewportModeNameThrowsOnUnknownMode) {
+  const auto unknownMode = static_cast<ViewportMode>(std::uint8_t{99});
+
+  EXPECT_THROW(static_cast<void>(viewportModeName(unknownMode)),
+               RaytracerException);
 }

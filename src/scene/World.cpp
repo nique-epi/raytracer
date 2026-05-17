@@ -7,6 +7,8 @@
 
 #include "World.hpp"
 
+#include "exceptions/Exceptions.hpp"
+
 namespace raytracer::scene {
 
 World::World() : viewportMode_(ViewportMode::Rendered) {}
@@ -24,7 +26,7 @@ ViewportMode nextViewportMode(ViewportMode mode) {
     case ViewportMode::Rendered:
       return ViewportMode::Wireframe;
   }
-  return ViewportMode::Rendered;
+  throw core::RaytracerException("nextViewportMode: unknown ViewportMode");
 }
 
 const char* viewportModeName(ViewportMode mode) {
@@ -36,7 +38,7 @@ const char* viewportModeName(ViewportMode mode) {
     case ViewportMode::Rendered:
       return "Rendered";
   }
-  return "Unknown";
+  throw core::RaytracerException("viewportModeName: unknown ViewportMode");
 }
 
 }  // namespace raytracer::scene

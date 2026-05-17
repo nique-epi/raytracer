@@ -52,6 +52,8 @@ enum class ViewportMode : std::uint8_t {
  *
  * @param[in] mode Current viewport mode.
  * @returns The mode following @p mode in cycle order.
+ * @throws raytracer::core::RaytracerException When @p mode is not a known
+ *         enumerator.
  */
 [[nodiscard]] ViewportMode nextViewportMode(ViewportMode mode);
 
@@ -60,6 +62,8 @@ enum class ViewportMode : std::uint8_t {
  *
  * @param[in] mode Viewport mode to name.
  * @returns A static, null-terminated label (e.g. "Rendered").
+ * @throws raytracer::core::RaytracerException When @p mode is not a known
+ *         enumerator.
  */
 [[nodiscard]] const char* viewportModeName(ViewportMode mode);
 
