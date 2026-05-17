@@ -13,7 +13,6 @@ Testing/
 test-results/
 tests/bin/
 tests/*.xml
-*.so
 # Sujet PDF — laissé en local, pas commit
 G-OOP-400_raytracer.pdf
 .DS_Store
@@ -22,3 +21,7 @@ G-OOP-400_raytracer.pdf
 *.png
 *.bin
 *.jpg
+*.ppm
+*.glb
+*.mtl
+*.obj
