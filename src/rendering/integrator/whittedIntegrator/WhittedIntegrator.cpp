@@ -133,7 +133,8 @@ double WhittedIntegrator::computeAmbientOcclusion(
     const math::Vector3D& shadingPoint, const math::Vector3D& unitNormal,
     const scene::Scene& scene,
     const scene::AmbientOcclusionSettings& settings) {
-  if (!settings.enabled || settings.samples <= 0) {
+  if (!settings.enabled || settings.samples <= 0 ||
+      settings.intensity <= 0.0) {
     return 1.0;
   }
 

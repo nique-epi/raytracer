@@ -9,12 +9,28 @@
 
 #include <algorithm>
 #include <cmath>
+#include <stdexcept>
+#include <string>
 
 #include "utils/math/Constants.hpp"
 #include "utils/math/Vector3D.hpp"
 
+namespace {
+
+double validateShininess(double shininess) {
+  if (shininess <= 0.0) {
+    throw std::invalid_argument(
+        "AMaterial: shininess must be strictly positive (got " +
+        std::to_string(shininess) + ")");
+  }
+  return shininess;
+}
+
+}  // namespace
+
 AMaterial::AMaterial(raytracer::math::Color specularAlbedo, double shininess)
-    : specularAlbedo_(specularAlbedo), shininess_(shininess) {}
+    : specularAlbedo_(specularAlbedo),
+      shininess_(validateShininess(shininess)) {}
 
 raytracer::math::Color AMaterial::emitted() const {
   return {};

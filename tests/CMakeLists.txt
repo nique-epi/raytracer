@@ -128,6 +128,7 @@ add_executable(raytracer_tests
   components/material/textures/ImageTextureTest.cpp
   rendering/HemisphereSamplerTest.cpp
   rendering/AmbientOcclusionTest.cpp
+  rendering/WhittedIntegratorHighlightTest.cpp
   fixtures/SphereFixture.cpp
   fixtures/OrthoCameraFixture.cpp
   fixtures/ComponentFactoryFixture.cpp
