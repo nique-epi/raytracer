@@ -20,11 +20,13 @@ struct HelpRequest {};
  * Built by `ArgsParser::parse` from `argv`. Owns no resources.
  * `viewport` defaults to true: the SFML live-display window opens
  * unless `--no-viewport` is passed.
+ * `renderConfigPath` is populated by `--config` (BUILD_BONUS only).
  */
 struct SceneRequest {
   std::string scenePath;
   bool useBVH{true};
   bool viewport{true};
+  std::optional<std::string> renderConfigPath;
 };
 
 using AppConfig = std::variant<HelpRequest, SceneRequest>;
@@ -36,7 +38,7 @@ class ArgsParser {
    *
    * Recognised forms:
    *   raytracer -h | --help
-   *   raytracer <SCENE_FILE> [--no-bvh] [--no-viewport]
+   *   raytracer <SCENE_FILE> [--no-bvh] [--no-viewport] [--config <FILE>]
    *
    * Flags after the scene path may appear in any order. Any unknown
    * flag yields `std::nullopt` (usage error).

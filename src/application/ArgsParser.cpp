@@ -38,7 +38,13 @@ std::optional<AppConfig> ArgsParser::parse(int argc, const char** argv) {
 
   SceneRequest request{.scenePath = argv[1]};
   for (int i = 2; i < argc; ++i) {
-    if (!applyFlag(argv[i], request)) {
+    const std::string_view arg(argv[i]);
+    if (arg == "--config") {
+      if (i + 1 >= argc) {
+        return std::nullopt;
+      }
+      request.renderConfigPath = argv[++i];
+    } else if (!applyFlag(arg, request)) {
       return std::nullopt;
     }
   }

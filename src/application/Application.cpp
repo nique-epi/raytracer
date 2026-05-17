@@ -9,8 +9,8 @@
 #include <unistd.h>
 #include <algorithm>
 #include <chrono>
-#include <cstdint>
 #include <cmath>
+#include <cstdint>
 #include <cstdio>
 #include <iomanip>
 #include <iostream>
@@ -38,6 +38,7 @@
 
 #ifdef BUILD_BONUS
 #include "Assimp/SceneLoader/AssimpLoaderRegistration.hpp"
+#include "json/JsonSettingsLoader.hpp"
 #include "postprocess/denoise/OIDDenoiser.hpp"
 #endif
 
@@ -137,7 +138,14 @@ Application::Application() {
 #endif
 }
 
-int Application::run(const std::string& scenePath, bool useBVH) {
+int Application::run(const std::string& scenePath, bool useBVH,
+                     const std::optional<std::string>& renderConfigPath) {
+#ifndef BUILD_BONUS
+  if (renderConfigPath) {
+    throw RaytracerException(
+        "--config requires BUILD_BONUS. Rebuild with: cmake --preset bonus");
+  }
+#endif
   const auto loader = _factory.getLoader(scenePath);
   if (!loader) {
     throw RaytracerException("No loader available for: " + scenePath);
@@ -148,11 +156,33 @@ int Application::run(const std::string& scenePath, bool useBVH) {
 
   loader->load(scenePath, builder, settings);
 
+#ifdef BUILD_BONUS
+  std::optional<raytracer::bonus::json::JsonSettings> jsonSettings;
+  if (renderConfigPath) {
+    jsonSettings = raytracer::bonus::json::JsonSettingsLoader::load(
+        *renderConfigPath, settings);
+    settings = jsonSettings->settings;
+  }
+#endif
+
   if (!settings.validate()) {
+#ifdef BUILD_BONUS
+    if (jsonSettings) {
+      throw RaytracerException(
+          "Invalid render settings loaded from scene: " + scenePath +
+          ", overridden by config: " + *renderConfigPath);
+    }
+#endif
     throw RaytracerException("Invalid render settings loaded from: " +
                              scenePath);
   }
   auto scene = builder.build();
+
+#ifdef BUILD_BONUS
+  if (jsonSettings && jsonSettings->viewportMode) {
+    scene->getWorld().setViewportMode(*jsonSettings->viewportMode);
+  }
+#endif
   if (useBVH) {
     scene->buildBVH();
   }
@@ -161,8 +191,18 @@ int Application::run(const std::string& scenePath, bool useBVH) {
   RaytracerRenderer renderer;
   auto shadingContext = createShadingContext(*scene);
 
-  const RendererConfig config{
-      .scene = scene, .settings = settings, .shadingContext = shadingContext};
+#ifdef BUILD_BONUS
+  const std::string outputPath = (jsonSettings && jsonSettings->outputFile)
+                                     ? *jsonSettings->outputFile
+                                     : "out.ppm";
+#else
+  const std::string outputPath = "out.ppm";
+#endif
+
+  const RendererConfig config{.scene = scene,
+                              .settings = settings,
+                              .shadingContext = shadingContext,
+                              .outputPath = outputPath};
   const Frame frame{.camera = scene->getCamera()};
 
   if (viewportRequested_) {
@@ -177,7 +217,7 @@ int Application::run(const std::string& scenePath, bool useBVH) {
 #ifdef BUILD_BONUS
   OIDDenoiser::denoise(image);
 #endif
-  writer.write(image, "out.ppm");
+  writer.write(image, outputPath);
   return 0;
 }
 

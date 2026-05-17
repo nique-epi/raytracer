@@ -60,7 +60,7 @@ int ViewportRunner::run() {
     const std::lock_guard<std::mutex> lock(finalImageMutex_);
     exportImage = finalImage_;
   }
-  viewport.write(exportImage, "out.ppm");
+  viewport.write(exportImage, baseConfig_.outputPath);
   return 0;
 }
 
@@ -141,19 +141,20 @@ void ViewportRunner::publishPass(
 void ViewportRunner::reportOutcome(Viewport& viewport) {
   const int donePasses = completedPasses_.load();
   const int finalSamples = donePasses * samplesPerPass;
+  const std::string& outFile = baseConfig_.outputPath;
   if (donePasses == 0) {
-    viewport.setStatus("Aborted before first pass | saving black out.ppm");
+    viewport.setStatus("Aborted before first pass | saving black " + outFile);
     logger_.warn(
         "viewport closed before any pass completed; exporting black image");
   } else if (donePasses == totalPasses_) {
     viewport.setStatus("Done | " + std::to_string(finalSamples) +
-                       " samples | close window to save out.ppm");
+                       " samples | close window to save " + outFile);
     logger_.info("render finished: ", finalSamples,
                  " samples - close window to export");
   } else {
     viewport.setStatus("Interrupted at " + std::to_string(finalSamples) +
                        " / " + std::to_string(effectiveSamples_) +
-                       " samples | close window to save partial out.ppm");
+                       " samples | close window to save partial " + outFile);
     logger_.info("render interrupted: ", finalSamples, '/', effectiveSamples_,
                  " samples - close window to export partial result");
   }

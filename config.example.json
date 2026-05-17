@@ -1,0 +1,11 @@
+{
+  "imageWidth": 1280,
+  "imageHeight": 720,
+  "samplesPerPixel": 4,
+  "maxDepth": 10,
+  "tileWidth": 32,
+  "tileHeight": 32,
+  "numThreads": 4,
+  "viewportMode": "rendered",
+  "name": "test.ppm"
+}
