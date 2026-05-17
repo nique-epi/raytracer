@@ -29,11 +29,18 @@ in the current directory by default; the destination can be overridden
 by the JSON configuration passed to
 .BR \-\-config ).
 .PP
-Scene files are accepted in libconfig
+The libconfig
 .RB ( .cfg )
-and glTF
-.RB ( .gltf )
-formats. The runtime log verbosity is controlled by the
+scene format is always available. Builds compiled with
+.B BUILD_BONUS
+additionally accept the formats handled by the Assimp loader:
+.BR .gltf ,
+.BR .glb ,
+.BR .obj ,
+.BR .fbx ,
+and
+.BR .dae .
+The runtime log verbosity is controlled by the
 .B RT_LOG_LEVEL
 environment variable
 .RB ( trace ,
@@ -48,10 +55,13 @@ default
 .TP
 .I SCENE_FILE
 Path to the scene description to render. Required for any rendering
-invocation. Supported formats are libconfig
+invocation. The libconfig
 .RB ( .cfg )
-and glTF
-.RB ( .gltf ).
+format is always supported.
+.BR .gltf ", " .glb ", " .obj ", " .fbx " and " .dae
+files are supported only in builds compiled with
+.B BUILD_BONUS
+(via the Assimp loader).
 .TP
 .B \-\-no\-bvh
 Disable the BVH (bounding volume hierarchy) acceleration structure.
