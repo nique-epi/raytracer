@@ -127,3 +127,10 @@ if(CLANG_TIDY)
     COMMENT "Linting code with ${CLANG_TIDY}..."
   )
 endif()
+
+add_custom_target(man
+  COMMAND man -l ${CMAKE_SOURCE_DIR}/doc/raytracer.1
+  COMMENT "Previewing doc/raytracer.1 manpage..."
+  VERBATIM
+  USES_TERMINAL
+)
