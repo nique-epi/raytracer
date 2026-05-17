@@ -132,3 +132,67 @@ TEST(MaterialFactoryTest, ParseTextureMissingTypeThrows) {
   EXPECT_THROW(static_cast<void>(MaterialFactory::parseTexture(cfg.at("t"))),
                raytracer::core::RaytracerException);
 }
+
+TEST(MaterialFactoryTest, CreateDiffuseFromCfgParsesSpecularAndShininess) {
+  CfgFromString cfg(
+      "diffuse = { albedo   = { r = 200; g = 100; b = 50;  };"
+      "            specular = { r = 255; g = 255; b = 255; };"
+      "            shininess = 64.0; };");
+  auto material = MaterialFactory::create("diffuse", cfg.at("diffuse"));
+  ASSERT_NE(material, nullptr);
+  const auto specularAlbedo = material->specularAlbedo();
+  EXPECT_NEAR(specularAlbedo.r, 1.0, 1e-9);
+  EXPECT_NEAR(specularAlbedo.g, 1.0, 1e-9);
+  EXPECT_NEAR(specularAlbedo.b, 1.0, 1e-9);
+  EXPECT_DOUBLE_EQ(material->shininess(), 64.0);
+}
+
+TEST(MaterialFactoryTest, CreateGlossyFromCfgParsesSpecularAndShininess) {
+  CfgFromString cfg(
+      "glossy = { fuzz = 0.1;"
+      "           albedo   = { r = 255; g = 255; b = 255; };"
+      "           specular = { r = 100; g = 100; b = 100; };"
+      "           shininess = 128.0; };");
+  auto material = MaterialFactory::create("glossy", cfg.at("glossy"));
+  ASSERT_NE(material, nullptr);
+  const auto specularAlbedo = material->specularAlbedo();
+  EXPECT_NEAR(specularAlbedo.r, 100.0 / 255.0, 1e-9);
+  EXPECT_DOUBLE_EQ(material->shininess(), 128.0);
+}
+
+TEST(MaterialFactoryTest, CreateGlassFromCfgParsesSpecularAndShininess) {
+  CfgFromString cfg(
+      "glass = { refractionIndex = 1.5;"
+      "          specular  = { r = 255; g = 255; b = 255; };"
+      "          shininess = 256.0; };");
+  auto material = MaterialFactory::create("glass", cfg.at("glass"));
+  ASSERT_NE(material, nullptr);
+  const auto specularAlbedo = material->specularAlbedo();
+  EXPECT_NEAR(specularAlbedo.r, 1.0, 1e-9);
+  EXPECT_DOUBLE_EQ(material->shininess(), 256.0);
+}
+
+TEST(MaterialFactoryTest, CreateTexturedFromCfgParsesSpecularAndShininess) {
+  CfgFromString cfg(
+      "m = { albedo   = { r = 200; g = 200; b = 200; };"
+      "      specular = { r = 50;  g = 50;  b = 50;  };"
+      "      shininess = 32.0;"
+      "      texture = { type = \"solid\"; color = { r=200; g=200; b=200; }; "
+      "}; };");
+  auto material = MaterialFactory::create("textured", cfg.at("m"));
+  ASSERT_NE(material, nullptr);
+  const auto specularAlbedo = material->specularAlbedo();
+  EXPECT_NEAR(specularAlbedo.r, 50.0 / 255.0, 1e-9);
+  EXPECT_DOUBLE_EQ(material->shininess(), 32.0);
+}
+
+TEST(MaterialFactoryTest, CreateDiffuseWithoutSpecularKeepsNeutralDefaults) {
+  CfgFromString cfg("diffuse = { albedo = { r = 200; g = 100; b = 50; }; };");
+  auto material = MaterialFactory::create("diffuse", cfg.at("diffuse"));
+  ASSERT_NE(material, nullptr);
+  const auto specularAlbedo = material->specularAlbedo();
+  EXPECT_DOUBLE_EQ(specularAlbedo.r, 0.0);
+  EXPECT_DOUBLE_EQ(specularAlbedo.g, 0.0);
+  EXPECT_DOUBLE_EQ(specularAlbedo.b, 0.0);
+  EXPECT_DOUBLE_EQ(material->shininess(), 1.0);
+}

@@ -119,6 +119,8 @@ add_executable(raytracer_tests
   components/material/textures/SolidColorTest.cpp
   components/material/textures/CheckerTextureTest.cpp
   components/material/TexturedMaterialTest.cpp
+  components/material/AMaterialBrdfTest.cpp
+  components/material/PrincipledBrdfTest.cpp
   components/material/textures/PerlinNoiseTest.cpp
   components/material/textures/NoiseTextureTest.cpp
   components/material/textures/ImageTextureTest.cpp
