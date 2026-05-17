@@ -6,8 +6,10 @@
 */
 
 #include <gtest/gtest.h>
+#include <cstdint>
 #include <memory>
 #include "rendering/shading/IShadingMode.hpp"
+#include "rendering/shading/ShadingException.hpp"
 #include "rendering/shading/ShadingModeFactory.hpp"
 #include "rendering/shading/materialPreview/MaterialPreviewShader.hpp"
 #include "rendering/shading/rendered/RenderedShader.hpp"
@@ -18,6 +20,7 @@ using raytracer::scene::ViewportMode;
 using raytracer::shading::IShadingMode;
 using raytracer::shading::MaterialPreviewShader;
 using raytracer::shading::RenderedShader;
+using raytracer::shading::ShadingException;
 using raytracer::shading::ShadingModeFactory;
 using raytracer::shading::WireframeShader;
 
@@ -52,4 +55,11 @@ TEST(ShadingModeFactoryTest, EachCallReturnsAFreshInstance) {
       ShadingModeFactory::create(ViewportMode::Rendered);
 
   EXPECT_NE(first, second);
+}
+
+TEST(ShadingModeFactoryTest, UnknownModeThrowsShadingException) {
+  const auto unknownMode = static_cast<ViewportMode>(std::uint8_t{99});
+
+  EXPECT_THROW(static_cast<void>(ShadingModeFactory::create(unknownMode)),
+               ShadingException);
 }
