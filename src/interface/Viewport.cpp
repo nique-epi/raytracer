@@ -61,7 +61,7 @@ void Viewport::setStatus(std::string status) {
 }
 
 void Viewport::setViewportMode(raytracer::scene::ViewportMode mode) {
-  currentMode_.store(mode);
+  cycleMode_ = mode;
 }
 
 std::optional<raytracer::scene::ViewportMode> Viewport::consumeModeRequest() {
@@ -74,15 +74,10 @@ std::optional<raytracer::scene::ViewportMode> Viewport::consumeModeRequest() {
 
 bool Viewport::hasModeRequest() const { return pendingMode_.load() >= 0; }
 
-void Viewport::requestViewportMode(raytracer::scene::ViewportMode mode) {
-  currentMode_.store(mode);
-  pendingMode_.store(static_cast<int>(mode));
-}
-
 void Viewport::handleKeyPress(sf::Keyboard::Key key) {
   if (key == sf::Keyboard::Tab) {
-    requestViewportMode(
-        raytracer::scene::nextViewportMode(currentMode_.load()));
+    cycleMode_ = raytracer::scene::nextViewportMode(cycleMode_);
+    pendingMode_.store(static_cast<int>(cycleMode_));
   }
 }
 

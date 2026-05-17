@@ -109,12 +109,15 @@ class Viewport : public raytracer::output::IImageWriter {
   void setStatus(std::string status);
 
   /**
-   * @brief Seed the viewport mode the window believes is active.
+   * @brief Seed the mode the `Tab` cycle key advances from.
    *
-   * Used to align the `Tab` cycle key with the scene's initial mode.
-   * Must be called before the render worker starts.
+   * The viewport keeps its own cursor for the `Tab` cycle; this seeds
+   * it with the scene's initial mode so the first `Tab` press steps to
+   * the correct neighbour. Must be called before the render worker
+   * starts: the cursor is touched only by the window thread and is not
+   * synchronised.
    *
-   * @param [in] mode Mode currently shown.
+   * @param [in] mode Mode the scene starts in.
    */
   void setViewportMode(raytracer::scene::ViewportMode mode);
 
@@ -141,7 +144,6 @@ class Viewport : public raytracer::output::IImageWriter {
 
  private:
   void handleKeyPress(sf::Keyboard::Key key);
-  void requestViewportMode(raytracer::scene::ViewportMode mode);
 
   Framebuffer framebuffer_;
   StatusOverlay overlay_;
@@ -149,7 +151,7 @@ class Viewport : public raytracer::output::IImageWriter {
   sf::Texture texture_;
   sf::Sprite sprite_;
   std::atomic<bool> shouldClose_{false};
-  std::atomic<raytracer::scene::ViewportMode> currentMode_{
+  raytracer::scene::ViewportMode cycleMode_{
       raytracer::scene::ViewportMode::Rendered};
   std::atomic<int> pendingMode_{-1};
 };
