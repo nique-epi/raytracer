@@ -124,6 +124,7 @@ add_executable(raytracer_tests
   components/material/TexturedMaterialTest.cpp
   components/material/AMaterialBrdfTest.cpp
   components/material/PrincipledBrdfTest.cpp
+  components/material/TransparentTest.cpp
   components/material/textures/PerlinNoiseTest.cpp
   components/material/textures/NoiseTextureTest.cpp
   components/material/textures/ImageTextureTest.cpp
@@ -153,8 +154,6 @@ target_compile_definitions(raytracer_tests
 target_link_libraries(raytracer_tests
   PRIVATE
     raytracer_src
-	raytracer_translation
-	raytracer_scale
     raytracer_tests_helpers
     GTest::gtest_main
 )

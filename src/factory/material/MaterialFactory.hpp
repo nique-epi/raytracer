@@ -104,6 +104,20 @@ class MaterialFactory {
       double ior = defaultPrincipledRefractionIndex, double alpha = 1.0);
 
   /**
+   * @brief Create a pass-through transparent material (no refraction).
+   *
+   * Unlike @c createGlass, the scattered ray crosses the surface
+   * without Snell deviation and without Fresnel reflection mixing.
+   * The optional @p tint acts as a color filter (cellophane-like).
+   *
+   * @param [in] tint Color filter applied to the ray crossing the
+   *                  surface (default: white — perfectly clear).
+   * @returns Shared pointer to the freshly constructed material.
+   */
+  [[nodiscard]] static std::shared_ptr<IMaterial> createTransparent(
+      const math::Color& tint = math::Color(1.0, 1.0, 1.0));
+
+  /**
    * @brief Create a textured Lambertian material with optional Phong highlight.
    *
    * @param [in] texture        Texture used to modulate the surface color.
@@ -136,7 +150,8 @@ class MaterialFactory {
   /**
    * @brief Dispatch by type name and parse @p cfg into typed arguments.
    *
-   * Supported type names: `"diffuse"`, `"glossy"`, `"glass"`, `"textured"`.
+   * Supported type names: `"diffuse"`, `"glossy"`, `"glass"`,
+   * `"principled"`, `"textured"`, `"transparent"`.
    *
    * @param [in] type Type discriminant (one of the supported names above).
    * @param [in] cfg  libconfig setting; absent fields keep their typed

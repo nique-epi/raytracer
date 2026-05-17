@@ -73,6 +73,30 @@ TEST(MaterialFactoryTest, CreateGlassFromEmptyCfgFallsBackToDefaults) {
   EXPECT_NE(material, nullptr);
 }
 
+TEST(MaterialFactoryTest, CreateTransparentFromCfgReadsTint) {
+  CfgFromString cfg(
+      "transparent = { tint = { r = 100; g = 150; b = 255; }; };");
+  auto material = MaterialFactory::create("transparent", cfg.at("transparent"));
+  ASSERT_NE(material, nullptr);
+  const auto diffuseAlbedo = material->diffuseAlbedo();
+  EXPECT_DOUBLE_EQ(diffuseAlbedo.r, 0.0);
+  EXPECT_DOUBLE_EQ(diffuseAlbedo.g, 0.0);
+  EXPECT_DOUBLE_EQ(diffuseAlbedo.b, 0.0);
+}
+
+TEST(MaterialFactoryTest, CreateTransparentFromEmptyCfgFallsBackToNeutralTint) {
+  CfgFromString cfg("transparent = { };");
+  auto material = MaterialFactory::create("transparent", cfg.at("transparent"));
+  EXPECT_NE(material, nullptr);
+}
+
+TEST(MaterialFactoryTest, CreateTransparentColorAliasForTint) {
+  CfgFromString cfg(
+      "transparent = { color = { r = 0; g = 200; b = 0; }; };");
+  auto material = MaterialFactory::create("transparent", cfg.at("transparent"));
+  EXPECT_NE(material, nullptr);
+}
+
 TEST(MaterialFactoryTest, CreateUnknownTypeThrows) {
   CfgFromString cfg("entry = { };");
   EXPECT_THROW(

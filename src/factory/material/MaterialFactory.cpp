@@ -19,6 +19,7 @@
 #include "components/material/glossy/Glossy.hpp"
 #include "components/material/principledBSDF/PrincipledBSDF.hpp"
 #include "components/material/textured/TexturedMaterial.hpp"
+#include "components/material/transparent/Transparent.hpp"
 #include "exceptions/Exceptions.hpp"
 #include "utils/math/Color.hpp"
 
@@ -31,6 +32,7 @@ using raytracer::components::material::Glass;
 using raytracer::components::material::Glossy;
 using raytracer::components::material::PrincipledMaterial;
 using raytracer::components::material::TexturedMaterial;
+using raytracer::components::material::Transparent;
 using raytracer::materials::ITexture;
 using raytracer::materials::textures::CheckerTexture;
 using raytracer::materials::textures::ImageTexture;
@@ -101,6 +103,14 @@ std::shared_ptr<IMaterial> createPrincipledFromCfg(
                                            alpha);
 }
 
+std::shared_ptr<IMaterial> createTransparentFromCfg(
+    const libconfig::Setting& cfg) {
+  Color tint(1.0, 1.0, 1.0);
+  overrideColorIfPresent(cfg, "tint", tint);
+  overrideColorIfPresent(cfg, "color", tint);
+  return MaterialFactory::createTransparent(tint);
+}
+
 }  // namespace
 
 std::shared_ptr<IMaterial> MaterialFactory::createDiffuse(
@@ -127,6 +137,11 @@ std::shared_ptr<IMaterial> MaterialFactory::createPrincipled(
     double alpha) {
   return std::make_shared<PrincipledMaterial>(baseColor, metallic, roughness,
                                               ior, alpha);
+}
+
+std::shared_ptr<IMaterial> MaterialFactory::createTransparent(
+    const math::Color& tint) {
+  return std::make_shared<Transparent>(tint);
 }
 
 // NOLINTNEXTLINE(misc-use-internal-linkage)
@@ -208,6 +223,9 @@ std::shared_ptr<IMaterial> MaterialFactory::create(
   }
   if (type == "principled") {
     return createPrincipledFromCfg(cfg);
+  }
+  if (type == "transparent") {
+    return createTransparentFromCfg(cfg);
   }
   if (type == "textured") {
     Color albedo(1.0, 1.0, 1.0);
