@@ -97,3 +97,18 @@ TEST(ShadingPoolTest, NullStrategyInConstructorThrows) {
                       std::make_shared<raytracer::core::WhittedIntegrator>())),
       ShadingException);
 }
+
+TEST(ShadingPoolTest, CreateBuildsTheThreeDefaultShaders) {
+  const std::shared_ptr<ShadingPool> pool = ShadingPool::create();
+
+  ASSERT_NE(pool, nullptr);
+  EXPECT_NE(std::dynamic_pointer_cast<WireframeShader>(
+                pool->get(ViewportMode::Wireframe)),
+            nullptr);
+  EXPECT_NE(std::dynamic_pointer_cast<MaterialPreviewShader>(
+                pool->get(ViewportMode::MaterialPreview)),
+            nullptr);
+  EXPECT_NE(std::dynamic_pointer_cast<RenderedShader>(
+                pool->get(ViewportMode::Rendered)),
+            nullptr);
+}

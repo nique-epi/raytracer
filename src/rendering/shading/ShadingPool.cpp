@@ -9,8 +9,12 @@
 
 #include <utility>
 
+#include "rendering/integrator/whittedIntegrator/WhittedIntegrator.hpp"
 #include "rendering/shading/IShadingMode.hpp"
 #include "rendering/shading/ShadingException.hpp"
+#include "rendering/shading/materialPreview/MaterialPreviewShader.hpp"
+#include "rendering/shading/rendered/RenderedShader.hpp"
+#include "rendering/shading/wireframe/WireframeShader.hpp"
 
 namespace raytracer::shading {
 
@@ -37,6 +41,14 @@ std::shared_ptr<IShadingMode> ShadingPool::get(
       return rendered_;
   }
   throw ShadingException("ShadingPool::get: unknown ViewportMode");
+}
+
+std::shared_ptr<ShadingPool> ShadingPool::create() {
+  return std::make_shared<ShadingPool>(
+      std::make_shared<WireframeShader>(),
+      std::make_shared<MaterialPreviewShader>(),
+      std::make_shared<RenderedShader>(
+          std::make_shared<raytracer::core::WhittedIntegrator>()));
 }
 
 }  // namespace raytracer::shading
