@@ -85,6 +85,10 @@ raytracer::core::RendererConfig ViewportRunner::buildPassConfig() const {
 void ViewportRunner::resetAccumulation() {
   std::ranges::fill(accumulator_, raytracer::math::Color{});
   pass_ = 1;
+  completedPasses_.store(0);
+  displayImage_ = raytracer::components::Image(width_, height_);
+  const std::lock_guard<std::mutex> lock(finalImageMutex_);
+  finalImage_ = raytracer::components::Image(width_, height_);
 }
 
 void ViewportRunner::accumulate(Viewport& viewport) {
@@ -112,6 +116,8 @@ bool ViewportRunner::handleModeSwitch(Viewport& viewport) {
   }
   applyViewportModeSwitch(*requested);
   resetAccumulation();
+  viewport.liveDisplay(displayImage_);
+  viewport.setStatus(decorateStatus("Restarting render"));
   return true;
 }
 

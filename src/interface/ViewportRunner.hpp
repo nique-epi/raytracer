@@ -67,8 +67,9 @@ class ViewportRunner {
    * @brief Apply a pending viewport-mode switch, if any.
    *
    * Consumes the viewport's pending mode request: when present it
-   * swaps the shading strategy and clears the accumulation buffers so
-   * rendering restarts from scratch in the new mode.
+   * swaps the shading strategy, discards all accumulation state and
+   * repaints the window blank so rendering restarts from scratch in
+   * the new mode.
    *
    * @param[in,out] viewport Viewport polled for the pending request.
    * @returns true when a switch was applied.
@@ -89,7 +90,12 @@ class ViewportRunner {
                   const raytracer::core::RendererConfig& perPassConfig);
 
   /**
-   * @brief Clear accumulated radiance and restart at the first pass.
+   * @brief Discard all accumulation state for a fresh render.
+   *
+   * Clears the radiance accumulator and the published image, and
+   * resets the pass index and the completed-pass count. After this
+   * call the reported progress and the exported image describe only
+   * work done from this point on, never a previous viewport mode.
    */
   void resetAccumulation();
 
