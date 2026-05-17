@@ -21,15 +21,11 @@
 #include "exceptions/Exceptions.hpp"
 #include "interface/ViewportRunner.hpp"
 #include "output/ppm/ppm.hpp"
-#include "rendering/integrator/whittedIntegrator/WhittedIntegrator.hpp"
 #include "rendering/renderer/Frame.hpp"
 #include "rendering/renderer/RendererConfig.hpp"
 #include "rendering/renderer/raytracerRenderer/RaytracerRenderer.hpp"
-#include "rendering/shading/IShadingMode.hpp"
 #include "rendering/shading/ShadingContext.hpp"
-#include "rendering/shading/materialPreview/MaterialPreviewShader.hpp"
-#include "rendering/shading/rendered/RenderedShader.hpp"
-#include "rendering/shading/wireframe/WireframeShader.hpp"
+#include "rendering/shading/ShadingModeFactory.hpp"
 #include "scene/CFGSceneLoader.hpp"
 #include "scene/Scene.hpp"
 #include "scene/SceneBuilder.hpp"
@@ -67,25 +63,8 @@ std::string formatRemainingTime(std::int64_t remainingSeconds) {
 
 std::shared_ptr<shading::ShadingContext> createShadingContext(
     const scene::Scene& scene) {
-  auto wireframe = std::make_shared<shading::WireframeShader>();
-  auto materialPreview = std::make_shared<shading::MaterialPreviewShader>();
-  auto rendered = std::make_shared<shading::RenderedShader>(
-      std::make_shared<WhittedIntegrator>());
-
-  std::shared_ptr<shading::IShadingMode> initialStrategy;
-  switch (scene.getWorld().viewportMode()) {
-    case scene::ViewportMode::Wireframe:
-      initialStrategy = wireframe;
-      break;
-    case scene::ViewportMode::MaterialPreview:
-      initialStrategy = materialPreview;
-      break;
-    case scene::ViewportMode::Rendered:
-      initialStrategy = rendered;
-      break;
-  }
-
-  return std::make_shared<shading::ShadingContext>(std::move(initialStrategy));
+  return std::make_shared<shading::ShadingContext>(
+      shading::ShadingModeFactory::create(scene.getWorld().viewportMode()));
 }
 
 void displayProgressBar(RaytracerRenderer& renderer) {

@@ -60,6 +60,27 @@ void Viewport::setStatus(std::string status) {
   overlay_.setStatus(std::move(status));
 }
 
+void Viewport::setViewportMode(raytracer::scene::ViewportMode mode) {
+  cycleMode_ = mode;
+}
+
+std::optional<raytracer::scene::ViewportMode> Viewport::consumeModeRequest() {
+  const int raw = pendingMode_.exchange(-1);
+  if (raw < 0) {
+    return std::nullopt;
+  }
+  return static_cast<raytracer::scene::ViewportMode>(raw);
+}
+
+bool Viewport::hasModeRequest() const { return pendingMode_.load() >= 0; }
+
+void Viewport::handleKeyPress(sf::Keyboard::Key key) {
+  if (key == sf::Keyboard::Tab) {
+    cycleMode_ = raytracer::scene::nextViewportMode(cycleMode_);
+    pendingMode_.store(static_cast<int>(cycleMode_));
+  }
+}
+
 void Viewport::tick() {
   if (!window_.isOpen()) {
     shouldClose_.store(true);
@@ -69,6 +90,9 @@ void Viewport::tick() {
   while (window_.pollEvent(event)) {
     if (event.type == sf::Event::Closed) {
       shouldClose_.store(true);
+    } else if (event.type == sf::Event::KeyPressed) {
+      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-union-access)
+      handleKeyPress(event.key.code);
     }
   }
   framebuffer_.consume(

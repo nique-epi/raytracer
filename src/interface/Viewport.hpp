@@ -9,11 +9,13 @@
 
 #include <SFML/Graphics.hpp>
 #include <atomic>
+#include <optional>
 #include <string>
 #include "components/image/Image.hpp"
 #include "interface/Framebuffer.hpp"
 #include "interface/StatusOverlay.hpp"
 #include "output/IImageWriter.hpp"
+#include "scene/World.hpp"
 
 namespace raytracer::interface {
 
@@ -106,13 +108,52 @@ class Viewport : public raytracer::output::IImageWriter {
    */
   void setStatus(std::string status);
 
+  /**
+   * @brief Seed the mode the `Tab` cycle key advances from.
+   *
+   * The viewport keeps its own cursor for the `Tab` cycle; this seeds
+   * it with the scene's initial mode so the first `Tab` press steps to
+   * the correct neighbour. Must be called before the render worker
+   * starts: the cursor is touched only by the window thread and is not
+   * synchronised.
+   *
+   * @param [in] mode Mode the scene starts in.
+   */
+  void setViewportMode(raytracer::scene::ViewportMode mode);
+
+  /**
+   * @brief Take the pending viewport-mode switch requested by a key.
+   *
+   * Safe to call from any thread. Each request is returned exactly
+   * once: a second call without a new key press yields `nullopt`.
+   *
+   * @returns The requested mode, or `nullopt` when none is pending.
+   */
+  [[nodiscard]] std::optional<raytracer::scene::ViewportMode>
+  consumeModeRequest();
+
+  /**
+   * @brief Whether a viewport-mode switch is pending.
+   *
+   * Safe to call from any thread. Unlike `consumeModeRequest`, this
+   * leaves the request pending for a later consumer.
+   *
+   * @returns true when a key press has queued an unconsumed switch.
+   */
+  [[nodiscard]] bool hasModeRequest() const;
+
  private:
+  void handleKeyPress(sf::Keyboard::Key key);
+
   Framebuffer framebuffer_;
   StatusOverlay overlay_;
   sf::RenderWindow window_;
   sf::Texture texture_;
   sf::Sprite sprite_;
   std::atomic<bool> shouldClose_{false};
+  raytracer::scene::ViewportMode cycleMode_{
+      raytracer::scene::ViewportMode::Rendered};
+  std::atomic<int> pendingMode_{-1};
 };
 
 }  // namespace raytracer::interface

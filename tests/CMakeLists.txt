@@ -90,10 +90,12 @@ add_executable(raytracer_tests
   scene/TransformsParserTest.cpp
   scene/SceneExceptionTest.cpp
   scene/SceneTest.cpp
+  scene/WorldTest.cpp
   scene/background/SolidBackgroundTest.cpp
   scene/background/GradientBackgroundTest.cpp
   exceptions/ExceptionsTest.cpp
   renderer/RendererViewportModeTest.cpp
+  rendering/shading/ShadingModeFactoryTest.cpp
   renderer/TileTest.cpp
   renderer/RaytracerRendererTest.cpp
   config/ConfigExceptionTest.cpp
