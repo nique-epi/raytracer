@@ -6,9 +6,11 @@
 */
 
 #include "JsonSettingsLoader.hpp"
+#include <algorithm>
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include <string>
+#include <thread>
 #include "scene/SceneFileNotFoundException.hpp"
 #include "scene/SceneParseException.hpp"
 
@@ -26,7 +28,7 @@ raytracer::scene::ViewportMode viewportModeFromString(const std::string& mode) {
 }  // namespace
 
 JsonSettings JsonSettingsLoader::load(const std::string& path,
-                                       const math::RenderSettings& base) {
+                                      const math::RenderSettings& base) {
   std::ifstream file(path);
   if (!file.is_open()) {
     throw raytracer::scene::SceneFileNotFoundException(path);
@@ -49,6 +51,10 @@ JsonSettings JsonSettingsLoader::load(const std::string& path,
     settings.tileWidth = j.value("tileWidth", settings.tileWidth);
     settings.tileHeight = j.value("tileHeight", settings.tileHeight);
     settings.numThreads = j.value("numThreads", settings.numThreads);
+    if (settings.numThreads <= 0) {
+      settings.numThreads =
+          static_cast<int>(std::max(1U, std::thread::hardware_concurrency()));
+    }
     settings.samplesPerPixel =
         j.value("samplesPerPixel", settings.samplesPerPixel);
     settings.maxDepth = j.value("maxDepth", settings.maxDepth);
