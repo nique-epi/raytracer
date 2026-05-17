@@ -9,9 +9,9 @@
 
 #include <algorithm>
 #include <cmath>
-#include <stdexcept>
 #include <string>
 
+#include "components/material/MaterialException.hpp"
 #include "utils/math/Constants.hpp"
 #include "utils/math/Vector3D.hpp"
 
@@ -19,7 +19,7 @@ namespace {
 
 double validateShininess(double shininess) {
   if (shininess <= 0.0) {
-    throw std::invalid_argument(
+    throw raytracer::components::material::MaterialException(
         "AMaterial: shininess must be strictly positive (got " +
         std::to_string(shininess) + ")");
   }
