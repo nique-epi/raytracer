@@ -205,7 +205,7 @@ void ViewportRunner::publishPass(Viewport& viewport) {
     }
 #endif
     viewport.setStatus(decorateStatus("Done - " + std::to_string(samples) +
-                                      " samples - denoising and saving"));
+                                      " samples - close window to save"));
   } else {
     viewport.setStatus(
         decorateStatus("Rendering " + std::to_string(samples) + " / " +
