@@ -42,15 +42,20 @@ and
 .BR .dae .
 The runtime log verbosity is controlled by the
 .B RT_LOG_LEVEL
-environment variable
-.RB ( trace ,
+environment variable, which accepts
+.BR trace ,
 .BR debug ,
 .BR info ,
-.BR warn ,
+.B warn
+(or
+.BR warning ),
 .BR error ,
-.BR silent ;
-default
-.BR info ).
+and
+.B silent
+(or
+.BR off ", " none ).
+The default is
+.BR info .
 .SH OPTIONS
 .TP
 .I SCENE_FILE
