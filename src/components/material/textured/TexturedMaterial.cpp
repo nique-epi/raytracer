@@ -19,8 +19,11 @@ namespace raytracer::components::material {
 // NOLINTNEXTLINE(cppcoreguidelines-pro-type-member-init,hicpp-member-init)
 TexturedMaterial::TexturedMaterial(
     std::shared_ptr<raytracer::materials::ITexture> texture,
-    const raytracer::math::Color& albedo)
-    : texture_(std::move(texture)), albedo_(albedo) {}
+    const raytracer::math::Color& albedo,
+    const raytracer::math::Color& specularAlbedo, double shininess)
+    : AMaterial(specularAlbedo, shininess),
+      texture_(std::move(texture)),
+      albedo_(albedo) {}
 
 bool TexturedMaterial::scatter(const raytracer::math::Ray& /*in*/,
                                const raytracer::math::HitRecord& rec,
