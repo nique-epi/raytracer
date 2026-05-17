@@ -18,7 +18,7 @@
 #include <vector>
 #include "interface/Viewport.hpp"
 #include "rendering/shading/ShadingContext.hpp"
-#include "rendering/shading/ShadingModeFactory.hpp"
+#include "rendering/shading/ShadingPool.hpp"
 #include "scene/Scene.hpp"
 #include "scene/World.hpp"
 #include "utils/math/Color.hpp"
@@ -30,12 +30,14 @@
 
 namespace raytracer::interface {
 
-ViewportRunner::ViewportRunner(raytracer::core::RaytracerRenderer& renderer,
-                               raytracer::core::RendererConfig baseConfig,
-                               raytracer::core::Frame frame)
+ViewportRunner::ViewportRunner(
+    raytracer::core::RaytracerRenderer& renderer,
+    raytracer::core::RendererConfig baseConfig, raytracer::core::Frame frame,
+    std::shared_ptr<raytracer::shading::ShadingPool> shadingPool)
     : renderer_(renderer),
       baseConfig_(std::move(baseConfig)),
       frame_(std::move(frame)),
+      shadingPool_(std::move(shadingPool)),
       width_(baseConfig_.settings.imageWidth),
       height_(baseConfig_.settings.imageHeight),
       targetSamples_(std::max(1, baseConfig_.settings.samplesPerPixel)),
@@ -144,8 +146,7 @@ void ViewportRunner::renderPass(
 void ViewportRunner::applyViewportModeSwitch(
     raytracer::scene::ViewportMode mode) {
   currentMode_.store(mode);
-  baseConfig_.shadingContext->setStrategy(
-      raytracer::shading::ShadingModeFactory::create(mode));
+  baseConfig_.shadingContext->setStrategy(shadingPool_->get(mode));
   logger_.info("viewport mode -> ", raytracer::scene::viewportModeName(mode),
                ", restarting accumulation");
 }
